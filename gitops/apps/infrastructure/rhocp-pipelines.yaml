@@ -10,7 +10,7 @@ metadata:
 spec:
   project: demojam
   source:
-    repoURL: https://github.com/team/demojam-ai-assistant
+    repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: HEAD
     path: helm/charts/rhocp-pipelines
     helm:

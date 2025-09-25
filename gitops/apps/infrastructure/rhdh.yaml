@@ -6,14 +6,14 @@ metadata:
   labels:
     app: rhdh
     project: demojam-2026
-    tier: application
+    tier: infrastructure
     component: red-hat-developer-hub
   annotations:
-    argocd.argoproj.io/sync-wave: "10"
+    argocd.argoproj.io/sync-wave: "5"
 spec:
   project: demojam
   source:
-    repoURL: https://github.com/team/demojam-ai-assistant
+    repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: HEAD
     path: helm/charts/rhdh
     helm:

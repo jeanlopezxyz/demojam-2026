@@ -11,9 +11,13 @@ spec:
   # Source repositories permitidos
   sourceRepos:
   - https://github.com/team/demojam-ai-assistant
+  - https://github.com/team/demojam-ecommerce-platform
   - https://github.com/redhat/backstage-helm
   - https://charts.bitnami.com/bitnami
   - https://codecentric.github.io/helm-charts
+  - https://prometheus-community.github.io/helm-charts
+  - https://jaegertracing.github.io/helm-charts
+  - https://elastic.github.io/helm-charts
   
   # Clusters de destino permitidos
   destinations:
@@ -28,6 +32,13 @@ spec:
   - namespace: gitea
     server: https://kubernetes.default.svc
   - namespace: openshift-pipelines
+    server: https://kubernetes.default.svc
+  # E-commerce platform namespaces
+  - namespace: ecommerce-production
+    server: https://kubernetes.default.svc
+  - namespace: ecommerce-staging
+    server: https://kubernetes.default.svc
+  - namespace: ecommerce-monitoring
     server: https://kubernetes.default.svc
     
   # Recursos permitidos

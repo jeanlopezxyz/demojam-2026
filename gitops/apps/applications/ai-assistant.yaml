@@ -9,11 +9,11 @@ metadata:
     tier: application
     component: ai-service
   annotations:
-    argocd.argoproj.io/sync-wave: "20"
+    argocd.argoproj.io/sync-wave: "10"
 spec:
   project: demojam
   source:
-    repoURL: https://github.com/team/demojam-ai-assistant
+    repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: HEAD
     path: helm/charts/ai-assistant
     helm:

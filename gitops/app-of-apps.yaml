@@ -6,12 +6,14 @@ metadata:
   labels:
     app: demojam-root
     project: demojam-2026
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: demojam
   source:
-    repoURL: https://github.com/team/demojam-ai-assistant
+    repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: HEAD
     path: gitops/apps
   destination:
@@ -23,9 +25,15 @@ spec:
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
+    - ServerSideApply=true
     retry:
       limit: 5
       backoff:
         duration: 5s
         factor: 2
         maxDuration: 3m
+  ignoreDifferences:
+  - group: argoproj.io
+    kind: Application
+    jsonPointers:
+    - /status
