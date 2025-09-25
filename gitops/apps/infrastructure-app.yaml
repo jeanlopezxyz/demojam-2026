@@ -10,11 +10,9 @@ metadata:
 spec:
   project: demojam
   source:
-    repoURL: https://jeanlopezxyz.github.io/demojam-helm-charts
-    chart: bookstack
-    targetRevision: 1.0.0
-    helm:
-      releaseName: bookstack
+    repoURL: https://github.com/jeanlopezxyz/demojam-2026
+    targetRevision: HEAD
+    path: gitops/apps/infrastructure
   destination:
     server: https://kubernetes.default.svc
     namespace: openshift-gitops
