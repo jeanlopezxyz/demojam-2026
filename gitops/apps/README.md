@@ -22,9 +22,6 @@ gitops/apps/
 
 ## 🌊 Sync Waves Configuradas
 
-### Wave 0: Foundational
-- **namespaces.yaml** - Crear todos los namespaces primero
-
 ### Wave 1-5: Infrastructure (Dependencies)
 - **Wave 1**: RHBK (Red Hat build of Keycloak) - Identity first
 - **Wave 2**: Gitea - Git repositories
