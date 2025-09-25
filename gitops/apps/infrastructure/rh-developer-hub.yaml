@@ -15,8 +15,7 @@ spec:
   source:
     repoURL: https://github.com/jeanlopezxyz/helm-charts
     targetRevision: HEAD
-    chart: setup-rh-operator-developer-hub
-    targetRevision: "1.0.0"
+    path: charts/setup-rh-operator-developer-hub
     helm:
       valueFiles:
       - values.yaml
