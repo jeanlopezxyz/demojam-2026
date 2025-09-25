@@ -4,18 +4,3 @@ description: AI-Powered Assistant for Corporate Repositories
 type: application
 version: 1.0.0
 appVersion: "1.0.0"
-home: https://github.com/team/demojam-ai-assistant
-maintainers:
-- name: Jean Paul Lopez
-  email: jealopez@redhat.com
-- name: Abel Luque  
-  email: aluque@redhat.com
-dependencies:
-- name: postgresql
-  version: "12.x.x"
-  repository: https://charts.bitnami.com/bitnami
-  condition: postgresql.enabled
-- name: redis
-  version: "17.x.x" 
-  repository: https://charts.bitnami.com/bitnami
-  condition: redis.enabled

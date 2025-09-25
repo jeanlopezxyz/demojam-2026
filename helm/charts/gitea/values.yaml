@@ -1,60 +1,18 @@
-# Based on official Gitea Helm chart configuration
-replicaCount: 2
+replicaCount: 1
 
 image:
   repository: gitea/gitea
   tag: "1.21.0"
   pullPolicy: IfNotPresent
 
-namespace: gitea
-
-# Gitea configuration following official chart structure
-gitea:
-  admin:
-    username: "giteaadmin"
-    password: "gitea-admin-123"
-    email: "admin@company.com"
-  
-  config:
-    server:
-      DOMAIN: "gitea.apps.cluster.company.com"
-      ROOT_URL: "https://gitea.apps.cluster.company.com"
-      HTTP_PORT: 3000
-      SSH_PORT: 2222
-    database:
-      DB_TYPE: "postgres"
-      HOST: "postgresql:5432"
-      NAME: "gitea"
-      USER: "gitea"
-      PASSWD: "gitea123"
-
 service:
-  http:
-    type: ClusterIP
-    port: 3000
-  ssh:
-    type: ClusterIP
-    port: 2222
+  type: ClusterIP
+  port: 3000
 
 resources:
   limits:
-    cpu: 1000m
-    memory: 1Gi
-  requests:
     cpu: 500m
     memory: 512Mi
-
-# PostgreSQL dependency
-postgresql:
-  enabled: true
-  auth:
-    postgresPassword: "postgres123"
-    username: "gitea"
-    password: "gitea123"
-    database: "gitea"
-
-# Persistence
-persistence:
-  enabled: true
-  size: 20Gi
-  storageClass: "gp3-csi"
+  requests:
+    cpu: 250m
+    memory: 256Mi

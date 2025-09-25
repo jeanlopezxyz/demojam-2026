@@ -15,11 +15,11 @@ maintainers:
   email: aluque@redhat.com
 dependencies:
 - name: postgresql
-  version: "12.x.x"
+  version: "13.2.24"
   repository: https://charts.bitnami.com/bitnami
   condition: postgresql.enabled
 - name: redis
-  version: "17.x.x"
+  version: "18.4.0"
   repository: https://charts.bitnami.com/bitnami
   condition: redis.enabled
 keywords:

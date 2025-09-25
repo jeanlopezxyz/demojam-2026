@@ -1,23 +1,6 @@
 apiVersion: v2
 name: gitea
-description: Gitea Git Repository Server for Corporate Source Code Management
+description: Gitea Git Repository Server
 type: application
 version: 1.0.0
 appVersion: "1.21.0"
-home: https://gitea.io/
-sources:
-- https://github.com/go-gitea/gitea
-- https://gitea.com/gitea/helm-chart
-maintainers:
-- name: Jean Paul Lopez
-  email: jeanlopez@linux.com
-dependencies:
-- name: postgresql
-  version: "12.x.x"
-  repository: https://charts.bitnami.com/bitnami
-  condition: postgresql.enabled
-keywords:
-- git
-- gitea
-- repository
-- source-control

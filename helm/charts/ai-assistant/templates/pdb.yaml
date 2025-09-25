@@ -1,0 +1,14 @@
+{{- if .Values.podDisruptionBudget.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "ai-assistant.fullname" . }}
+  namespace: {{ .Values.namespace | default "demojam-ai-assistant" }}
+  labels:
+    {{- include "ai-assistant.labels" . | nindent 4 }}
+spec:
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
+  selector:
+    matchLabels:
+      {{- include "ai-assistant.selectorLabels" . | nindent 6 }}
+{{- end }}

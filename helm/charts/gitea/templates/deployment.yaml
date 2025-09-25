@@ -2,12 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gitea
-  namespace: {{ .Values.namespace | default "gitea" }}
   labels:
     app: gitea
-    component: git-server
 spec:
-  replicas: {{ .Values.replicaCount | default 2 }}
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: gitea
@@ -15,31 +13,11 @@ spec:
     metadata:
       labels:
         app: gitea
-        component: git-server
     spec:
       containers:
       - name: gitea
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-        env:
-        - name: USER_UID
-          value: "1000"
-        - name: USER_GID
-          value: "1000"
-        - name: TZ
-          value: {{ .Values.config.timezone | default "America/Lima" }}
         ports:
         - containerPort: 3000
-          name: http
-        - containerPort: 2222
-          name: ssh
         resources:
-          limits:
-            cpu: 1000m
-            memory: 1Gi
-          requests:
-            cpu: 500m
-            memory: 512Mi
-        securityContext:
-          runAsUser: 1000
-          runAsGroup: 1000
-          runAsNonRoot: true
+          {{- toYaml .Values.resources | nindent 10 }}

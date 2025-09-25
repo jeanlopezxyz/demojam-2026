@@ -47,3 +47,14 @@ Selector labels
 app.kubernetes.io/name: {{ include "ai-assistant.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "ai-assistant.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+{{- default (include "ai-assistant.fullname" .) .Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
+{{- end }}
+{{- end }}
