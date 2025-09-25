@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.namespace | default "bookstack-corporate" }}
+  labels:
+    app: bookstack
+    component: infrastructure
+    project: demojam-2026
+  annotations:
+    description: "BookStack corporate guidelines namespace"
+    openshift.io/display-name: "BookStack Corporate"
