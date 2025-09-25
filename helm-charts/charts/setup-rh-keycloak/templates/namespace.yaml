@@ -1,0 +1,11 @@
+{{- if .Values.operator.defaultNamespace }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.operator.defaultNamespace }}
+  labels:
+    {{- include "setup-rh-keycloak.labels" . | nindent 4 }}
+    app.kubernetes.io/component: keycloak-namespace
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+{{- end }}

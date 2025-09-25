@@ -15,7 +15,7 @@ spec:
   source:
     repoURL: https://github.com/jeanlopezxyz/helm-charts
     targetRevision: HEAD
-    path: charts/bookstack
+    path: charts/setup-platform-bookstack
     helm:
       valueFiles:
       - values.yaml

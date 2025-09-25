@@ -55,7 +55,7 @@ Individual chart packages are available for download:
 | [setup-rh-developer-hub](charts/setup-rh-developer-hub/) | 1.0.0 | Red Hat Developer Hub (Backstage) |
 | [setup-platform-bookstack](charts/setup-platform-bookstack/) | 1.0.0 | Bookstack documentation platform |
 | [setup-platform-gitea](charts/setup-platform-gitea/) | 1.1.0 | Gitea Git server with CI/CD |
-| [setup-rh-keycloak](charts/setup-rh-keycloak/) | 1.0.0 | Red Hat Build of Keycloak |
+| [setup-rh-keycloak](charts/setup-rh-keycloak/) | 1.0.0 | Red Hat Build of Keycloak operator |
 | [setup-rh-pipelines](charts/setup-rh-pipelines/) | 1.0.0 | Red Hat Pipelines (Tekton) for CI/CD |
 | [setup-rh-console](charts/setup-rh-console/) | 1.0.0 | Enhanced OpenShift Console operator |
 

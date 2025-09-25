@@ -12,7 +12,7 @@ spec:
   source:
     repoURL: https://github.com/jeanlopezxyz/helm-charts
     targetRevision: HEAD
-    path: charts/rhocp-pipelines
+    path: charts/setup-rh-pipelines
     helm:
       valueFiles:
       - values.yaml

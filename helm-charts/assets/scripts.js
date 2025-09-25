@@ -33,8 +33,8 @@ const chartConfig = {
     'setup-rh-keycloak': {
         icon: 'fas fa-key',
         category: 'setup',
-        description: 'Red Hat Build of Keycloak with SSO and realm configuration',
-        tags: ['setup', 'red-hat', 'keycloak', 'sso'],
+        description: 'Red Hat Build of Keycloak operator installation',
+        tags: ['setup', 'red-hat', 'keycloak', 'operator'],
         version: '1.0.0'
     },
     'setup-rh-developer-hub': {
@@ -83,44 +83,33 @@ const chartConfig = {
 
 // Create chart card HTML
 function createChartCard(name, data) {
+    console.log(`Creating card for: ${name}`);
     const installName = name.replace(/^(setup-|helper-)/, '');
     const repoUrl = `https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/${name}`;
     const downloadUrl = `https://jeanlopezxyz.github.io/helm-charts/${name}-${data.version}.tgz`;
     
     return `
-        <div class="chart-card category-${data.category}" data-name="${name}" data-tags="${data.tags.join(' ')}">
-            <div class="chart-header">
-                <i class="${data.icon} chart-icon"></i>
+        <div class="chart-card category-${data.category}" style="background: white; border: 1px solid #ccc; padding: 20px; margin: 10px; border-radius: 8px;">
+            <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <div class="chart-info">
-                    <div class="chart-title">${name}</div>
-                    <span class="chart-version">v${data.version}</span>
+                    <h3 class="chart-title" style="margin: 0; color: #333; font-size: 1.2rem;">${name}</h3>
+                    <span class="chart-version" style="background: #dc2626; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">v${data.version}</span>
                 </div>
-                <div class="chart-actions">
-                    <a href="${repoUrl}" target="_blank" class="action-btn repo-btn" title="View Source">
-                        <i class="fab fa-github"></i>
+                <div class="chart-actions" style="display: flex; gap: 8px;">
+                    <a href="${repoUrl}" target="_blank" class="action-btn repo-btn" title="View Source" style="padding: 8px; background: #f0f0f0; border-radius: 4px; text-decoration: none; color: #333;">
+                        GitHub
                     </a>
-                    <a href="${downloadUrl}" class="action-btn download-btn" title="Download Chart">
-                        <i class="fas fa-download"></i>
+                    <a href="${downloadUrl}" class="action-btn download-btn" title="Download Chart" style="padding: 8px; background: #059669; color: white; border-radius: 4px; text-decoration: none;">
+                        Download
                     </a>
                 </div>
             </div>
-            <div class="chart-description">${data.description}</div>
-            <div class="chart-tags">
-                ${data.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+            <div class="chart-description" style="color: #666; margin-bottom: 15px; line-height: 1.4;">${data.description}</div>
+            <div class="chart-tags" style="margin-bottom: 15px;">
+                ${data.tags.map(tag => `<span class="tag" style="background: #f1f5f9; color: #475569; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-right: 4px; display: inline-block;">${tag}</span>`).join('')}
             </div>
-            <div class="chart-install">
-                <div class="install-command">
-                    <code>helm install ${installName} jeanlopezxyz/${name}</code>
-                    <button class="copy-btn" onclick="copyInstallCommand(this, '${installName}', '${name}')">
-                        <i class="fas fa-copy"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="chart-links">
-                <a href="https://artifacthub.io/packages/helm/jeanlopezxyz/${name}" target="_blank" class="artifact-hub-link">
-                    <i class="fas fa-external-link-alt"></i>
-                    View on Artifact Hub
-                </a>
+            <div class="chart-install" style="background: #f8fafc; padding: 10px; border-radius: 4px;">
+                <code style="font-family: monospace; color: #333;">helm install ${installName} jeanlopezxyz/${name}</code>
             </div>
         </div>
     `;
@@ -291,10 +280,59 @@ function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// Simple chart rendering - no async complexity
+function renderChartsSimple() {
+    const container = document.getElementById('charts-container');
+    
+    if (!container) {
+        console.error('Container not found!');
+        return;
+    }
+    
+    console.log('Rendering charts...');
+    
+    const charts = [
+        { name: 'helper-operator', version: '1.0.28', description: 'Meta-chart for installing operators', category: 'helper' },
+        { name: 'helper-status-checker', version: '4.0.13', description: 'Health validation for deployments', category: 'helper' },
+        { name: 'setup-rh-pipelines', version: '1.0.1', description: 'Red Hat Pipelines (Tekton) for CI/CD', category: 'setup' },
+        { name: 'setup-rh-console', version: '1.0.3', description: 'Enhanced OpenShift Console operator', category: 'setup' },
+        { name: 'setup-app-openshift-ai-asistant', version: '2.0.0', description: 'AI-powered assistant with OpenShift AI', category: 'setup' },
+        { name: 'setup-rh-developer-hub', version: '1.0.0', description: 'Red Hat Developer Hub (Backstage)', category: 'setup' },
+        { name: 'setup-rh-keycloak', version: '1.0.0', description: 'Red Hat Build of Keycloak', category: 'setup' },
+        { name: 'setup-platform-bookstack', version: '1.0.0', description: 'Bookstack documentation platform', category: 'setup' },
+        { name: 'setup-platform-gitea', version: '1.1.0', description: 'Gitea Git server with CI/CD', category: 'setup' }
+    ];
+    
+    let html = '';
+    charts.forEach(chart => {
+        const installName = chart.name.replace(/^(setup-|helper-)/, '');
+        html += `
+            <div class="chart-card" style="background: white; border: 2px solid #e5e7eb; padding: 20px; margin: 15px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="margin: 0 0 10px 0; color: #1f2937; font-size: 1.3rem;">${chart.name}</h3>
+                <p style="color: #6b7280; margin: 0 0 15px 0; line-height: 1.5;">${chart.description}</p>
+                <div style="margin-bottom: 15px;">
+                    <span style="background: #dc2626; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: 600;">v${chart.version}</span>
+                    <span style="background: #f3f4f6; color: #374151; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; margin-left: 8px;">${chart.category}</span>
+                </div>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/${chart.name}" target="_blank" style="padding: 8px 12px; background: #f9fafb; border: 1px solid #d1d5db; border-radius: 6px; text-decoration: none; color: #374151; font-size: 0.9rem;">GitHub</a>
+                    <a href="https://jeanlopezxyz.github.io/helm-charts/${chart.name}-${chart.version}.tgz" style="padding: 8px 12px; background: #059669; color: white; border-radius: 6px; text-decoration: none; font-size: 0.9rem;">Download</a>
+                </div>
+                <div style="background: #f9fafb; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 0.9rem; color: #374151;">
+                    helm install ${installName} jeanlopezxyz/${chart.name}
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+    console.log('Charts rendered successfully');
+}
+
 // Initialize page
 document.addEventListener('DOMContentLoaded', () => {
-    // Load and render charts
-    loadCharts();
+    console.log('DOM loaded, rendering charts...');
+    renderChartsSimple();
     
     // Scroll to top button
     const scrollButton = document.createElement('button');
