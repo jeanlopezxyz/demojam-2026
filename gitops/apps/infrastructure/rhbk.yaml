@@ -1,10 +1,10 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: setup-rh-keycloak
+  name: rhbk
   namespace: openshift-gitops
   labels:
-    app: setup-rh-keycloak
+    app: rhbk
     project: demojam-2026
     tier: infrastructure
     component: identity-management

@@ -142,7 +142,58 @@
         .chart-header {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             margin-bottom: 1rem;
+            position: relative;
+        }
+        
+        .chart-main-info {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .chart-actions-top {
+            display: flex;
+            gap: 0.5rem;
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .icon-btn-secondary {
+            background: rgba(51, 65, 85, 0.8);
+            border: 1px solid #64748b;
+            color: #e2e8f0;
+        }
+        
+        .icon-btn-secondary:hover {
+            background: rgba(71, 85, 105, 0.9);
+            border-color: #3b82f6;
+            transform: scale(1.1);
+        }
+        
+        .icon-btn-success {
+            background: rgba(16, 185, 129, 0.8);
+            border: 1px solid #10b981;
+            color: white;
+        }
+        
+        .icon-btn-success:hover {
+            background: rgba(5, 150, 105, 0.9);
+            transform: scale(1.1);
         }
         
         .chart-icon {
@@ -196,50 +247,6 @@
             border: 1px solid rgba(59, 130, 246, 0.3);
         }
         
-        .chart-actions {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 10px;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border: 1px solid;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(20px);
-        }
-        
-        .btn-secondary {
-            background: rgba(51, 65, 85, 0.8);
-            border-color: #64748b;
-            color: #e2e8f0;
-        }
-        
-        .btn-secondary:hover {
-            background: rgba(71, 85, 105, 0.9);
-            border-color: #3b82f6;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-        }
-        
-        .btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            border-color: #10b981;
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.4);
-        }
         
         .install-command {
             background: rgba(15, 23, 42, 0.9);
@@ -336,12 +343,22 @@
             <div class="charts-grid" id="charts-container">
                 <div class="chart-card">
                     <div class="chart-header">
-                        <div class="chart-icon helper">
-                            <i class="fas fa-cogs"></i>
+                        <div class="chart-main-info">
+                            <div class="chart-icon helper">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <div class="chart-info">
+                                <h3>helper-operator</h3>
+                                <div class="chart-version">v1.0.28</div>
+                            </div>
                         </div>
-                        <div class="chart-info">
-                            <h3>helper-operator</h3>
-                            <div class="chart-version">v1.0.28</div>
+                        <div class="chart-actions-top">
+                            <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/helper-operator" target="_blank" class="icon-btn icon-btn-secondary" title="View Source">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="https://jeanlopezxyz.github.io/helm-charts/helper-operator-1.0.28.tgz" class="icon-btn icon-btn-success" title="Download Chart">
+                                <i class="fas fa-download"></i>
+                            </a>
                         </div>
                     </div>
                     <div class="chart-description">
@@ -352,14 +369,6 @@
                         <span class="tag">operator</span>
                         <span class="tag">automation</span>
                     </div>
-                    <div class="chart-actions">
-                        <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/helper-operator" target="_blank" class="btn btn-secondary">
-                            <i class="fab fa-github"></i> Source
-                        </a>
-                        <a href="https://jeanlopezxyz.github.io/helm-charts/helper-operator-1.0.28.tgz" class="btn btn-success">
-                            <i class="fas fa-download"></i> Download
-                        </a>
-                    </div>
                     <div class="install-command">
                         helm install operator jeanlopezxyz/helper-operator
                     </div>
@@ -367,10 +376,22 @@
 
                 <div class="chart-card">
                     <div class="chart-header">
-                        <div class="chart-icon helper">📊</div>
-                        <div class="chart-info">
-                            <h3>helper-status-checker</h3>
-                            <div class="chart-version">v4.0.13</div>
+                        <div class="chart-main-info">
+                            <div class="chart-icon helper">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                            <div class="chart-info">
+                                <h3>helper-status-checker</h3>
+                                <div class="chart-version">v4.0.13</div>
+                            </div>
+                        </div>
+                        <div class="chart-actions-top">
+                            <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/helper-status-checker" target="_blank" class="icon-btn icon-btn-secondary" title="View Source">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="https://jeanlopezxyz.github.io/helm-charts/helper-status-checker-4.0.13.tgz" class="icon-btn icon-btn-success" title="Download Chart">
+                                <i class="fas fa-download"></i>
+                            </a>
                         </div>
                     </div>
                     <div class="chart-description">
@@ -381,14 +402,6 @@
                         <span class="tag">monitoring</span>
                         <span class="tag">health</span>
                     </div>
-                    <div class="chart-actions">
-                        <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/helper-status-checker" target="_blank" class="btn btn-secondary">
-                            Source
-                        </a>
-                        <a href="https://jeanlopezxyz.github.io/helm-charts/helper-status-checker-4.0.13.tgz" class="btn btn-success">
-                            Download
-                        </a>
-                    </div>
                     <div class="install-command">
                         helm install status-checker jeanlopezxyz/helper-status-checker
                     </div>
@@ -396,7 +409,9 @@
 
                 <div class="chart-card">
                     <div class="chart-header">
-                        <div class="chart-icon setup">🔗</div>
+                        <div class="chart-icon setup">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
                         <div class="chart-info">
                             <h3>setup-rh-pipelines</h3>
                             <div class="chart-version">v1.0.5</div>
@@ -408,14 +423,14 @@
                     <div class="chart-tags">
                         <span class="tag">pipelines</span>
                         <span class="tag">tekton</span>
-                        <span class="tag">ci-cd</span>
+                        <span class="tag">operator</span>
                     </div>
                     <div class="chart-actions">
                         <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/setup-rh-pipelines" target="_blank" class="btn btn-secondary">
-                            Source
+                            <i class="fab fa-github"></i> Source
                         </a>
                         <a href="https://jeanlopezxyz.github.io/helm-charts/setup-rh-pipelines-1.0.5.tgz" class="btn btn-success">
-                            Download
+                            <i class="fas fa-download"></i> Download
                         </a>
                     </div>
                     <div class="install-command">
@@ -425,26 +440,28 @@
 
                 <div class="chart-card">
                     <div class="chart-header">
-                        <div class="chart-icon setup">🖥️</div>
+                        <div class="chart-icon setup">
+                            <i class="fas fa-desktop"></i>
+                        </div>
                         <div class="chart-info">
                             <h3>setup-rh-console</h3>
                             <div class="chart-version">v1.0.7</div>
                         </div>
                     </div>
                     <div class="chart-description">
-                        Enhanced OpenShift Console operator with UI customizations
+                        Enhanced OpenShift Console operator installation
                     </div>
                     <div class="chart-tags">
                         <span class="tag">console</span>
-                        <span class="tag">ui</span>
+                        <span class="tag">operator</span>
                         <span class="tag">openshift</span>
                     </div>
                     <div class="chart-actions">
                         <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/setup-rh-console" target="_blank" class="btn btn-secondary">
-                            Source
+                            <i class="fab fa-github"></i> Source
                         </a>
                         <a href="https://jeanlopezxyz.github.io/helm-charts/setup-rh-console-1.0.7.tgz" class="btn btn-success">
-                            Download
+                            <i class="fas fa-download"></i> Download
                         </a>
                     </div>
                     <div class="install-command">
@@ -454,10 +471,12 @@
 
                 <div class="chart-card">
                     <div class="chart-header">
-                        <div class="chart-icon setup">🔐</div>
+                        <div class="chart-icon setup">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
                         <div class="chart-info">
                             <h3>setup-rh-keycloak</h3>
-                            <div class="chart-version">v1.0.1</div>
+                            <div class="chart-version">v1.0.2</div>
                         </div>
                     </div>
                     <div class="chart-description">
@@ -470,10 +489,10 @@
                     </div>
                     <div class="chart-actions">
                         <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/setup-rh-keycloak" target="_blank" class="btn btn-secondary">
-                            Source
+                            <i class="fab fa-github"></i> Source
                         </a>
-                        <a href="https://jeanlopezxyz.github.io/helm-charts/setup-rh-keycloak-1.0.1.tgz" class="btn btn-success">
-                            Download
+                        <a href="https://jeanlopezxyz.github.io/helm-charts/setup-rh-keycloak-1.0.2.tgz" class="btn btn-success">
+                            <i class="fas fa-download"></i> Download
                         </a>
                     </div>
                     <div class="install-command">
@@ -483,7 +502,40 @@
 
                 <div class="chart-card">
                     <div class="chart-header">
-                        <div class="chart-icon setup">🤖</div>
+                        <div class="chart-icon setup">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <div class="chart-info">
+                            <h3>setup-rh-developer-hub</h3>
+                            <div class="chart-version">v1.1.0</div>
+                        </div>
+                    </div>
+                    <div class="chart-description">
+                        Red Hat Developer Hub operator installation
+                    </div>
+                    <div class="chart-tags">
+                        <span class="tag">rhdh</span>
+                        <span class="tag">operator</span>
+                        <span class="tag">backstage</span>
+                    </div>
+                    <div class="chart-actions">
+                        <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/setup-rh-developer-hub" target="_blank" class="btn btn-secondary">
+                            <i class="fab fa-github"></i> Source
+                        </a>
+                        <a href="https://jeanlopezxyz.github.io/helm-charts/setup-rh-developer-hub-1.1.0.tgz" class="btn btn-success">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                    </div>
+                    <div class="install-command">
+                        helm install developer-hub jeanlopezxyz/setup-rh-developer-hub
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-icon setup">
+                            <i class="fas fa-brain"></i>
+                        </div>
                         <div class="chart-info">
                             <h3>setup-app-openshift-ai-asistant</h3>
                             <div class="chart-version">v2.0.0</div>
@@ -499,10 +551,10 @@
                     </div>
                     <div class="chart-actions">
                         <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/setup-app-openshift-ai-asistant" target="_blank" class="btn btn-secondary">
-                            Source
+                            <i class="fab fa-github"></i> Source
                         </a>
                         <a href="https://jeanlopezxyz.github.io/helm-charts/setup-app-openshift-ai-asistant-2.0.0.tgz" class="btn btn-success">
-                            Download
+                            <i class="fas fa-download"></i> Download
                         </a>
                     </div>
                     <div class="install-command">
