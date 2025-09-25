@@ -1,0 +1,18 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: gitea-route
+  namespace: {{ .Values.namespace | default "gitea" }}
+  labels:
+    app: gitea
+spec:
+  host: {{ .Values.config.domain }}
+  to:
+    kind: Service
+    name: gitea-service
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
