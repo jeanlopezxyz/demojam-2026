@@ -10,9 +10,13 @@ metadata:
 spec:
   project: demojam
   source:
-    repoURL: https://github.com/jeanlopezxyz/demojam-2026
-    targetRevision: HEAD
-    path: gitops/kustomize/components/gitea
+    repoURL: https://jeanlopezxyz.github.io/helm-charts
+    chart: setup-platform-gitea
+    targetRevision: "1.0.0"
+    helm:
+      parameters:
+      - name: config.domain
+        value: "gitea.apps.cluster-7n8gb.dynamic.redhatworkshops.io"
   destination:
     server: https://kubernetes.default.svc
     namespace: gitea
