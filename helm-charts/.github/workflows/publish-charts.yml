@@ -199,10 +199,29 @@ jobs:
                   }
                   h1 { font-size: 2.2rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 1rem; }
                   .subtitle { color: #94a3b8; font-size: 1rem; margin-bottom: 1.5rem; font-weight: 500; }
+                  .repo-command-container {
+                      position: relative; margin-top: 1rem;
+                  }
+                  .repo-header {
+                      display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;
+                  }
+                  .repo-label {
+                      color: #94a3b8; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;
+                  }
+                  .repo-copy-btn {
+                      background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6;
+                      color: #3b82f6; padding: 0.4rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem;
+                      transition: all 0.2s ease; display: flex; align-items: center; justify-content: center;
+                      width: 32px; height: 32px;
+                  }
+                  .repo-copy-btn:hover {
+                      background: rgba(59, 130, 246, 0.3); transform: scale(1.05);
+                  }
                   .repo-add {
                       background: rgba(15, 23, 42, 0.9); border: 1px solid #475569; border-radius: 10px;
                       padding: 1rem 1.5rem; font-family: "SF Mono", "Monaco", "Cascadia Code", monospace;
-                      font-size: 0.9rem; color: #10b981; display: inline-flex; align-items: center; gap: 0.75rem;
+                      font-size: 0.9rem; color: #10b981; font-weight: 400; letter-spacing: 0.025em;
+                      display: block; text-align: center;
                       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
                   }
                   main { padding: 2rem 0; }
@@ -258,22 +277,32 @@ jobs:
                       padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.7rem; font-weight: 500;
                       margin-right: 0.4rem; margin-bottom: 0.3rem; border: 1px solid rgba(59, 130, 246, 0.25);
                   }
-                  .install-command {
-                      background: rgba(15, 23, 42, 0.9); border: 1px solid #475569; border-radius: 10px;
-                      padding: 1rem 1.25rem; font-family: "SF Mono", "Monaco", "Cascadia Code", monospace;
-                      font-size: 0.85rem; color: #10b981; font-weight: 400; letter-spacing: 0.025em;
-                      margin-top: auto; position: relative; display: flex; align-items: center; justify-content: center;
+                  .command-container {
+                      margin-top: auto; position: relative;
+                  }
+                  .command-header {
+                      display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;
+                  }
+                  .command-label {
+                      color: #94a3b8; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;
                   }
                   .copy-btn {
-                      position: absolute; right: 0.75rem; background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6;
-                      color: #3b82f6; padding: 0.3rem; border-radius: 4px; cursor: pointer; font-size: 0.7rem;
+                      background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6;
+                      color: #3b82f6; padding: 0.4rem; border-radius: 6px; cursor: pointer; font-size: 0.7rem;
                       transition: all 0.2s ease; display: flex; align-items: center; justify-content: center;
+                      width: 28px; height: 28px;
                   }
                   .copy-btn:hover {
                       background: rgba(59, 130, 246, 0.3); transform: scale(1.05);
                   }
+                  .install-command {
+                      background: rgba(15, 23, 42, 0.9); border: 1px solid #475569; border-radius: 10px;
+                      padding: 1rem 1.25rem; font-family: "SF Mono", "Monaco", "Cascadia Code", monospace;
+                      font-size: 0.85rem; color: #10b981; font-weight: 400; letter-spacing: 0.025em;
+                      text-align: center; word-break: break-all;
+                  }
                   .footer-content {
-                      display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; padding: 2rem 0;
+                      display: grid; grid-template-columns: repeat(2, 1fr); gap: 4rem; padding: 2rem 0;
                       border-top: 1px solid rgba(59, 130, 246, 0.2);
                   }
                   .footer-section h4 {
@@ -305,6 +334,7 @@ jobs:
                   @media (max-width: 768px) {
                       .footer-content { grid-template-columns: 1fr; gap: 2rem; text-align: center; }
                       .footer-links { justify-content: center; }
+                      .repo-header { justify-content: center; }
                   }
               </style>
           </head>
@@ -315,15 +345,15 @@ jobs:
                           <div class="header-left">
                               <h1><i class="fas fa-dharmachakra" style="color: #3b82f6;"></i>Helm Charts Repository</h1>
                               <p class="subtitle">Enterprise Helm charts for Red Hat environments</p>
-                              <div class="repo-add">
-                                  <i class="fas fa-terminal" style="color: #64748b; margin-right: 0.5rem;"></i>
-                                  helm repo add jeanlopezxyz https://jeanlopezxyz.github.io/helm-charts
+                              <div class="repo-command-container">
+                                  <div class="repo-header">
+                                      <span class="repo-label">Add Repository</span>
+                                      <button class="repo-copy-btn" onclick="copyRepoCommand()" title="Copy command">
+                                          <i class="fas fa-copy"></i>
+                                      </button>
+                                  </div>
+                                  <div class="repo-add">helm repo add jeanlopezxyz https://jeanlopezxyz.github.io/helm-charts</div>
                               </div>
-                          </div>
-                          <div class="header-icons">
-                              <div class="enterprise-icon" title="Kubernetes Native"><i class="fas fa-dharmachakra"></i></div>
-                              <div class="enterprise-icon" title="Red Hat Certified"><i class="fab fa-redhat"></i></div>
-                              <div class="enterprise-icon" title="Enterprise Ready"><i class="fas fa-shield-alt"></i></div>
                           </div>
                       </div>
                   </div>
@@ -366,11 +396,14 @@ jobs:
                               </div>
                               <div class="chart-description">{chart['description']}</div>
                               <div class="chart-tags">{tags_html}</div>
-                              <div class="install-command">
-                                  <span>helm install {install_name} jeanlopezxyz/{chart['name']}</span>
-                                  <button class="copy-btn" onclick="copyToClipboard('helm install {install_name} jeanlopezxyz/{chart['name']}')" title="Copy command">
-                                      <i class="fas fa-copy"></i>
-                                  </button>
+                              <div class="command-container">
+                                  <div class="command-header">
+                                      <span class="command-label">Install Command</span>
+                                      <button class="copy-btn" onclick="copyToClipboard('helm install {install_name} jeanlopezxyz/{chart['name']}')" title="Copy command">
+                                          <i class="fas fa-copy"></i>
+                                      </button>
+                                  </div>
+                                  <div class="install-command">helm install {install_name} jeanlopezxyz/{chart['name']}</div>
                               </div>
                           </div>'''
           
@@ -394,12 +427,6 @@ jobs:
                               </div>
                           </div>
                           <div class="footer-section">
-                              <h4>Quick Start</h4>
-                              <div class="footer-command">
-                                  <code>helm repo add jeanlopezxyz https://jeanlopezxyz.github.io/helm-charts</code>
-                              </div>
-                          </div>
-                          <div class="footer-section">
                               <h4>License</h4>
                               <p>&copy; 2025 jeanlopezxyz</p>
                               <p>Apache License 2.0</p>
@@ -420,6 +447,24 @@ jobs:
                   function copyToClipboard(text) {
                       navigator.clipboard.writeText(text).then(() => {
                           const btn = event.target.closest('.copy-btn');
+                          const original = btn.innerHTML;
+                          btn.innerHTML = '<i class="fas fa-check"></i>';
+                          btn.style.background = 'rgba(16, 185, 129, 0.3)';
+                          btn.style.borderColor = '#10b981';
+                          btn.style.color = '#10b981';
+                          setTimeout(() => {
+                              btn.innerHTML = original;
+                              btn.style.background = '';
+                              btn.style.borderColor = '';
+                              btn.style.color = '';
+                          }, 2000);
+                      });
+                  }
+                  
+                  function copyRepoCommand() {
+                      const text = 'helm repo add jeanlopezxyz https://jeanlopezxyz.github.io/helm-charts';
+                      navigator.clipboard.writeText(text).then(() => {
+                          const btn = event.target.closest('.repo-copy-btn');
                           const original = btn.innerHTML;
                           btn.innerHTML = '<i class="fas fa-check"></i>';
                           btn.style.background = 'rgba(16, 185, 129, 0.3)';
