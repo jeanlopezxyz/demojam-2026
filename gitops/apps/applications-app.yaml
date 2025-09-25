@@ -10,7 +10,7 @@ metadata:
 spec:
   project: demojam
   source:
-    repoURL: https://github.com/jeanlopezxyz/demojam-2026
+    repoURL: https://github.com/jeanlopezxyz/helm-charts
     targetRevision: HEAD
     path: gitops/apps/applications
   destination:

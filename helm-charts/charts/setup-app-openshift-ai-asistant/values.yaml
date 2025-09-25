@@ -1,0 +1,166 @@
+replicaCount: 1
+
+image:
+  repository: quay.io/jeanlopezxyz/ai-assistant
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+# OpenShift Route (preferred over Ingress)
+route:
+  enabled: true
+  host: ""  # Will use default OpenShift naming
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  annotations: {}
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 250m
+    memory: 512Mi
+
+# Security Context (Enterprise Best Practices)
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  capabilities:
+    drop:
+    - ALL
+
+# Service Account
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+  automountServiceAccountToken: false
+
+# Pod Disruption Budget
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+# Network Policy
+networkPolicy:
+  enabled: true
+  ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            name: openshift-gitops
+      - namespaceSelector:
+          matchLabels:
+            name: backstage
+      ports:
+      - protocol: TCP
+        port: 8080
+
+# Helpers integration
+helpers:
+  # Helper Operator para instalar OpenShift AI operator
+  operator:
+    enabled: true
+    operators:
+      openshift-ai-operator:
+        enabled: true
+        syncwave: 0
+        namespace:
+          name: openshift-operators
+        subscription:
+          channel: stable
+          operatorName: rhods-operator
+          source: redhat-operators
+
+  # Status Checker para health monitoring
+  statusChecker:
+    enabled: true
+    statusChecks:
+      checks:
+        openshift-ai:
+          enabled: true
+          type: deployment
+          namespace: redhat-ods-applications
+          name: notebook-controller-deployment
+        postgresql:
+          enabled: true
+          type: statefulset
+          name: postgresql
+        redis:
+          enabled: true
+          type: statefulset
+          name: redis-master
+        qdrant:
+          enabled: true
+          type: deployment
+          name: qdrant
+
+# OpenShift AI Integration
+openshift:
+  ai:
+    endpoint: "https://rhods-dashboard.redhat-ods-applications.svc.cluster.local"
+    model: "granite-7b-code"
+
+# External Dependencies URLs
+external:
+  bookstack:
+    url: "https://bookstack.apps.cluster.company.com"
+  gitea:
+    url: "https://gitea.apps.cluster.company.com"
+  keycloak:
+    url: "https://keycloak.apps.cluster.company.com"
+
+# Database Dependencies
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "ai-assistant-postgres-password"
+    username: "aiassistant"
+    password: "aiassistant-password"
+    database: "aiassistant"
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi
+
+redis:
+  enabled: true
+  auth:
+    enabled: false
+  master:
+    persistence:
+      enabled: true
+      size: 8Gi
+
+# Vector Database (Qdrant)
+qdrant:
+  enabled: true
+  image:
+    repository: qdrant/qdrant
+    tag: "1.7.0"
+  persistence:
+    enabled: true
+    size: "10Gi"
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 250m
+    limits:
+      memory: 1Gi
+      cpu: 500m

@@ -1,0 +1,114 @@
+# Helpers integration
+helpers:
+  # Helper Operator para instalar Red Hat Pipelines operator
+  operator:
+    enabled: true
+    operators:
+      # Red Hat OpenShift Pipelines (Tekton)
+      openshift-pipelines-operator:
+        enabled: true
+        syncwave: 0
+        namespace:
+          name: openshift-operators
+        subscription:
+          channel: latest
+          operatorName: openshift-pipelines-operator-rh
+          source: redhat-operators
+          
+
+  # Status Checker para health monitoring
+  statusChecker:
+    enabled: true
+    statusChecks:
+      checks:
+        pipelines-operator:
+          enabled: true
+          type: deployment
+          namespace: openshift-pipelines
+          name: tekton-pipelines-controller
+        tekton-triggers:
+          enabled: true
+          type: deployment
+          namespace: openshift-pipelines
+          name: tekton-triggers-controller
+
+# Pipeline Configuration
+pipelines:
+  # Namespace donde se ejecutarán las pipelines por defecto
+  defaultNamespace: "ci-cd-pipelines"
+  
+  # Configuraciones por defecto para las pipelines
+  defaults:
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "100m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+    
+    # Timeout por defecto para las tareas (en minutos)
+    defaultTimeout: 60
+    
+    # Storage por defecto para workspaces
+    defaultWorkspaceSize: "1Gi"
+
+
+# Security Context (Enterprise Best Practices)
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  capabilities:
+    drop:
+    - ALL
+
+# Service Account
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+  automountServiceAccountToken: false
+
+# Network Policy
+networkPolicy:
+  enabled: true
+  ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            name: openshift-gitops
+      - namespaceSelector:
+          matchLabels:
+            name: ci-cd-pipelines
+      ports:
+      - protocol: TCP
+        port: 8080
+
+# Resource requests and limits
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Node selection
+nodeSelector: {}
+
+# Tolerations
+tolerations: []
+
+# Pod affinity
+affinity: {}

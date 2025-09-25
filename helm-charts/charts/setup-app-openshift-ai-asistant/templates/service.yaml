@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "setup-app-openshift-ai-asistant.fullname" . }}
+  namespace: {{ include "setup-app-openshift-ai-asistant.namespace" . }}
+  labels:
+    {{- include "setup-app-openshift-ai-asistant.labels" . | nindent 4 }}
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "{{ .Values.service.port }}"
+    prometheus.io/path: "/q/metrics"
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "setup-app-openshift-ai-asistant.selectorLabels" . | nindent 4 }}

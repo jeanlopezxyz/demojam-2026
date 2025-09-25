@@ -1,0 +1,113 @@
+replicaCount: 1
+
+image:
+  repository: gitea/gitea
+  tag: "1.21.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 3000
+
+# OpenShift Route
+route:
+  enabled: true
+  host: ""
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  annotations: {}
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+# Security Context (adjusted for Gitea)
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false  # Gitea needs write access
+  runAsNonRoot: true
+  runAsUser: 1001
+  capabilities:
+    drop:
+    - ALL
+
+# Service Account
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+  automountServiceAccountToken: false
+
+# Helpers integration
+helpers:
+  statusChecker:
+    enabled: true
+    statusChecks:
+      checks:
+        gitea-health:
+          enabled: true
+          type: deployment
+          healthEndpoint: "/api/healthz"
+        postgresql-health:
+          enabled: true
+          type: statefulset
+          name: postgresql
+          
+  objectstore:
+    enabled: true
+    backup:
+      schedule: "0 3 * * *"
+      retention: "30d"
+      targets:
+        - postgresql-database
+        - gitea-repositories
+        - gitea-config
+
+# Gitea Configuration
+config:
+  domain: "gitea.apps.cluster.company.com"
+  appName: "DemoJam Git Server"
+  runMode: "prod"
+  rootUrl: "https://gitea.apps.cluster.company.com"
+
+# Keycloak SSO Integration
+auth:
+  oauth2:
+    enabled: false  # Enable when Keycloak is deployed
+    provider: "keycloak"
+    clientId: "gitea"
+    clientSecret: "gitea-secret"
+    authUrl: "https://keycloak.apps.cluster.company.com/realms/demojam/protocol/openid-connect/auth"
+    tokenUrl: "https://keycloak.apps.cluster.company.com/realms/demojam/protocol/openid-connect/token"
+    userUrl: "https://keycloak.apps.cluster.company.com/realms/demojam/protocol/openid-connect/userinfo"
+
+# Database
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "gitea-postgres-password"
+    username: "gitea"
+    password: "gitea-password"
+    database: "gitea"
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+
+# Persistent storage for repositories
+persistence:
+  enabled: true
+  size: 50Gi
+  storageClass: ""
+  accessMode: ReadWriteOnce

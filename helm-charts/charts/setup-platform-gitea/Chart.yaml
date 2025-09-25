@@ -1,0 +1,45 @@
+apiVersion: v2
+name: setup-platform-gitea
+description: Setup Gitea Git Server for DemoJam platform with CI/CD and Keycloak integration
+type: application
+version: 1.1.0
+appVersion: "1.21.0"
+home: https://github.com/jeanlopezxyz/helm-charts
+sources:
+- https://github.com/jeanlopezxyz/helm-charts
+- https://gitea.io
+maintainers:
+- name: Jean Paul Lopez
+  email: jealopez@redhat.com
+
+dependencies:
+# Reutilizar helper para status checking
+- name: helper-status-checker
+  version: "~4.0.0"
+  repository: "https://jeanlopezxyz.github.io/helm-charts"
+  condition: helpers.statusChecker.enabled
+# Reutilizar helper para backup
+- name: helper-objectstore
+  version: "~1.0.0"
+  repository: "https://jeanlopezxyz.github.io/helm-charts"
+  condition: helpers.objectstore.enabled
+# Database
+- name: postgresql
+  version: "13.2.24"
+  repository: https://charts.bitnami.com/bitnami
+  condition: postgresql.enabled
+
+keywords:
+- setup
+- platform
+- git
+- server
+- gitea
+- ci-cd
+- demojam
+- keycloak-integrated
+
+annotations:
+  category: Developer Tools
+  support: "Red Hat DemoJam"
+  licenses: MIT

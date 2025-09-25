@@ -1,0 +1,9 @@
+# Artifact Hub repository metadata file
+# https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-repo.yml
+repositoryID: 0e8cebe6-2ad9-4b57-a1fb-3ed55495adbc
+owners:
+  - name: Jean Paul Lopez
+    email: jealopez@redhat.com
+ignore:
+  - name: "*"
+    version: ">=0.0.0-0"

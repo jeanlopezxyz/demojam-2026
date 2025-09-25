@@ -11,6 +11,7 @@ spec:
   # Source repositories permitidos
   sourceRepos:
   - https://github.com/jeanlopezxyz/demojam-2026
+  - https://github.com/jeanlopezxyz/helm-charts
   - https://charts.bitnami.com/bitnami
   - https://codecentric.github.io/helm-charts
   - https://prometheus-community.github.io/helm-charts
@@ -49,12 +50,13 @@ spec:
   - group: route.openshift.io
     kind: Route
     
-  # Recursos denegados (seguridad)
+  # Recursos denegados a nivel de cluster (seguridad)
   clusterResourceBlacklist:
   - group: ""
     kind: Secret
   - group: v1
     kind: Secret
+  # Note: Secrets are allowed at namespace level but not cluster level
     
   # Namespaces permitidos
   namespaceResourceWhitelist:
@@ -63,13 +65,23 @@ spec:
   - group: ""
     kind: Service
   - group: ""
+    kind: ServiceAccount
+  - group: ""
     kind: PersistentVolumeClaim
+  - group: ""
+    kind: Secret
   - group: apps
     kind: Deployment
   - group: apps
     kind: StatefulSet
+  - group: autoscaling
+    kind: HorizontalPodAutoscaler
+  - group: policy
+    kind: PodDisruptionBudget
   - group: networking.k8s.io
     kind: NetworkPolicy
+  - group: route.openshift.io
+    kind: Route
   - group: argoproj.io
     kind: Application
     

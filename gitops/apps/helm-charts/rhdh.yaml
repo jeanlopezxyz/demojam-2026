@@ -1,0 +1,91 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rhdh
+  namespace: openshift-gitops
+  labels:
+    app: rhdh
+    tier: application
+  annotations:
+    argocd.argoproj.io/sync-wave: "40"
+spec:
+  project: demojam
+  source:
+    repoURL: https://jeanlopezxyz.github.io/demojam-helm-charts
+    chart: rhdh
+    targetRevision: 1.0.0
+    helm:
+      releaseName: rhdh
+      values: |
+        replicaCount: 2
+        
+        image:
+          repository: registry.redhat.io/rhdh/rhdh-rhel9
+          tag: "1.2.0"
+          pullPolicy: IfNotPresent
+        
+        config:
+          app:
+            title: "Red Hat Developer Hub - DemoJam"
+            baseUrl: "https://backstage.apps.cluster-7n8gb.dynamic.redhatworkshops.io"
+          backend:
+            baseUrl: "https://backstage.apps.cluster-7n8gb.dynamic.redhatworkshops.io"
+          auth:
+            providers:
+              guest: {}
+        
+        service:
+          type: ClusterIP
+          port: 7007
+        
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            memory: 1Gi
+        
+        # Security Context
+        podSecurityContext:
+          runAsNonRoot: true
+          runAsUser: 1001
+          runAsGroup: 1001
+          fsGroup: 1001
+        
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1001
+          capabilities:
+            drop:
+            - ALL
+        
+        # PostgreSQL configuration
+        postgresql:
+          enabled: true
+          auth:
+            postgresPassword: "rhdh-postgres-password"
+            username: "backstage"
+            password: "backstage-password"
+            database: "backstage"
+          primary:
+            persistence:
+              enabled: true
+              size: 20Gi
+        
+        # Redis configuration
+        redis:
+          enabled: true
+          auth:
+            enabled: false
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: backstage
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

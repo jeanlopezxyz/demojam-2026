@@ -1,0 +1,159 @@
+replicaCount: 2
+
+# Keycloak image (RHBK)
+image:
+  repository: registry.redhat.io/rhbk/keycloak-rhel9
+  tag: "23"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+# OpenShift Route
+route:
+  enabled: true
+  host: ""
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  annotations: {}
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+# Helpers integration
+helpers:
+  # Usar helper-operator para instalar RHBK operator
+  operator:
+    enabled: true
+    operators:
+      rhbk-operator:
+        enabled: true
+        syncwave: 1
+        namespace:
+          name: openshift-operators-redhat
+        subscription:
+          channel: stable
+          operatorName: rhbk-operator
+          source: redhat-operators
+          
+  # Status checking para Keycloak
+  statusChecker:
+    enabled: true
+    statusChecks:
+      checks:
+        rhbk-operator:
+          enabled: true
+          type: deployment
+          namespace: openshift-operators-redhat
+          name: rhbk-operator
+        keycloak-instance:
+          enabled: true
+          type: statefulset
+          healthEndpoint: "/health"
+          
+  # Backup para realm configuration
+  objectstore:
+    enabled: true
+    backup:
+      schedule: "0 1 * * *"
+      retention: "60d"
+      targets:
+        - realm-config
+        - users-data
+        - client-secrets
+
+# Keycloak Configuration
+config:
+  hostname: "keycloak.apps.cluster.company.com"
+  logLevel: "INFO"
+  timezone: "America/Lima"
+  backstageUrl: "https://backstage.apps.cluster.company.com"
+  aiAssistantUrl: "https://ai-assistant.apps.cluster.company.com"
+  giteaUrl: "https://gitea.apps.cluster.company.com"
+  bookstackUrl: "https://bookstack.apps.cluster.company.com"
+
+# Keycloak Instance Configuration
+keycloak:
+  adminUser: "admin"
+  adminPassword: "demojam-admin-123"
+  
+  # DemoJam Realm Configuration
+  realm:
+    name: "demojam"
+    displayName: "DemoJam AI Assistant Platform"
+    enabled: true
+    
+    # Clients for platform integration
+    clients:
+      backstage:
+        clientId: "backstage"
+        secret: "backstage-client-secret"
+        name: "Backstage Developer Hub"
+        protocol: "openid-connect"
+        publicClient: false
+        standardFlowEnabled: true
+        implicitFlowEnabled: false
+        directAccessGrantsEnabled: true
+        
+      ai-assistant:
+        clientId: "ai-assistant"
+        secret: "ai-assistant-client-secret"
+        name: "AI Assistant API"
+        protocol: "openid-connect"
+        publicClient: false
+        serviceAccountsEnabled: true
+        authorizationServicesEnabled: true
+        
+      gitea:
+        clientId: "gitea"
+        secret: "gitea-client-secret"
+        name: "Gitea Git Server"
+        protocol: "openid-connect"
+        publicClient: false
+        standardFlowEnabled: true
+        
+      bookstack:
+        clientId: "bookstack"
+        secret: "bookstack-client-secret"
+        name: "Bookstack Documentation"
+        protocol: "openid-connect"
+        publicClient: false
+        standardFlowEnabled: true
+    
+    # Default users
+    users:
+      demoAdmin:
+        username: "demojam-admin"
+        email: "admin@company.com"
+        firstName: "DemoJam"
+        lastName: "Administrator"
+        password: "demojam-admin-123"
+        roles: ["admin"]
+        
+      demoUser:
+        username: "demojam-user"
+        email: "user@company.com"
+        firstName: "DemoJam"
+        lastName: "User"
+        password: "demojam-user-123"
+        roles: ["user"]
+
+# Database (operator manages this typically)
+postgresql:
+  enabled: false  # RHBK operator usually manages database
+  auth:
+    postgresPassword: "keycloak-postgres-password"
+    username: "keycloak"
+    password: "keycloak-password"
+    database: "keycloak"
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi

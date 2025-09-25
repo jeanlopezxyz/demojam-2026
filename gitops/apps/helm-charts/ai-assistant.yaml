@@ -1,0 +1,92 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ai-assistant
+  namespace: openshift-gitops
+  labels:
+    app: ai-assistant
+    tier: application
+  annotations:
+    argocd.argoproj.io/sync-wave: "30"
+spec:
+  project: demojam
+  source:
+    repoURL: https://jeanlopezxyz.github.io/demojam-helm-charts
+    chart: ai-assistant
+    targetRevision: 1.0.0
+    helm:
+      releaseName: ai-assistant
+      values: |
+        replicaCount: 2
+        
+        image:
+          repository: quay.io/redhat/ai-assistant
+          tag: "latest"
+          pullPolicy: Always
+        
+        service:
+          type: ClusterIP
+          port: 8080
+        
+        ingress:
+          enabled: true
+          className: "openshift-default"
+          annotations:
+            route.openshift.io/termination: "edge"
+          hosts:
+            - host: ai-assistant.apps.cluster-7n8gb.dynamic.redhatworkshops.io
+              paths:
+                - path: /
+                  pathType: Prefix
+        
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1Gi
+          requests:
+            cpu: 250m
+            memory: 512Mi
+        
+        # Security Context
+        podSecurityContext:
+          runAsNonRoot: true
+          runAsUser: 1001
+          runAsGroup: 1001
+          fsGroup: 1001
+        
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1001
+          capabilities:
+            drop:
+            - ALL
+        
+        # PostgreSQL configuration
+        postgresql:
+          enabled: true
+          auth:
+            postgresPassword: "ai-assistant-postgres-password"
+            username: "aiassistant"
+            password: "aiassistant-password"
+            database: "aiassistant"
+          primary:
+            persistence:
+              enabled: true
+              size: 10Gi
+        
+        # Redis configuration
+        redis:
+          enabled: true
+          auth:
+            enabled: false
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demojam-ai-assistant
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

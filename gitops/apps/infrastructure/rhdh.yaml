@@ -13,9 +13,9 @@ metadata:
 spec:
   project: demojam
   source:
-    repoURL: https://github.com/jeanlopezxyz/demojam-2026
+    repoURL: https://github.com/jeanlopezxyz/helm-charts
     targetRevision: HEAD
-    path: helm/charts/rhdh
+    path: charts/rhdh
     helm:
       valueFiles:
       - values.yaml

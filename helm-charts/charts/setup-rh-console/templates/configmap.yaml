@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "setup-rh-console.fullname" . }}-config
+  namespace: {{ include "setup-rh-console.namespace" . }}
+  labels:
+    {{- include "setup-rh-console.labels" . | nindent 4 }}
+data:
+  {{- if .Values.console.customizations.customLinks.enabled }}
+  console-links.yaml: |
+    {{- range .Values.console.customizations.customLinks.links }}
+    ---
+    apiVersion: console.openshift.io/v1
+    kind: ConsoleExternalLink
+    metadata:
+      name: {{ .text | lower | replace " " "-" | replace "." "-" }}
+      labels:
+        {{- include "setup-rh-console.labels" $ | nindent 8 }}
+    spec:
+      text: {{ .text | quote }}
+      href: {{ .href | quote }}
+      location: ApplicationMenu
+    {{- end }}
+  {{- end }}
+
+  {{- if .Values.console.customizations.notifications.enabled }}
+  console-notification.yaml: |
+    apiVersion: console.openshift.io/v1
+    kind: ConsoleNotification
+    metadata:
+      name: {{ include "setup-rh-console.fullname" . }}-banner
+      labels:
+        {{- include "setup-rh-console.labels" . | nindent 8 }}
+    spec:
+      text: {{ .Values.console.customizations.notifications.bannerText | quote }}
+      location: {{ .Values.console.customizations.notifications.bannerLocation }}
+      color: {{ .Values.console.customizations.notifications.bannerColor | quote }}
+  {{- end }}
+
+  {{- if .Values.console.customizations.branding.enabled }}
+  console-branding.yaml: |
+    apiVersion: operator.openshift.io/v1
+    kind: Console
+    metadata:
+      name: cluster
+      labels:
+        {{- include "setup-rh-console.labels" . | nindent 8 }}
+    spec:
+      customization:
+        {{- if .Values.console.customizations.branding.customLogo }}
+        customLogo:
+          image: {{ .Values.console.customizations.branding.customLogo | quote }}
+        {{- end }}
+        {{- if .Values.console.customizations.branding.customProductName }}
+        customProductName: {{ .Values.console.customizations.branding.customProductName | quote }}
+        {{- end }}
+  {{- end }}

@@ -1,0 +1,38 @@
+apiVersion: v2
+name: setup-platform-bookstack
+description: Setup Bookstack Documentation Platform for DemoJam with backup integration
+type: application
+version: 1.0.0
+appVersion: "23.10.0"
+home: https://github.com/jeanlopezxyz/helm-charts
+sources:
+- https://github.com/jeanlopezxyz/helm-charts
+maintainers:
+- name: Jean Paul Lopez
+  email: jealopez@redhat.com
+
+dependencies:
+# Reutilizar helper para backup
+- name: helper-objectstore
+  version: "~1.0.0"
+  repository: "https://jeanlopezxyz.github.io/helm-charts"
+  condition: helpers.objectstore.enabled
+# Database
+- name: mariadb
+  version: "15.0.0"
+  repository: https://charts.bitnami.com/bitnami
+  condition: mariadb.enabled
+
+keywords:
+- setup
+- platform
+- documentation
+- bookstack
+- wiki
+- demojam
+- backup-integrated
+
+annotations:
+  category: Documentation
+  support: "Red Hat DemoJam"
+  licenses: MIT

@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "setup-rh-pipelines.fullname" . }}-config
+  namespace: {{ include "setup-rh-pipelines.namespace" . }}
+  labels:
+    {{- include "setup-rh-pipelines.labels" . | nindent 4 }}
+data:
+  pipeline-defaults.yaml: |
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: pipeline-defaults
+      namespace: {{ .Values.pipelines.defaultNamespace | default "ci-cd-pipelines" }}
+    data:
+      default-timeout: {{ .Values.pipelines.defaults.defaultTimeout | quote }}
+      default-workspace-size: {{ .Values.pipelines.defaults.defaultWorkspaceSize | quote }}
+      resource-requests-memory: {{ .Values.pipelines.defaults.resources.requests.memory | quote }}
+      resource-requests-cpu: {{ .Values.pipelines.defaults.resources.requests.cpu | quote }}
+      resource-limits-memory: {{ .Values.pipelines.defaults.resources.limits.memory | quote }}
+      resource-limits-cpu: {{ .Values.pipelines.defaults.resources.limits.cpu | quote }}
+

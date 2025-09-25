@@ -1,0 +1,14 @@
+apiVersion: v2
+name: helper-operator
+version: 1.0.28
+description: Helper chart to reduce code repetition by being used as a dependency for installing Operators.
+dependencies:
+  - name: tpl
+    version: ~1.0.0
+    repository: https://charts.stderr.at/
+keywords:
+  - helper
+  - subchart
+  - operator
+  - red-hat
+  - demojam

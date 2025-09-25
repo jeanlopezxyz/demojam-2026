@@ -1,0 +1,220 @@
+name: Publish Charts
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'charts/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    name: Package and Publish
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.13.2
+
+      - name: Add repositories
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add codecentric https://codecentric.github.io/helm-charts
+          helm repo add tjungbauer https://charts.stderr.at/
+          
+          # Try to add our own repo if it exists (for dependencies)  
+          helm repo add jeanlopezxyz https://jeanlopezxyz.github.io/helm-charts 2>/dev/null || echo "Own repository not yet available"
+          
+          helm repo update
+
+      - name: Package charts
+        run: |
+          mkdir -p packages
+          
+          # First pass: Package charts without dependencies
+          echo "=== First pass: Charts without external dependencies ==="
+          for chart in charts/*/; do
+            if [ -f "$chart/Chart.yaml" ]; then
+              chart_name=$(basename $chart)
+              echo "Checking $chart_name"
+              
+              # Skip charts with external dependencies on first pass
+              if ! grep -q "repository:" "$chart/Chart.yaml" 2>/dev/null; then
+                echo "Packaging $chart_name (no external deps)"
+                helm package "$chart" --destination packages
+              else
+                echo "Skipping $chart_name (has external deps)"
+              fi
+            fi
+          done
+          
+          # Second pass: Package charts with dependencies (best effort)
+          echo "=== Second pass: Charts with dependencies ==="
+          for chart in charts/*/; do
+            if [ -f "$chart/Chart.yaml" ]; then
+              chart_name=$(basename $chart)
+              
+              # Only process charts with dependencies
+              if grep -q "repository:" "$chart/Chart.yaml" 2>/dev/null; then
+                echo "Attempting to package $chart_name"
+                
+                # Try to update dependencies, continue on failure
+                if helm dependency update "$chart" 2>/dev/null; then
+                  echo "Dependencies updated successfully for $chart_name"
+                else
+                  echo "Warning: Could not update dependencies for $chart_name, packaging anyway"
+                fi
+                
+                # Package the chart
+                if helm package "$chart" --destination packages 2>/dev/null; then
+                  echo "Successfully packaged $chart_name"
+                else
+                  echo "Warning: Failed to package $chart_name"
+                fi
+              fi
+            fi
+          done
+          
+          echo "=== Packaging summary ==="
+          ls -la packages/ || echo "No packages created"
+
+      - name: Update repository
+        run: |
+          cd gh-pages
+          
+          # Copy chart packages if they exist
+          if ls ../packages/*.tgz 1> /dev/null 2>&1; then
+            echo "Copying chart packages"
+            cp ../packages/*.tgz .
+          else
+            echo "No chart packages found"
+          fi
+          
+          # Copy Artifact Hub metadata
+          cp ../artifacthub-repo.yml . 2>/dev/null || true
+          
+          # Generate Helm repository index
+          helm repo index . --url https://jeanlopezxyz.github.io/helm-charts
+          
+          # Verify Artifact Hub compatibility
+          if command -v ah &> /dev/null; then
+            ah lint --kind helm || echo "Artifact Hub linting completed"
+          fi
+          
+          echo "=== Repository contents ==="
+          ls -la
+
+      - name: Copy website assets
+        run: |
+          cd gh-pages
+          mkdir -p assets
+          cp ../assets/* assets/ 2>/dev/null || true
+
+      - name: Generate website
+        run: |
+          cd gh-pages
+          cat > index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Helm Charts</title>
+              <link href="assets/styles.css" rel="stylesheet">
+              <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+          </head>
+          <body>
+              <header class="hero">
+                  <div class="container">
+                      <h1><i class="fas fa-ship"></i> Helm Charts</h1>
+                      <p>Enterprise repository for Red Hat 2026</p>
+                      <div class="repo-url">
+                          <code>helm repo add jeanlopezxyz https://jeanlopezxyz.github.io/helm-charts</code>
+                          <button onclick="copyToClipboard(this.previousElementSibling.textContent)">
+                              <i class="fas fa-copy"></i>
+                          </button>
+                      </div>
+                  </div>
+              </header>
+              
+              <main class="container">
+                  <section class="charts-section">
+                      <h2>Available Charts</h2>
+                      <div id="charts-container" class="charts-grid">
+                          <div class="loading">Loading charts...</div>
+                      </div>
+                  </section>
+                  
+                  <section class="instructions">
+                      <h2>Quick Start</h2>
+                      <div class="code-block">
+                          <pre><code># Add the repository
+          helm repo add jeanlopezxyz https://jeanlopezxyz.github.io/helm-charts
+
+          # Update repositories
+          helm repo update
+
+          # List available charts
+          helm search repo jeanlopezxyz
+
+          # Install a chart
+          helm install my-release jeanlopezxyz/CHART-NAME</code></pre>
+                      </div>
+                      
+                      <div class="artifact-hub-info">
+                          <h3><i class="fas fa-external-link-alt"></i> Also available on Artifact Hub</h3>
+                          <p>Browse and discover our charts on <a href="https://artifacthub.io/packages/search?repo=jeanlopezxyz" target="_blank">Artifact Hub</a></p>
+                      </div>
+                  </section>
+              </main>
+              
+              <footer>
+                  <div class="container">
+                      <p>&copy; 2025 Red Hat. Licensed under MIT.</p>
+                  </div>
+              </footer>
+              
+              <script src="assets/scripts.js"></script>
+              <script>
+                  function copyToClipboard(text) {
+                      navigator.clipboard.writeText(text).then(() => {
+                          const btn = event.target.closest('button');
+                          const original = btn.innerHTML;
+                          btn.innerHTML = '<i class="fas fa-check"></i>';
+                          setTimeout(() => btn.innerHTML = original, 2000);
+                      });
+                  }
+                  
+                  // Load charts when page loads
+                  document.addEventListener('DOMContentLoaded', loadCharts);
+              </script>
+          </body>
+          </html>
+          EOF
+
+      - name: Deploy
+        run: |
+          cd gh-pages
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add .
+          git commit -m "Update charts and website"
+          git push origin gh-pages

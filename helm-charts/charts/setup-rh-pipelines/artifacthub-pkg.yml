@@ -1,0 +1,73 @@
+# Artifact Hub package metadata file
+# https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-pkg.yml
+version: 1.0.0
+name: setup-rh-pipelines
+displayName: Red Hat Pipelines (Tekton)
+createdAt: "2025-01-25T10:00:00Z"
+description: |
+  Red Hat Pipelines (Tekton) for CI/CD automation in OpenShift clusters.
+  
+  This chart deploys and configures the Red Hat OpenShift Pipelines operator using 
+  helper-operator for automated installation and status checking.
+
+digest: ""
+license: MIT
+homeURL: https://tekton.dev/
+appVersion: "1.0.0"
+containsSecurityUpdates: false
+operator: false
+deprecated: false
+keywords:
+  - tekton
+  - pipelines
+  - ci-cd
+  - red-hat
+  - openshift
+  - devops
+  - automation
+links:
+  - name: GitHub Repository
+    url: https://github.com/jeanlopezxyz/helm-charts
+  - name: Tekton Documentation
+    url: https://tekton.dev/docs/
+  - name: Red Hat Pipelines Guide
+    url: https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html/cicd/pipelines
+install: |
+  ## Installation
+  
+  Add the Helm repository:
+  ```bash
+  helm repo add jeanlopezxyz https://jeanlopezxyz.github.io/helm-charts
+  helm repo update
+  ```
+  
+  Install the chart:
+  ```bash
+  helm install pipelines jeanlopezxyz/setup-rh-pipelines
+  ```
+  
+  ## Configuration
+  
+  The chart can be configured via values.yaml. Key configuration options:
+  
+  - `helpers.operator.enabled`: Enable operator installation (default: true)
+  - `pipelines.defaultNamespace`: Default namespace for pipelines (default: "ci-cd-pipelines")
+  - `pipelines.defaults.defaultTimeout`: Default timeout in minutes (default: 60)
+
+maintainers:
+  - name: Jean Paul Lopez
+    email: jealopez@redhat.com
+recommendations:
+  - url: https://artifacthub.io/packages/helm/jeanlopezxyz/helper-operator
+  - url: https://artifacthub.io/packages/helm/jeanlopezxyz/helper-status-checker
+annotations:
+  artifacthub.io/changes: |
+    - kind: added
+      description: Initial release with Red Hat Pipelines operator support
+  artifacthub.io/images: |
+    - name: tekton-pipelines-controller
+      image: registry.redhat.io/openshift-pipelines/pipelines-rhel8-operator@sha256:abcd1234
+  artifacthub.io/license: MIT
+  artifacthub.io/links: |
+    - name: GitHub
+      url: https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/setup-rh-pipelines

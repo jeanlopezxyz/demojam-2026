@@ -1,0 +1,97 @@
+replicaCount: 2
+
+image:
+  repository: lscr.io/linuxserver/bookstack
+  tag: "23.10.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+# OpenShift Route
+route:
+  enabled: true
+  host: ""
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  annotations: {}
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 250m
+    memory: 512Mi
+
+# Security Context (adjusted for Bookstack)
+podSecurityContext:
+  runAsNonRoot: false  # Bookstack needs root for some operations
+  runAsUser: 0
+  runAsGroup: 0
+  fsGroup: 1001
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false  # Bookstack needs write access
+  runAsNonRoot: false
+  runAsUser: 0
+  capabilities:
+    drop:
+    - ALL
+    add:
+    - CHOWN
+    - SETUID
+    - SETGID
+
+# Service Account
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+  automountServiceAccountToken: false
+
+# Pod Disruption Budget
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+# Helpers integration
+helpers:
+  objectstore:
+    enabled: true
+    backup:
+      schedule: "0 2 * * *"
+      retention: "30d"
+      targets:
+        - mariadb-database
+        - bookstack-uploads
+        - bookstack-config
+
+# Bookstack Configuration
+config:
+  timezone: "America/Lima"
+  appUrl: "https://bookstack.apps.cluster.company.com"
+  appKey: "base64:RandomGeneratedKey1234567890ABCDEFGHIJKLMNOP"
+  
+# Database
+mariadb:
+  enabled: true
+  auth:
+    rootPassword: "bookstack-root-password"
+    username: "bookstack"
+    password: "bookstack-password"
+    database: "bookstackapp"
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi
+
+# Persistent storage for uploads
+persistence:
+  enabled: true
+  size: 5Gi
+  storageClass: ""
+  accessMode: ReadWriteOnce

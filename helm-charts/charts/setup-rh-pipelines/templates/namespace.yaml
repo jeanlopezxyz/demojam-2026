@@ -1,0 +1,11 @@
+{{- if .Values.pipelines.defaultNamespace }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.pipelines.defaultNamespace }}
+  labels:
+    {{- include "setup-rh-pipelines.labels" . | nindent 4 }}
+    app.kubernetes.io/component: pipelines-namespace
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+{{- end }}

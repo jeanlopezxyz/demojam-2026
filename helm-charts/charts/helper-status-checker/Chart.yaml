@@ -1,0 +1,26 @@
+apiVersion: v2
+name: helper-status-checker
+description: A helper Chart that creates a job to verify if the deployments of an operator are running.
+version: 4.0.13
+home: https://github.com/jeanlopezxyz/helm-charts
+maintainers:
+  - name: Jean Paul Lopez
+    email: jealopez@redhat.com
+  - name: tjungbauer
+    email: tjungbau@redhat.com
+    url: https://blog.stderr.at/
+dependencies:
+  - name: tpl
+    version: ~1.0.0
+    repository: https://charts.stderr.at/
+sources:
+  - https://github.com/jeanlopezxyz/helm-charts
+  - https://charts.stderr.at/
+keywords:
+  - helper
+  - subchart
+  - status-checker
+  - demojam
+  - health-monitoring
+annotations:
+  artifacthub.io/license: Apache-2.0

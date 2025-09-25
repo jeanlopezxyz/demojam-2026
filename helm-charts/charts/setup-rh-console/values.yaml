@@ -1,0 +1,127 @@
+# Helpers integration
+helpers:
+  # Helper Operator para instalar Console operator
+  operator:
+    enabled: true
+    operators:
+      # Console operator for enhanced UI capabilities
+      console-operator:
+        enabled: true
+        syncwave: 0
+        namespace:
+          name: openshift-operators
+        subscription:
+          channel: stable
+          operatorName: console-operator
+          source: community-operators
+
+  # Status Checker para health monitoring
+  statusChecker:
+    enabled: true
+    statusChecks:
+      checks:
+        console-operator:
+          enabled: true
+          type: deployment
+          namespace: openshift-console-operator
+          name: console-operator
+
+# Console Configuration
+console:
+  # Configuraciones específicas para el console operator
+  customizations:
+    # Habilitar plugins personalizados
+    plugins:
+      enabled: true
+      
+    # Configurar branding personalizado
+    branding:
+      enabled: false
+      customLogo: ""
+      customProductName: ""
+      
+    # Links personalizados en el console
+    customLinks:
+      enabled: true
+      links:
+        - text: "Pipeline Docs"
+          href: "https://tekton.dev/docs/"
+        - text: "Red Hat Documentation"
+          href: "https://docs.redhat.com/"
+        - text: "OpenShift Console Guide"
+          href: "https://docs.openshift.com/container-platform/latest/web_console/web-console.html"
+          
+    # Notificaciones en el console
+    notifications:
+      enabled: true
+      bannerText: "DemoJam Platform - Development Environment"
+      bannerLocation: "BannerTop"
+      bannerColor: "#0066CC"
+      
+    # Configuraciones de UI
+    ui:
+      # Ocultar elementos de la UI
+      hiddenResources: []
+      # Personalizar perspectivas
+      perspectives:
+        developer: true
+        administrator: true
+
+# Security Context (Enterprise Best Practices)
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  capabilities:
+    drop:
+    - ALL
+
+# Service Account
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+  automountServiceAccountToken: false
+
+# Network Policy
+networkPolicy:
+  enabled: true
+  ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            name: openshift-console
+      - namespaceSelector:
+          matchLabels:
+            name: openshift-console-operator
+      ports:
+      - protocol: TCP
+        port: 8080
+
+# Resource requests and limits
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+# Node selection
+nodeSelector: {}
+
+# Tolerations
+tolerations: []
+
+# Pod affinity
+affinity: {}
