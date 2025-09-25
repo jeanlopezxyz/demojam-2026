@@ -70,6 +70,8 @@ spec:
     kind: StatefulSet
   - group: networking.k8s.io
     kind: NetworkPolicy
+  - group: argoproj.io
+    kind: Application
     
   # Roles para el proyecto
   roles:
