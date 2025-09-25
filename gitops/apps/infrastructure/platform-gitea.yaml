@@ -10,13 +10,12 @@ metadata:
 spec:
   project: demojam
   source:
-    repoURL: https://jeanlopezxyz.github.io/helm-charts
-    chart: setup-platform-gitea
-    targetRevision: "1.0.0"
+    repoURL: https://github.com/jeanlopezxyz/helm-charts
+    targetRevision: HEAD
+    path: charts/setup-platform-gitea
     helm:
-      parameters:
-      - name: config.domain
-        value: "gitea.apps.cluster-7n8gb.dynamic.redhatworkshops.io"
+      valueFiles:
+      - values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: gitea
