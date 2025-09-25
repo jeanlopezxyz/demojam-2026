@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rhdh
+  namespace: openshift-gitops
+  labels:
+    app: rhdh
+    project: demojam-2026
+    tier: application
+    component: red-hat-developer-hub
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  project: demojam
+  source:
+    repoURL: https://github.com/team/demojam-ai-assistant
+    targetRevision: HEAD
+    path: helm/charts/rhdh
+    helm:
+      valueFiles:
+      - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: backstage
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - RespectIgnoreDifferences=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas

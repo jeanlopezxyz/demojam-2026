@@ -1,0 +1,13 @@
+site_name: Frontend Application Documentation
+site_description: React.js frontend application for the e-commerce platform
+
+nav:
+  - Home: index.md
+
+theme:
+  name: material
+  palette:
+    primary: cyan
+
+plugins:
+  - techdocs-core

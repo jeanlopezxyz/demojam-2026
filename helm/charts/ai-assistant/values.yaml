@@ -1,0 +1,63 @@
+replicaCount: 1
+
+image:
+  repository: quay.io/redhat/ai-assistant
+  tag: "dev"
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: "openshift-default"
+  annotations:
+    route.openshift.io/termination: "edge"
+  hosts:
+    - host: ai-assistant.apps.cluster.company.com
+      paths:
+        - path: /
+          pathType: Prefix
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 250m
+    memory: 512Mi
+
+# OpenShift AI Integration
+openshift:
+  ai:
+    endpoint: "https://openshift-ai.apps.cluster.company.com"
+    model: "granite-7b-code"
+
+# External Dependencies
+external:
+  bookstack:
+    url: "https://corporate-docs.apps.cluster.company.com"
+  gitea:
+    url: "https://gitea.apps.cluster.company.com"
+  keycloak:
+    url: "https://keycloak.apps.cluster.company.com"
+
+# Database Dependencies
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "dev123"
+    username: "aiassistant"
+    password: "dev123"
+    database: "aiassistant"
+
+redis:
+  enabled: true
+  auth:
+    enabled: false
+
+qdrant:
+  enabled: true
+  persistence:
+    size: "10Gi"

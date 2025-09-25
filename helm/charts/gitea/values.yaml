@@ -1,0 +1,40 @@
+replicaCount: 2
+
+image:
+  repository: gitea/gitea
+  tag: "1.21.0"
+  pullPolicy: IfNotPresent
+
+config:
+  timezone: "America/Lima"
+  domain: "gitea.apps.cluster.company.com"
+  rootUrl: "https://gitea.apps.cluster.company.com"
+
+gitea:
+  adminUser: "giteaadmin"
+  adminPassword: "gitea-admin-123"
+  adminEmail: "admin@company.com"
+
+service:
+  http:
+    type: ClusterIP
+    port: 3000
+  ssh:
+    type: LoadBalancer
+    port: 2222
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "postgres123"
+    username: "gitea"
+    password: "gitea123"
+    database: "gitea"

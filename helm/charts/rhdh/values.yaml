@@ -1,0 +1,45 @@
+replicaCount: 2
+
+image:
+  repository: quay.io/redhat/backstage
+  tag: "1.20.0"
+  pullPolicy: IfNotPresent
+
+config:
+  app:
+    title: "Red Hat Developer Hub - DemoJam"
+    baseUrl: "https://backstage.apps.cluster.company.com"
+  backend:
+    baseUrl: "https://backstage.apps.cluster.company.com"
+  auth:
+    providers:
+      keycloak:
+        clientId: "backstage"
+        clientSecret: "backstage-secret"
+        metadataUrl: "https://keycloak.apps.cluster.company.com/realms/demojam/.well-known/openid_configuration"
+
+plugins:
+  aiAssistant:
+    enabled: true
+    apiUrl: "https://ai-assistant.apps.cluster.company.com"
+    bookstackUrl: "https://corporate-docs.apps.cluster.company.com"
+
+service:
+  type: ClusterIP
+  port: 7007
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "postgres123"
+    username: "backstage"
+    password: "backstage123"
+    database: "backstage"

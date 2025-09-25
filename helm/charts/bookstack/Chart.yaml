@@ -1,0 +1,15 @@
+apiVersion: v2
+name: bookstack
+description: BookStack Corporate Guidelines Documentation Platform
+type: application
+version: 1.0.0
+appVersion: "23.12"
+home: https://www.bookstackapp.com/
+maintainers:
+- name: Jean Paul Lopez
+  email: jealopez@redhat.com
+dependencies:
+- name: mariadb
+  version: "11.x.x"
+  repository: https://charts.bitnami.com/bitnami
+  condition: mariadb.enabled

@@ -1,0 +1,132 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: inventory-service
+  title: Inventory Service
+  description: Stock management, reservations, and inventory tracking microservice
+  tags:
+    - microservice
+    - inventory
+    - nodejs
+    - postgresql
+    - redis
+    - real-time
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: redhat/demojam-ecommerce
+spec:
+  type: service
+  lifecycle: production
+  owner: inventory-team
+  system: ecommerce-platform
+  providesApis:
+    - inventory-management-api
+  dependsOn:
+    - resource:inventory-database
+    - resource:redis-cache
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: inventory-management-api
+  title: Inventory Management API
+  description: Stock management, reservations, and real-time inventory tracking
+  tags:
+    - rest-api
+    - inventory
+    - real-time
+spec:
+  type: openapi
+  lifecycle: production
+  owner: inventory-team
+  system: ecommerce-platform
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: Inventory Management API
+      version: 1.0.0
+      description: Stock management and reservation endpoints
+    servers:
+      - url: http://localhost:3005
+        description: Development server
+    paths:
+      /products/{id}/stock:
+        get:
+          summary: Get product stock level
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            '200':
+              description: Stock information
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      productId:
+                        type: integer
+                      availableQuantity:
+                        type: integer
+                      reservedQuantity:
+                        type: integer
+                      totalQuantity:
+                        type: integer
+                      warehouse:
+                        type: string
+                      lastUpdated:
+                        type: string
+                        format: date-time
+      /reserve:
+        post:
+          summary: Reserve stock for order
+          security:
+            - bearerAuth: []
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    orderId:
+                      type: integer
+                    items:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          productId:
+                            type: integer
+                          quantity:
+                            type: integer
+                          attributes:
+                            type: object
+          responses:
+            '200':
+              description: Reservation successful
+            '409':
+              description: Insufficient stock
+      /check-availability:
+        post:
+          summary: Check stock availability
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    items:
+                      type: array
+          responses:
+            '200':
+              description: Availability status
+    components:
+      securitySchemes:
+        bearerAuth:
+          type: http
+          scheme: bearer

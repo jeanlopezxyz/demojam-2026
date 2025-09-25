@@ -1,0 +1,131 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: notification-service
+  title: Notification Service
+  description: Multi-channel notification management microservice
+  tags:
+    - microservice
+    - notifications
+    - nodejs
+    - mongodb
+    - email
+    - sms
+    - push
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: redhat/demojam-ecommerce
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: ecommerce-platform
+  providesApis:
+    - notification-api
+  dependsOn:
+    - resource:notification-database
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: notification-api
+  title: Notification API
+  description: Multi-channel notification management and delivery
+  tags:
+    - rest-api
+    - notifications
+    - messaging
+spec:
+  type: openapi
+  lifecycle: production
+  owner: platform-team
+  system: ecommerce-platform
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: Notification API
+      version: 1.0.0
+      description: Multi-channel notification management
+    servers:
+      - url: http://localhost:3006
+        description: Development server
+    paths:
+      /notifications:
+        get:
+          summary: Get user notifications
+          security:
+            - bearerAuth: []
+          parameters:
+            - name: unread
+              in: query
+              schema:
+                type: boolean
+            - name: page
+              in: query
+              schema:
+                type: integer
+            - name: limit
+              in: query
+              schema:
+                type: integer
+          responses:
+            '200':
+              description: List of notifications
+        post:
+          summary: Send notification
+          security:
+            - bearerAuth: []
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    userId:
+                      type: integer
+                    type:
+                      type: string
+                    channels:
+                      type: array
+                      items:
+                        type: string
+                        enum: [email, sms, push]
+                    data:
+                      type: object
+          responses:
+            '201':
+              description: Notification sent
+      /preferences:
+        get:
+          summary: Get notification preferences
+          security:
+            - bearerAuth: []
+          responses:
+            '200':
+              description: User notification preferences
+        put:
+          summary: Update notification preferences
+          security:
+            - bearerAuth: []
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    email:
+                      type: object
+                    sms:
+                      type: object
+                    push:
+                      type: object
+          responses:
+            '200':
+              description: Preferences updated
+    components:
+      securitySchemes:
+        bearerAuth:
+          type: http
+          scheme: bearer

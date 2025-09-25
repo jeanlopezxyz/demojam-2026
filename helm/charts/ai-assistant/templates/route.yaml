@@ -1,0 +1,27 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ include "ai-assistant.fullname" . }}
+  namespace: {{ .Values.namespace | default "demojam-ai-assistant" }}
+  labels:
+    {{- include "ai-assistant.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- range .Values.ingress.hosts }}
+  host: {{ .host | quote }}
+  {{- end }}
+  to:
+    kind: Service
+    name: {{ include "ai-assistant.fullname" . }}
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+{{- end }}

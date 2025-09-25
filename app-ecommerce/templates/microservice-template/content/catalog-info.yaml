@@ -1,0 +1,177 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.name }}
+  title: ${{ values.name | title }} Service
+  description: ${{ values.description }}
+  tags:
+    - microservice
+    - ${{ values.database }}
+    - nodejs
+    - enterprise
+    {% if values.hasAuth %}
+    - authentication
+    {% endif %}
+    {% if values.hasCache %}
+    - caching
+    {% endif %}
+    {% if values.hasMetrics %}
+    - monitoring
+    {% endif %}
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: company/ecommerce-platform
+    backstage.io/source-location: url:file:///home/jeanlopez/Documents/redhat/demojam/ecommerce-platform/services/${{ values.name }}
+    {% if values.hasSwagger %}
+    swagger.io/definition: url:http://localhost:${{ values.port }}/api-docs
+    {% endif %}
+    {% if values.hasMetrics %}
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: '${{ values.port }}'
+    prometheus.io/path: '/metrics'
+    {% endif %}
+spec:
+  type: service
+  lifecycle: ${{ values.environment }}
+  owner: ${{ values.owner }}
+  system: ecommerce-platform
+  providesApis:
+    - ${{ values.name }}-api
+  dependsOn:
+    {% if values.database == "postgresql" %}
+    - resource:${{ values.name }}-database
+    {% endif %}
+    {% if values.database == "mongodb" %}
+    - resource:${{ values.name }}-mongodb
+    {% endif %}
+    {% if values.hasCache or values.database == "redis-only" %}
+    - resource:redis-cache
+    {% endif %}
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: ${{ values.name }}-api
+  title: ${{ values.name | title }} API
+  description: ${{ values.description }} - REST API endpoints
+  tags:
+    - rest-api
+    - microservice
+    {% if values.hasAuth %}
+    - authenticated
+    {% endif %}
+spec:
+  type: openapi
+  lifecycle: ${{ values.environment }}
+  owner: ${{ values.owner }}
+  system: ecommerce-platform
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: ${{ values.name | title }} API
+      version: 1.0.0
+      description: ${{ values.description }}
+      contact:
+        name: ${{ values.owner | title }}
+        email: ${{ values.owner }}@company.com
+    servers:
+      - url: http://localhost:${{ values.port }}
+        description: Development server
+      - url: https://${{ values.name }}-staging.ecommerce.company.com
+        description: Staging server
+      - url: https://${{ values.name }}.ecommerce.company.com
+        description: Production server
+    paths:
+      /health:
+        get:
+          summary: Health check endpoint
+          description: Returns service health status
+          tags: [Health]
+          responses:
+            '200':
+              description: Service is healthy
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: healthy
+                      service:
+                        type: string
+                        example: ${{ values.name }}
+                      version:
+                        type: string
+                        example: 1.0.0
+                      timestamp:
+                        type: string
+                        format: date-time
+      /ready:
+        get:
+          summary: Readiness check endpoint
+          description: Returns service readiness status
+          tags: [Health]
+          responses:
+            '200':
+              description: Service is ready
+            '503':
+              description: Service is not ready
+      {% if values.hasMetrics %}
+      /metrics:
+        get:
+          summary: Prometheus metrics endpoint
+          description: Returns Prometheus metrics for monitoring
+          tags: [Monitoring]
+          responses:
+            '200':
+              description: Metrics data
+              content:
+                text/plain:
+                  schema:
+                    type: string
+      {% endif %}
+    {% if values.hasAuth %}
+    components:
+      securitySchemes:
+        bearerAuth:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
+      security:
+        - bearerAuth: []
+    {% endif %}
+---
+{% if values.database == "postgresql" %}
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: ${{ values.name }}-database
+  title: ${{ values.name | title }} Database
+  description: PostgreSQL database for ${{ values.name }} service
+  tags:
+    - database
+    - postgresql
+spec:
+  type: database
+  lifecycle: ${{ values.environment }}
+  owner: ${{ values.owner }}
+  system: ecommerce-platform
+{% endif %}
+{% if values.database == "mongodb" %}
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: ${{ values.name }}-mongodb
+  title: ${{ values.name | title }} MongoDB
+  description: MongoDB database for ${{ values.name }} service
+  tags:
+    - database
+    - mongodb
+spec:
+  type: database
+  lifecycle: ${{ values.environment }}
+  owner: ${{ values.owner }}
+  system: ecommerce-platform
+{% endif %}

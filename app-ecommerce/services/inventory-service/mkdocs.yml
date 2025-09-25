@@ -1,0 +1,13 @@
+site_name: Inventory Service Documentation
+site_description: Stock management, reservations, and inventory tracking microservice
+
+nav:
+  - Home: index.md
+
+theme:
+  name: material
+  palette:
+    primary: purple
+
+plugins:
+  - techdocs-core

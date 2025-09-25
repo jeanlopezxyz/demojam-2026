@@ -1,0 +1,124 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: product-service
+  title: Product Service
+  description: Product catalog management and search microservice
+  tags:
+    - microservice
+    - catalog
+    - mongodb
+    - search
+    - nodejs
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: redhat/demojam-ecommerce
+spec:
+  type: service
+  lifecycle: production
+  owner: catalog-team
+  system: ecommerce-platform
+  providesApis:
+    - product-catalog-api
+  dependsOn:
+    - resource:product-database
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: product-catalog-api
+  title: Product Catalog API
+  description: Product management, search, and catalog operations
+  tags:
+    - rest-api
+    - products
+    - search
+spec:
+  type: openapi
+  lifecycle: production
+  owner: catalog-team
+  system: ecommerce-platform
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: Product Catalog API
+      version: 1.0.0
+      description: Product management and search endpoints
+    servers:
+      - url: http://localhost:3002
+        description: Development server
+    paths:
+      /products:
+        get:
+          summary: List products
+          description: Get paginated list of products with filtering
+          parameters:
+            - name: page
+              in: query
+              schema:
+                type: integer
+                default: 1
+            - name: limit
+              in: query
+              schema:
+                type: integer
+                default: 20
+            - name: category
+              in: query
+              schema:
+                type: string
+            - name: minPrice
+              in: query
+              schema:
+                type: number
+            - name: maxPrice
+              in: query
+              schema:
+                type: number
+          responses:
+            '200':
+              description: List of products
+        post:
+          summary: Create product
+          description: Create a new product (admin only)
+          security:
+            - bearerAuth: []
+          responses:
+            '201':
+              description: Product created
+      /products/{id}:
+        get:
+          summary: Get product details
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: string
+          responses:
+            '200':
+              description: Product details
+            '404':
+              description: Product not found
+      /products/search:
+        get:
+          summary: Search products
+          description: Full-text search across products
+          parameters:
+            - name: q
+              in: query
+              required: true
+              schema:
+                type: string
+            - name: category
+              in: query
+              schema:
+                type: string
+          responses:
+            '200':
+              description: Search results
+    components:
+      securitySchemes:
+        bearerAuth:
+          type: http
+          scheme: bearer

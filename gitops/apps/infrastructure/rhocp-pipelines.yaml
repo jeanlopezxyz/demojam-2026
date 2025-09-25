@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: openshift-pipelines
+  namespace: openshift-gitops
+  labels:
+    app: openshift-pipelines
+    project: demojam
+    component: ci-cd
+spec:
+  project: demojam
+  source:
+    repoURL: https://github.com/team/demojam-ai-assistant
+    targetRevision: HEAD
+    path: helm/charts/rhocp-pipelines
+    helm:
+      valueFiles:
+      - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: openshift-pipelines
+  syncPolicy:
+    automated:
+      prune: false  # No auto-prune para pipelines
+      selfHeal: false
+    syncOptions:
+    - CreateNamespace=true
+    - ApplyOutOfSyncOnly=true
+    retry:
+      limit: 2
+      backoff:
+        duration: 15s
+        factor: 2
+        maxDuration: 5m

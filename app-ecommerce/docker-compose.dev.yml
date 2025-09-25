@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  # Override for development with volume mounts and hot reload
+  user-service:
+    build:
+      context: ./services/user-service
+      dockerfile: Dockerfile
+      target: dev
+    command: npm run dev
+    volumes:
+      - ./services/user-service/src:/app/src
+      - ./services/user-service/package.json:/app/package.json
+    environment:
+      NODE_ENV: development
+
+  product-service:
+    build:
+      context: ./services/product-service
+      dockerfile: Dockerfile
+      target: dev
+    command: npm run dev
+    volumes:
+      - ./services/product-service/src:/app/src
+      - ./services/product-service/package.json:/app/package.json
+    environment:
+      NODE_ENV: development
+
+  order-service:
+    build:
+      context: ./services/order-service
+      dockerfile: Dockerfile
+      target: dev
+    command: npm run dev
+    volumes:
+      - ./services/order-service/src:/app/src
+      - ./services/order-service/package.json:/app/package.json
+    environment:
+      NODE_ENV: development
+
+  payment-service:
+    build:
+      context: ./services/payment-service
+      dockerfile: Dockerfile
+      target: dev
+    command: npm run dev
+    volumes:
+      - ./services/payment-service/src:/app/src
+      - ./services/payment-service/package.json:/app/package.json
+    environment:
+      NODE_ENV: development
+
+  inventory-service:
+    build:
+      context: ./services/inventory-service
+      dockerfile: Dockerfile
+      target: dev
+    command: npm run dev
+    volumes:
+      - ./services/inventory-service/src:/app/src
+      - ./services/inventory-service/package.json:/app/package.json
+    environment:
+      NODE_ENV: development
+
+  notification-service:
+    build:
+      context: ./services/notification-service
+      dockerfile: Dockerfile
+      target: dev
+    command: npm run dev
+    volumes:
+      - ./services/notification-service/src:/app/src
+      - ./services/notification-service/package.json:/app/package.json
+    environment:
+      NODE_ENV: development
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+      target: dev
+    command: npm run dev
+    volumes:
+      - ./api-gateway/src:/app/src
+      - ./api-gateway/package.json:/app/package.json
+    environment:
+      NODE_ENV: development
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    command: npm run dev
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/package.json:/app/package.json
+      - ./frontend/vite.config.js:/app/vite.config.js
+    environment:
+      NODE_ENV: development
+    ports:
+      - "3000:3000"

@@ -1,0 +1,13 @@
+site_name: Payment Service Documentation
+site_description: Payment processing, billing, and financial transactions microservice
+
+nav:
+  - Home: index.md
+
+theme:
+  name: material
+  palette:
+    primary: green
+
+plugins:
+  - techdocs-core

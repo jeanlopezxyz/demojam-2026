@@ -1,0 +1,31 @@
+apiVersion: v2
+name: rhbk-operator
+description: Red Hat build of Keycloak Operator for OpenShift Identity Management
+type: application
+version: 1.0.0
+appVersion: "22.0"
+home: https://access.redhat.com/documentation/en-us/red_hat_build_of_keycloak
+sources:
+- https://github.com/keycloak/keycloak-operator
+- https://access.redhat.com/documentation/en-us/red_hat_build_of_keycloak
+maintainers:
+- name: Jean Paul Lopez
+  email: jealopez@redhat.com
+dependencies:
+- name: postgresql
+  version: "12.x.x"
+  repository: https://charts.bitnami.com/bitnami
+  condition: postgresql.enabled
+keywords:
+- rhbk
+- red-hat-build-keycloak
+- keycloak-operator
+- identity-management
+- oauth2
+- oidc
+- openshift
+- operator
+annotations:
+  category: Identity
+  certified: "true"
+  support: "Red Hat"

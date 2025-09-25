@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: demojam-namespaces
+  namespace: openshift-gitops
+  labels:
+    app: namespaces
+    tier: infrastructure
+    component: foundational
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: demojam
+  source:
+    repoURL: https://github.com/team/demojam-ai-assistant
+    targetRevision: HEAD
+    path: gitops/infrastructure
+    directory:
+      include: "namespace.yaml"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    retry:
+      limit: 2
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 2m

@@ -1,0 +1,13 @@
+site_name: Microservice Template Documentation
+site_description: Enterprise microservice template for e-commerce platform
+
+nav:
+  - Home: index.md
+
+theme:
+  name: material
+  palette:
+    primary: deep purple
+
+plugins:
+  - techdocs-core

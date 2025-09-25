@@ -1,0 +1,173 @@
+graph TD
+    subgraph "PASO 1 INICIO INTERACCION USUARIO"
+        space1[ ]
+        U1["1 Desarrollador Ingresa<br/>Navega en Backstage<br/>Busca Informacion<br/> "]
+        U2["2 Abre Plugin AI Assistant<br/>Widget de Chat Disponible<br/>Interfaz Conversacional<br/> "]
+        U3["3 Realiza Consulta Especifica<br/>Pregunta Tecnica<br/>Solicitud de Implementacion<br/> "]
+
+        space1[ ]
+        U1 --> U2
+        U2 --> U3
+    end
+
+    subgraph "PASO 2 ANALISIS Y RECOLECCION CONTEXTO"
+        space2[ ]
+        C1["4 Gestor de Contexto<br/>Analiza Estado Actual<br/>Recopila Informacion de Pagina<br/> "]
+        C2["Componente Siendo Visto<br/>Servicio o Sistema Actual<br/>Metadatos y Configuracion<br/> "]
+        C3["Templates Scaffolder<br/>Blueprints Disponibles<br/>Catalogos de Proyectos<br/> "]
+        C4["Documentacion TechDocs<br/>Documentos del Componente<br/>Guias y Referencias<br/> "]
+
+        space2 ~~~ C1
+        C1 --> C2
+        C1 --> C3
+        C1 --> C4
+    end
+
+    subgraph "PASO 3 BUSQUEDA Y RECUPERACION CONOCIMIENTO"
+        space3[ ]
+        K1["5 Motor de Recuperacion<br/>Implementacion RAG<br/>Busqueda Inteligente Multi-Fuente<br/> "]
+        K2[("Base de Datos Vectorial<br/>Busqueda Semantica<br/>Embeddings de Contenido<br/> ")]
+        K3[("Almacen de Metadatos<br/>Referencias de Fuentes<br/>Indices y Relaciones<br/> ")]
+        K4[("Motor de Busqueda<br/>Consultas Texto Completo<br/>Elasticsearch<br/> ")]
+
+        space3 ~~~ K1
+        K1 <--> K2
+        K1 <--> K3
+        K1 <--> K4
+    end
+
+    subgraph "PASO 4 PROCESAMIENTO INTELIGENCIA ARTIFICIAL"
+        space4[ ]
+        A1["6 Generador de Respuestas<br/>Procesamiento de Contexto<br/>Sintesis de Informacion<br/> "]
+        A2["Agente de Analisis LangGraph<br/>Reconocimiento de Patrones<br/>Evaluacion de Codigo<br/> "]
+        A3["Agente de Recomendacion LangGraph<br/>Matching de Templates<br/>Sugerencias Personalizadas<br/> "]
+        A4["Agente de Seguridad LangGraph<br/>Validacion de Politicas<br/>Compliance y Auditoria<br/> "]
+        A5["Servicio LLM OpenShift AI<br/>Modelos Granite y Code-Llama<br/>Procesamiento Lenguaje Natural<br/> "]
+        A6["API de Inferencia<br/>Gateway de Modelos<br/>Gestion de Respuestas<br/> "]
+
+        space4 ~~~ A1
+        A1 --> A2
+        A1 --> A3
+        A1 --> A4
+        A2 --> A5
+        A3 --> A5
+        A4 --> A5
+        A5 --> A6
+    end
+
+    subgraph "PASO 5 EJECUCION ACCIONES Y ENTREGA RESULTADO"
+        space5[ ]
+        E1["7 Motor de Acciones<br/>Orquestador de Operaciones<br/>Coordinador de Tareas<br/> "]
+        E2["Servidor MCP<br/>Model Context Protocol<br/>Gestion de Herramientas<br/> "]
+        E3["Herramientas MCP<br/>Operaciones en Backstage<br/>Integracion Nativa<br/> "]
+        E4["API Catalogo Backstage<br/>Gestion de Componentes<br/>Navegacion de Recursos<br/> "]
+        E5["API Scaffolder Backstage<br/>Creacion de Proyectos<br/>Generacion Automatica<br/> "]
+        E6["API TechDocs Backstage<br/>Gestion de Documentacion<br/>Acceso a Guias<br/> "]
+        E7["8 Entrega Final al Usuario<br/>Presentacion de Resultado<br/>Actualizacion de Interfaz<br/> "]
+
+        space5 ~~~ E1
+        E1 --> E2
+        E2 --> E3
+        E3 --> E4
+        E3 --> E5
+        E3 --> E6
+        E4 --> E7
+        E5 --> E7
+        E6 --> E7
+    end
+
+    subgraph "FUENTES DE CONOCIMIENTO CORPORATIVO"
+        space6[ ]
+        S1["Documentacion Backstage<br/>TechDocs de Componentes<br/>Guias de Sistemas"]
+        S2["Documentacion GitLab<br/>Wikis de Equipos<br/>READMEs de Proyectos"]
+        S3["Especificaciones de APIs<br/>Documentacion OpenAPI<br/>Esquemas GraphQL"]
+        S4["Repositorios de Codigo Fuente<br/>Implementaciones de Servicios<br/>Patrones de Desarrollo"]
+        S5["Repositorios de Configuracion<br/>Infraestructura como Codigo<br/>Manifiestos Kubernetes"]
+        S6["Repositorios de Templates<br/>Blueprints de Scaffolder<br/>Plantillas de Proyectos"]
+        S7["Politicas de Seguridad<br/>Benchmarks CIS y STIG<br/>Requisitos de Compliance"]
+        S8["Estandares de Arquitectura<br/>Patrones de Diseno<br/>Registros de Decisiones ADR"]
+        S9["Lineamientos Corporativos<br/>Estandares de Desarrollo<br/>Mejores Practicas Empresa"]
+        
+        space6 ~~~ S1
+    end
+
+    subgraph "PIPELINE DE PROCESAMIENTO Y PREPARACION DATOS"
+        space7[ ]
+        P1["Crawler Multi-Fuente<br/>Ingesta de Contenido<br/>Sincronizacion Automatica"]
+        P2["Procesador de Contenido<br/>Analisis y Estructuracion<br/>Extraccion de Metadatos"]
+        P3["Generador de Embeddings<br/>Creacion de Vectores<br/>Indexacion Semantica"]
+
+        space7 ~~~ P1
+        P1 --> P2
+        P2 --> P3
+    end
+
+    %% FLUJO PRINCIPAL USUARIO
+    U3 -->|1. Solicitud Usuario| C1
+    C1 -->|2. Contexto Enriquecido| K1
+    K1 -->|3. Consulta Conocimiento| A1
+    A1 -->|4. Procesamiento Agentes| A2
+    A2 -->|5. Respuesta Generada| E1
+    E1 -->|6. Ejecutar Acciones| E7
+
+    %% FLUJOS PARALELOS CONTEXTO
+    C2 -.->|Datos Componente| C1
+    C3 -.->|Metadatos Template| C1
+    C4 -.->|Contexto Documentacion| C1
+
+    %% FLUJOS PARALELOS CONOCIMIENTO
+    K1 <-.->|Busqueda Semantica| K2
+    K1 <-.->|Consulta Metadatos| K3
+    K1 <-.->|Busqueda Texto| K4
+
+    %% FLUJOS PARALELOS AGENTES
+    A3 -.->|Template Match| A1
+    A4 -.->|Security Check| A1
+    A6 -.->|AI Response| A1
+
+    %% FLUJOS PARALELOS MCP
+    E2 -.->|Protocol Handler| E1
+    E3 -.->|Tool Execution| E1
+
+    %% FLUJOS PARALELOS BACKSTAGE
+    E4 -.->|Crear Proyecto| E1
+    E5 -.->|Navegar Componente| E1
+    E6 -.->|Abrir Documentacion| E1
+
+    %% INGESTA DATOS BACKGROUND
+    S1 --> P1
+    S2 --> P1
+    S3 --> P1
+    S4 --> P1
+    S5 --> P1
+    S6 --> P1
+    S7 --> P1
+    S8 --> P1
+    S9 --> P1
+
+    %% PIPELINE PROCESAMIENTO
+    P1 --> P2
+    P2 --> P3
+    P3 --> K2
+    P2 --> K3
+    P2 --> K4
+
+    classDef paso1 fill:#e8eaf6,stroke:#3f51b5,stroke-width:3px,color:#1a237e
+    classDef paso2 fill:#f3e5f5,stroke:#9c27b0,stroke-width:3px,color:#4a148c
+    classDef paso3 fill:#e0f2f1,stroke:#4caf50,stroke-width:3px,color:#1b5e20
+    classDef paso4 fill:#fff3e0,stroke:#ff9800,stroke-width:3px,color:#e65100
+    classDef paso5 fill:#fce4ec,stroke:#e91e63,stroke-width:3px,color:#880e4f
+    classDef fuentes fill:#f8f9fa,stroke:#607d8b,stroke-width:2px,color:#263238
+    classDef pipeline fill:#f1f8e9,stroke:#8bc34a,stroke-width:2px,color:#33691e
+
+    class U1,U2,U3 paso1
+    class C1,C2,C3,C4 paso2
+    class K1,K2,K3,K4 paso3
+    class A1,A2,A3,A4,A5,A6 paso4
+    class E1,E2,E3,E4,E5,E6,E7 paso5
+    class S1,S2,S3,S4,S5,S6,S7,S8,S9 fuentes
+    class P1,P2,P3 pipeline
+
+    %% Ocultar nodos espaciadores
+    classDef hidden fill:transparent,stroke:transparent,color:transparent
+    class space1,space2,space3,space4,space5,space6,space7 hidden

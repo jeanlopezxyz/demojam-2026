@@ -1,0 +1,121 @@
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: platform-team
+  title: Platform Team
+  description: Infrastructure, DevOps, and platform engineering team
+  tags:
+    - platform
+    - devops
+    - infrastructure
+spec:
+  type: team
+  children: []
+  members: [jean-lopez]
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: frontend-team
+  title: Frontend Team
+  description: React.js frontend development team
+  tags:
+    - frontend
+    - react
+    - ui-ux
+spec:
+  type: team
+  children: []
+  members: [jean-lopez]
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: auth-team
+  title: Authentication Team
+  description: Security, authentication, and user management team
+  tags:
+    - security
+    - auth
+    - users
+spec:
+  type: team
+  children: []
+  members: [jean-lopez]
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: catalog-team
+  title: Catalog Team
+  description: Product catalog and search functionality team
+  tags:
+    - products
+    - catalog
+    - search
+spec:
+  type: team
+  children: []
+  members: [jean-lopez]
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: orders-team
+  title: Orders Team
+  description: Order processing and fulfillment team
+  tags:
+    - orders
+    - fulfillment
+    - logistics
+spec:
+  type: team
+  children: []
+  members: [jean-lopez]
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: payments-team
+  title: Payments Team
+  description: Payment processing and financial operations team
+  tags:
+    - payments
+    - billing
+    - finance
+spec:
+  type: team
+  children: []
+  members: [jean-lopez]
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: inventory-team
+  title: Inventory Team
+  description: Stock management and inventory tracking team
+  tags:
+    - inventory
+    - stock
+    - logistics
+spec:
+  type: team
+  children: []
+  members: [jean-lopez]
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: jean-lopez
+  title: Jean Lopez
+  description: Platform Architect and Lead Developer
+  tags:
+    - architect
+    - developer
+    - lead
+spec:
+  profile:
+    displayName: Jean Lopez
+    email: jean.lopez@company.com
+    picture: https://example.com/avatar/jean-lopez.png
+  memberOf: [platform-team, frontend-team, auth-team, catalog-team, orders-team, payments-team, inventory-team]

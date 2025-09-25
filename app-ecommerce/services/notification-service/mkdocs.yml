@@ -1,0 +1,13 @@
+site_name: Notification Service Documentation
+site_description: Multi-channel notification management microservice
+
+nav:
+  - Home: index.md
+
+theme:
+  name: material
+  palette:
+    primary: teal
+
+plugins:
+  - techdocs-core

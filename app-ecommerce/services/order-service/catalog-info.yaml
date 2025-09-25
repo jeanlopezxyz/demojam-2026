@@ -1,0 +1,68 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: order-service
+  title: Order Service
+  description: Order processing, workflow management, and fulfillment microservice
+  tags:
+    - microservice
+    - orders
+    - nodejs
+    - postgresql
+    - fulfillment
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: redhat/demojam-ecommerce
+spec:
+  type: service
+  lifecycle: production
+  owner: orders-team
+  system: ecommerce-platform
+  providesApis:
+    - order-management-api
+  dependsOn:
+    - resource:order-database
+    - component:payment-service
+    - component:inventory-service
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: order-management-api
+  title: Order Management API
+  description: Order processing, status tracking, and fulfillment operations
+spec:
+  type: openapi
+  lifecycle: production
+  owner: orders-team
+  system: ecommerce-platform
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: Order Management API
+      version: 1.0.0
+    servers:
+      - url: http://localhost:3003
+    paths:
+      /orders:
+        get:
+          summary: List orders
+          security:
+            - bearerAuth: []
+        post:
+          summary: Create new order
+          security:
+            - bearerAuth: []
+      /orders/{id}:
+        get:
+          summary: Get order details
+        put:
+          summary: Update order status
+      /orders/{id}/items:
+        get:
+          summary: Get order items
+    components:
+      securitySchemes:
+        bearerAuth:
+          type: http
+          scheme: bearer

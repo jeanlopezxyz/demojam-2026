@@ -1,0 +1,14 @@
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: ecommerce
+  title: E-commerce Domain
+  description: Business domain for e-commerce operations and customer experience
+  tags:
+    - business-domain
+    - ecommerce
+    - customer-experience
+    - sales
+    - retail
+spec:
+  owner: platform-team

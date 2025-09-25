@@ -1,0 +1,26 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: payment-service
+  title: Payment Service
+  description: Payment processing, billing, and financial transactions microservice
+  tags:
+    - microservice
+    - payments
+    - nodejs
+    - postgresql
+    - stripe
+    - billing
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: redhat/demojam-ecommerce
+spec:
+  type: service
+  lifecycle: production
+  owner: payments-team
+  system: ecommerce-platform
+  providesApis:
+    - payment-processing-api
+  dependsOn:
+    - resource:payment-database
+    - resource:stripe-integration

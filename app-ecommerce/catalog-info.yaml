@@ -1,0 +1,274 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: ecommerce-platform
+  title: E-commerce Platform
+  description: Modern enterprise e-commerce platform built with microservices architecture
+  tags:
+    - ecommerce
+    - microservices
+    - nodejs
+    - react
+    - platform
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: redhat/demojam-ecommerce
+    backstage.io/source-location: url:file:///home/jeanlopez/Documents/redhat/demojam/ecommerce-platform
+spec:
+  owner: platform-team
+  domain: ecommerce
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: frontend
+  title: E-commerce Frontend
+  description: React.js frontend application for the e-commerce platform
+  tags:
+    - frontend
+    - react
+    - vite
+    - ui
+  annotations:
+    backstage.io/techdocs-ref: dir:./frontend
+    github.com/project-slug: redhat/demojam-ecommerce
+spec:
+  type: website
+  lifecycle: production
+  owner: frontend-team
+  system: ecommerce-platform
+  providesApis:
+    - frontend-api
+  dependsOn:
+    - component:api-gateway
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: api-gateway
+  title: API Gateway
+  description: Request routing, authentication, and load balancing for microservices
+  tags:
+    - gateway
+    - nodejs
+    - middleware
+    - routing
+  annotations:
+    backstage.io/techdocs-ref: dir:./api-gateway
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: ecommerce-platform
+  providesApis:
+    - gateway-api
+  dependsOn:
+    - component:user-service
+    - component:product-service
+    - component:order-service
+    - component:payment-service
+    - component:inventory-service
+    - component:notification-service
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: gateway-api
+  title: API Gateway
+  description: Central API gateway for request routing and authentication
+  tags:
+    - rest-api
+    - gateway
+    - routing
+spec:
+  type: openapi
+  lifecycle: production
+  owner: platform-team
+  system: ecommerce-platform
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: API Gateway
+      version: 1.0.0
+      description: Central entry point for all API requests
+    servers:
+      - url: http://localhost:8080
+        description: Development server
+    paths:
+      /health:
+        get:
+          summary: Gateway health check
+          responses:
+            '200':
+              description: Gateway is healthy
+      /api/auth/login:
+        post:
+          summary: User authentication (proxied to user-service)
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                    password:
+                      type: string
+          responses:
+            '200':
+              description: Authentication successful
+      /api/products:
+        get:
+          summary: List products (proxied to product-service)
+          responses:
+            '200':
+              description: Product list
+      /api/orders:
+        post:
+          summary: Create order (proxied to order-service)
+          security:
+            - bearerAuth: []
+          responses:
+            '201':
+              description: Order created
+    components:
+      securitySchemes:
+        bearerAuth:
+          type: http
+          scheme: bearer
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: user-api
+  title: User Management API
+  description: Authentication, authorization, and user profile management
+  tags:
+    - rest-api
+    - auth
+    - users
+spec:
+  type: openapi
+  lifecycle: production
+  owner: auth-team
+  system: ecommerce-platform
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: User Management API
+      version: 1.0.0
+      description: Authentication and user management endpoints
+    paths:
+      /auth/login:
+        post:
+          summary: User authentication
+      /auth/register:
+        post:
+          summary: User registration
+      /users/profile:
+        get:
+          summary: Get user profile
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: product-api
+  title: Product Catalog API
+  description: Product management, search, and catalog operations
+  tags:
+    - rest-api
+    - products
+    - catalog
+spec:
+  type: openapi
+  lifecycle: production
+  owner: catalog-team
+  system: ecommerce-platform
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: Product Catalog API
+      version: 1.0.0
+    paths:
+      /products:
+        get:
+          summary: List products
+      /products/{id}:
+        get:
+          summary: Get product details
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: order-api
+  title: Order Management API
+  description: Order processing, status tracking, and fulfillment
+  tags:
+    - rest-api
+    - orders
+    - fulfillment
+spec:
+  type: openapi
+  lifecycle: production
+  owner: orders-team
+  system: ecommerce-platform
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: Order Management API
+      version: 1.0.0
+    paths:
+      /orders:
+        get:
+          summary: List orders
+        post:
+          summary: Create order
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: user-database
+  title: User Database
+  description: PostgreSQL database for user data and authentication
+  tags:
+    - database
+    - postgresql
+    - users
+spec:
+  type: database
+  lifecycle: production
+  owner: platform-team
+  system: ecommerce-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: product-database
+  title: Product Database
+  description: MongoDB database for product catalog and metadata
+  tags:
+    - database
+    - mongodb
+    - products
+spec:
+  type: database
+  lifecycle: production
+  owner: platform-team
+  system: ecommerce-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: redis-cache
+  title: Redis Cache
+  description: Redis cache for session management and inventory caching
+  tags:
+    - cache
+    - redis
+    - session
+spec:
+  type: cache
+  lifecycle: production
+  owner: platform-team
+  system: ecommerce-platform

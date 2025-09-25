@@ -1,0 +1,13 @@
+site_name: Order Service Documentation
+site_description: Order processing, workflow management, and fulfillment microservice
+
+nav:
+  - Home: index.md
+
+theme:
+  name: material
+  palette:
+    primary: orange
+
+plugins:
+  - techdocs-core

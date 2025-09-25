@@ -1,0 +1,137 @@
+apiVersion: v1
+kind: Subscription
+metadata:
+  name: rhbk-operator
+  namespace: {{ .Values.namespace | default "rhbk-operator" }}
+  labels:
+    {{- include "rhbk-operator.labels" . | nindent 4 }}
+spec:
+  channel: stable
+  installPlanApproval: Automatic
+  name: rhbk-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: rhbk-operator.v22.0.5
+
+---
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: Keycloak
+metadata:
+  name: {{ include "rhbk-operator.fullname" . }}
+  namespace: {{ .Values.namespace | default "rhbk-operator" }}
+  labels:
+    {{- include "rhbk-operator.labels" . | nindent 4 }}
+spec:
+  instances: {{ .Values.replicaCount | default 2 }}
+  
+  # Red Hat build of Keycloak image
+  image: registry.redhat.io/rh-sso-7/sso76-openshift-rhel8:latest
+  
+  # Database configuration
+  db:
+    vendor: postgres
+    host: postgresql
+    port: 5432
+    database: {{ .Values.postgresql.auth.database }}
+    usernameSecret:
+      name: keycloak-db-secret
+      key: username
+    passwordSecret:
+      name: keycloak-db-secret
+      key: password
+      
+  # Hostname configuration
+  hostname:
+    hostname: {{ .Values.config.hostname }}
+    strict: false
+    
+  # HTTP configuration
+  http:
+    tlsSecret: keycloak-tls-secret
+    
+  # Proxy configuration (OpenShift edge termination)
+  proxy:
+    headers: xforwarded
+    
+  # Admin credentials
+  additionalOptions:
+  - name: KC_LOG_LEVEL
+    value: {{ .Values.config.logLevel | default "INFO" }}
+  - name: TZ  
+    value: {{ .Values.config.timezone | default "America/Lima" }}
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keycloak-db-secret
+  namespace: {{ .Values.namespace | default "rhbk-operator" }}
+type: Opaque
+stringData:
+  username: {{ .Values.postgresql.auth.username }}
+  password: {{ .Values.postgresql.auth.password }}
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keycloak-admin-secret
+  namespace: {{ .Values.namespace | default "rhbk-operator" }}
+type: Opaque
+stringData:
+  username: {{ .Values.keycloak.adminUser }}
+  password: {{ .Values.keycloak.adminPassword }}
+
+---
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: KeycloakRealmImport
+metadata:
+  name: demojam-realm
+  namespace: {{ .Values.namespace | default "rhbk-operator" }}
+  labels:
+    {{- include "rhbk-operator.labels" . | nindent 4 }}
+spec:
+  keycloakCRName: {{ include "rhbk-operator.fullname" . }}
+  realm:
+    realm: demojam
+    enabled: true
+    displayName: "DemoJam AI Assistant"
+    
+    # Clients configuration
+    clients:
+    - clientId: backstage
+      name: "Backstage Developer Hub"
+      protocol: openid-connect
+      publicClient: false
+      secret: "backstage-client-secret"
+      redirectUris:
+      - "{{ .Values.config.backstageUrl }}/*"
+      webOrigins:
+      - "{{ .Values.config.backstageUrl }}"
+      standardFlowEnabled: true
+      implicitFlowEnabled: false
+      directAccessGrantsEnabled: true
+      
+    - clientId: ai-assistant
+      name: "AI Assistant API"
+      protocol: openid-connect
+      publicClient: false
+      secret: "ai-assistant-client-secret"
+      serviceAccountsEnabled: true
+      authorizationServicesEnabled: true
+      redirectUris:
+      - "{{ .Values.config.aiAssistantUrl }}/*"
+      
+    # Users configuration
+    users:
+    - username: "demojam-admin"
+      enabled: true
+      firstName: "DemoJam"
+      lastName: "Administrator"
+      email: "admin@company.com"
+      credentials:
+      - type: "password"
+        value: "demojam-admin-123"
+        temporary: false
+      realmRoles:
+      - "admin"
