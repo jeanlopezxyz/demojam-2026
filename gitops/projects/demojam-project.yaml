@@ -38,6 +38,8 @@ spec:
   clusterResourceWhitelist:
   - group: ""
     kind: Namespace
+  - group: argoproj.io
+    kind: Application
   - group: rbac.authorization.k8s.io
     kind: ClusterRole
   - group: rbac.authorization.k8s.io
