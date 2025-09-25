@@ -1,0 +1,37 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Base Helm charts sin modificaciones
+helmCharts:
+- name: setup-platform-gitea
+  repo: https://github.com/jeanlopezxyz/helm-charts
+  version: "1.0.0"
+  valuesFile: values.yaml
+  
+- name: setup-platform-bookstack  
+  repo: https://github.com/jeanlopezxyz/helm-charts
+  version: "1.0.0"
+  valuesFile: values.yaml
+  
+- name: setup-rh-developer-hub
+  repo: https://github.com/jeanlopezxyz/helm-charts
+  version: "1.0.0"
+  valuesFile: values.yaml
+  
+- name: setup-rh-keycloak
+  repo: https://github.com/jeanlopezxyz/helm-charts
+  version: "1.0.1"
+  valuesFile: values.yaml
+  
+- name: setup-app-openshift-ai-asistant
+  repo: https://github.com/jeanlopezxyz/helm-charts
+  version: "2.0.0"
+  valuesFile: values.yaml
+
+# Recursos comunes aplicados a todos
+commonLabels:
+  project: demojam-2026
+  managed-by: kustomize
+
+# Prefijo para evitar conflictos
+namePrefix: demojam-
