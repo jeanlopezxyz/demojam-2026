@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Helm Charts Repository</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,45 +13,66 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             line-height: 1.6;
-            color: #24292e;
-            background-color: #fafbfc;
+            color: #e2e8f0;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 24px;
         }
         
         header {
-            background: white;
-            border-bottom: 1px solid #e1e4e8;
-            padding: 2rem 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid #334155;
+            padding: 3rem 0;
+            position: relative;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="1" fill="rgba(59,130,246,0.1)"/><circle cx="80" cy="20" r="1" fill="rgba(59,130,246,0.1)"/><circle cx="50" cy="80" r="1" fill="rgba(59,130,246,0.1)"/></svg>');
+            opacity: 0.3;
         }
         
         h1 {
-            font-size: 2rem;
-            font-weight: 600;
-            color: #24292e;
-            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #f8fafc;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
         }
         
         .subtitle {
-            color: #586069;
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
+            color: #94a3b8;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
         }
         
         .repo-add {
-            background: #f6f8fa;
-            border: 1px solid #e1e4e8;
-            border-radius: 6px;
-            padding: 1rem;
-            font-family: "SFMono-Regular", Consolas, monospace;
-            font-size: 0.9rem;
-            color: #24292e;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #475569;
+            border-radius: 12px;
+            padding: 1.5rem;
+            font-family: "SF Mono", "Monaco", "Cascadia Code", monospace;
+            font-size: 1rem;
+            color: #10b981;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
         }
         
         main {
@@ -64,37 +86,57 @@
         .search-box {
             width: 100%;
             max-width: 400px;
-            padding: 0.75rem 1rem;
-            border: 1px solid #e1e4e8;
-            border-radius: 6px;
+            padding: 1rem 1.5rem;
+            border: 1px solid #475569;
+            border-radius: 12px;
             font-size: 1rem;
-            background: white;
+            background: rgba(30, 41, 59, 0.8);
+            color: #f8fafc;
+            backdrop-filter: blur(20px);
         }
         
         .search-box:focus {
             outline: none;
-            border-color: #0366d6;
-            box-shadow: 0 0 0 3px rgba(3, 102, 214, 0.1);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+        
+        .search-box::placeholder {
+            color: #94a3b8;
         }
         
         .charts-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
         }
         
         .chart-card {
-            background: white;
-            border: 1px solid #e1e4e8;
-            border-radius: 6px;
-            padding: 1.5rem;
-            transition: border-color 0.15s ease;
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid #475569;
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #06b6d4);
         }
         
         .chart-card:hover {
-            border-color: #0366d6;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+            transform: translateY(-8px);
+            border-color: #3b82f6;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
         }
         
         .chart-header {
@@ -104,33 +146,37 @@
         }
         
         .chart-icon {
-            width: 48px;
-            height: 48px;
-            margin-right: 1rem;
-            border-radius: 6px;
+            width: 64px;
+            height: 64px;
+            margin-right: 1.5rem;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            color: white;
+            font-size: 1.8rem;
+            color: #f8fafc;
+            position: relative;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
         }
         
         .chart-info h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #f8fafc;
         }
         
         .chart-version {
-            color: #586069;
-            font-size: 0.85rem;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 500;
         }
         
         .chart-description {
-            color: #586069;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-            line-height: 1.5;
+            color: #cbd5e1;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
         }
         
         .chart-tags {
@@ -139,101 +185,135 @@
         
         .tag {
             display: inline-block;
-            background: #f1f3f4;
-            color: #586069;
-            padding: 0.25rem 0.5rem;
-            border-radius: 3px;
-            font-size: 0.75rem;
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
             margin-right: 0.5rem;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
         }
         
         .chart-actions {
             display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
         
         .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
             text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 500;
+            font-size: 0.9rem;
+            font-weight: 600;
             border: 1px solid;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            transition: all 0.15s ease;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
         }
         
         .btn-secondary {
-            background: #fafbfc;
-            border-color: #e1e4e8;
-            color: #24292e;
+            background: rgba(51, 65, 85, 0.8);
+            border-color: #64748b;
+            color: #e2e8f0;
         }
         
         .btn-secondary:hover {
-            background: #f3f4f6;
-            border-color: #d1d5da;
+            background: rgba(71, 85, 105, 0.9);
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
         }
         
         .btn-success {
-            background: #28a745;
-            border-color: #28a745;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-color: #10b981;
             color: white;
         }
         
         .btn-success:hover {
-            background: #218838;
-            border-color: #1e7e34;
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.4);
         }
         
         .install-command {
-            background: #f6f8fa;
-            border: 1px solid #e1e4e8;
-            border-radius: 6px;
-            padding: 0.75rem;
-            font-family: "SFMono-Regular", Consolas, monospace;
-            font-size: 0.85rem;
-            color: #24292e;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid #475569;
+            border-radius: 12px;
+            padding: 1.25rem;
+            font-family: "SF Mono", "Monaco", "Cascadia Code", monospace;
+            font-size: 0.95rem;
+            color: #10b981;
+            font-weight: 600;
         }
         
         .instructions {
-            background: white;
-            border: 1px solid #e1e4e8;
-            border-radius: 6px;
-            padding: 2rem;
-            margin-top: 3rem;
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid #475569;
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-top: 4rem;
+            backdrop-filter: blur(20px);
         }
         
         .instructions h2 {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #f8fafc;
+            font-weight: 700;
+        }
+        
+        .instructions h3 {
+            color: #e2e8f0;
+            font-size: 1.2rem;
             margin-bottom: 1rem;
         }
         
+        .instructions p {
+            color: #cbd5e1;
+            margin-bottom: 1.5rem;
+        }
+        
         .code-block {
-            background: #f6f8fa;
-            border: 1px solid #e1e4e8;
-            border-radius: 6px;
-            padding: 1rem;
-            font-family: "SFMono-Regular", Consolas, monospace;
-            font-size: 0.85rem;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid #475569;
+            border-radius: 12px;
+            padding: 1.5rem;
+            font-family: "SF Mono", "Monaco", "Cascadia Code", monospace;
+            font-size: 0.9rem;
             overflow-x: auto;
+            color: #10b981;
+            font-weight: 500;
         }
         
         footer {
-            background: white;
-            border-top: 1px solid #e1e4e8;
-            padding: 2rem 0;
-            margin-top: 3rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid #334155;
+            padding: 3rem 0;
+            margin-top: 4rem;
             text-align: center;
-            color: #586069;
+            color: #94a3b8;
+            backdrop-filter: blur(20px);
         }
         
-        .helper { background: #28a745; }
-        .setup { background: #0366d6; }
-        .platform { background: #6f42c1; }
+        footer a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        footer a:hover {
+            color: #60a5fa;
+        }
+        
+        .helper { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .setup { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
+        .platform { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
     </style>
 </head>
 <body>
@@ -256,7 +336,9 @@
             <div class="charts-grid" id="charts-container">
                 <div class="chart-card">
                     <div class="chart-header">
-                        <div class="chart-icon helper">⚙️</div>
+                        <div class="chart-icon helper">
+                            <i class="fas fa-cogs"></i>
+                        </div>
                         <div class="chart-info">
                             <h3>helper-operator</h3>
                             <div class="chart-version">v1.0.28</div>
@@ -272,10 +354,10 @@
                     </div>
                     <div class="chart-actions">
                         <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/helper-operator" target="_blank" class="btn btn-secondary">
-                            Source
+                            <i class="fab fa-github"></i> Source
                         </a>
                         <a href="https://jeanlopezxyz.github.io/helm-charts/helper-operator-1.0.28.tgz" class="btn btn-success">
-                            Download
+                            <i class="fas fa-download"></i> Download
                         </a>
                     </div>
                     <div class="install-command">

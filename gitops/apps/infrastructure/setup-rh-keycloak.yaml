@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: setup-rh-keycloak
+  namespace: openshift-gitops
+  labels:
+    app: setup-rh-keycloak
+    project: demojam-2026
+    tier: infrastructure
+    component: identity-management
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: demojam
+  source:
+    repoURL: https://github.com/jeanlopezxyz/helm-charts
+    targetRevision: HEAD
+    path: charts/setup-rh-keycloak
+    helm:
+      valueFiles:
+      - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: rhbk-operator
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 5m

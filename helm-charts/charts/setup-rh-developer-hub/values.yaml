@@ -1,145 +1,31 @@
-replicaCount: 2
-
-image:
-  repository: registry.redhat.io/rhdh/rhdh-rhel9
-  tag: "1.2.0"
-  pullPolicy: IfNotPresent
-
-service:
-  type: ClusterIP
-  port: 7007
-
-# OpenShift Route
-route:
-  enabled: true
-  host: ""
-  tls:
-    termination: edge
-    insecureEdgeTerminationPolicy: Redirect
-  annotations: {}
-
-resources:
-  limits:
-    cpu: 1000m
-    memory: 2Gi
-  requests:
-    cpu: 500m
-    memory: 1Gi
-
-# Security Context (Enterprise Best Practices)
-podSecurityContext:
-  runAsNonRoot: true
-  runAsUser: 1001
-  runAsGroup: 1001
-  fsGroup: 1001
-  seccompProfile:
-    type: RuntimeDefault
-
-securityContext:
-  allowPrivilegeEscalation: false
-  readOnlyRootFilesystem: true
-  runAsNonRoot: true
-  runAsUser: 1001
-  runAsGroup: 1001
-  capabilities:
-    drop:
-    - ALL
-
-# Service Account
-serviceAccount:
-  create: true
-  annotations: {}
-  name: ""
-  automountServiceAccountToken: false
-
-# Pod Disruption Budget
-podDisruptionBudget:
-  enabled: true
-  minAvailable: 1
-
-# Network Policy
-networkPolicy:
-  enabled: true
-  ingress:
-    - from:
-      - namespaceSelector:
-          matchLabels:
-            name: openshift-gitops
-      ports:
-      - protocol: TCP
-        port: 7007
-
 # Helpers integration
 helpers:
+  # Helper Operator para instalar RHDH operator
+  operator:
+    enabled: true
+    operators:
+      rhdh-operator:
+        enabled: true
+        syncwave: 0
+        namespace:
+          name: openshift-operators
+        subscription:
+          channel: stable
+          operatorName: rhdh-operator
+          source: redhat-operators
+
+  # Status Checker para health monitoring del operador
   statusChecker:
     enabled: true
     statusChecks:
       checks:
-        rhdh-health:
+        rhdh-operator:
           enabled: true
           type: deployment
-          healthEndpoint: "/api/health"
-        postgresql-health:
-          enabled: true
-          type: statefulset
-          name: postgresql
-        redis-health:
-          enabled: true
-          type: statefulset
-          name: redis-master
-          
-  objectstore:
-    enabled: true
-    backup:
-      schedule: "0 2 * * *"
-      retention: "30d"
-      targets:
-        - postgresql-catalog
-        - backstage-config
-        - techdocs
+          namespace: openshift-operators
+          name: rhdh-operator
 
-# RHDH Configuration
-config:
-  app:
-    title: "Red Hat Developer Hub - DemoJam"
-    baseUrl: "https://backstage.apps.cluster.company.com"
-  backend:
-    baseUrl: "https://backstage.apps.cluster.company.com"
-  auth:
-    providers:
-      guest: {}
-      oidc:
-        development:
-          metadataUrl: "https://keycloak.apps.cluster.company.com/realms/demojam/.well-known/openid_configuration"
-          clientId: "backstage"
-          clientSecret: "backstage-secret"
-
-# AI Assistant Plugin Integration
-plugins:
-  aiAssistant:
-    enabled: true
-    apiUrl: "https://ai-assistant.apps.cluster.company.com"
-    bookstackUrl: "https://bookstack.apps.cluster.company.com"
-    giteaUrl: "https://gitea.apps.cluster.company.com"
-
-# Database
-postgresql:
-  enabled: true
-  auth:
-    postgresPassword: "rhdh-postgres-password"
-    username: "backstage"
-    password: "backstage-password"
-    database: "backstage"
-  primary:
-    persistence:
-      enabled: true
-      size: 20Gi
-
-redis:
-  enabled: true
-  auth:
-    enabled: false
-  master:
-    persistence:
-      enabled: true
-      size: 8Gi
+# Configuración básica del operador
+operator:
+  # Namespace por defecto donde se pueden crear instancias RHDH
+  defaultNamespace: "rhdh"
