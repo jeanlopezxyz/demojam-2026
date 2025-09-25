@@ -2,7 +2,7 @@ apiVersion: v2
 name: setup-rh-operator-pipelines
 description: Setup Red Hat Pipelines (Tekton) for CI/CD automation
 type: application
-version: 1.0.7
+version: 1.0.8
 appVersion: "1.0.0"
 home: https://tekton.dev/
 sources:

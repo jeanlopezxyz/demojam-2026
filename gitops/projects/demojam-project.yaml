@@ -35,7 +35,7 @@ spec:
   - namespace: openshift-pipelines
     server: https://kubernetes.default.svc
     
-  # Recursos permitidos
+  # Recursos permitidos a nivel cluster
   clusterResourceWhitelist:
   - group: ""
     kind: Namespace
@@ -49,6 +49,32 @@ spec:
     kind: CustomResourceDefinition
   - group: route.openshift.io
     kind: Route
+  # Operadores
+  - group: operators.coreos.com
+    kind: Subscription
+  - group: operators.coreos.com
+    kind: OperatorGroup
+  - group: operators.coreos.com
+    kind: ClusterServiceVersion
+  # Keycloak CRDs
+  - group: keycloak.org
+    kind: Keycloak
+  - group: keycloak.org
+    kind: KeycloakRealm
+  - group: keycloak.org
+    kind: KeycloakClient
+  # Tekton CRDs
+  - group: tekton.dev
+    kind: Pipeline
+  - group: tekton.dev
+    kind: Task
+  - group: tekton.dev
+    kind: PipelineRun
+  # Monitoring
+  - group: monitoring.coreos.com
+    kind: ServiceMonitor
+  - group: monitoring.coreos.com
+    kind: PrometheusRule
     
   # Recursos denegados a nivel de cluster (seguridad)
   clusterResourceBlacklist:
@@ -58,7 +84,7 @@ spec:
     kind: Secret
   # Note: Secrets are allowed at namespace level but not cluster level
     
-  # Namespaces permitidos
+  # Recursos permitidos a nivel namespace
   namespaceResourceWhitelist:
   - group: ""
     kind: ConfigMap
@@ -70,20 +96,59 @@ spec:
     kind: PersistentVolumeClaim
   - group: ""
     kind: Secret
+  - group: ""
+    kind: Pod
   - group: apps
     kind: Deployment
   - group: apps
     kind: StatefulSet
+  - group: apps
+    kind: ReplicaSet
+  - group: apps
+    kind: DaemonSet
   - group: autoscaling
     kind: HorizontalPodAutoscaler
   - group: policy
     kind: PodDisruptionBudget
   - group: networking.k8s.io
     kind: NetworkPolicy
+  - group: networking.k8s.io
+    kind: Ingress
   - group: route.openshift.io
     kind: Route
   - group: argoproj.io
     kind: Application
+  # Batch jobs para backups
+  - group: batch
+    kind: Job
+  - group: batch
+    kind: CronJob
+  # Keycloak resources
+  - group: keycloak.org
+    kind: Keycloak
+  - group: keycloak.org
+    kind: KeycloakRealm
+  - group: keycloak.org
+    kind: KeycloakClient
+  # Tekton resources
+  - group: tekton.dev
+    kind: Pipeline
+  - group: tekton.dev
+    kind: Task
+  - group: tekton.dev
+    kind: PipelineRun
+  - group: tekton.dev
+    kind: TaskRun
+  # Monitoring resources
+  - group: monitoring.coreos.com
+    kind: ServiceMonitor
+  - group: monitoring.coreos.com
+    kind: PrometheusRule
+  # Extensions
+  - group: extensions
+    kind: Deployment
+  - group: extensions
+    kind: Ingress
     
   # Roles para el proyecto
   roles:
