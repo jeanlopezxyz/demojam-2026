@@ -10,23 +10,14 @@ sources:
 - https://gitea.com/gitea/helm-chart
 maintainers:
 - name: Jean Paul Lopez
-  email: jealopez@redhat.com
-- name: Juan Lozano
-  email: jlozano@redhat.com
+  email: jeanlopez@linux.com
 dependencies:
 - name: postgresql
   version: "12.x.x"
   repository: https://charts.bitnami.com/bitnami
   condition: postgresql.enabled
-- name: redis
-  version: "17.x.x"
-  repository: https://charts.bitnami.com/bitnami
-  condition: redis.enabled
 keywords:
 - git
 - gitea
 - repository
 - source-control
-- corporate
-annotations:
-  category: SCM
