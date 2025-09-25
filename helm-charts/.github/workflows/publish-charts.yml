@@ -253,6 +253,18 @@ jobs:
                       padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.7rem; font-weight: 500;
                       margin-right: 0.4rem; margin-bottom: 0.3rem; border: 1px solid rgba(59, 130, 246, 0.25);
                   }
+                  .artifact-hub-link {
+                      margin-bottom: 1rem; text-align: center;
+                  }
+                  .artifact-hub-link a {
+                      color: #8b5cf6; text-decoration: none; font-size: 0.8rem; font-weight: 500;
+                      display: inline-flex; align-items: center; gap: 0.5rem;
+                      padding: 0.5rem 1rem; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.2);
+                      border-radius: 8px; transition: all 0.2s ease;
+                  }
+                  .artifact-hub-link a:hover {
+                      background: rgba(139, 92, 246, 0.2); border-color: #8b5cf6; transform: translateY(-1px);
+                  }
                   .install-command {
                       background: rgba(15, 23, 42, 0.9); border: 1px solid #475569; border-radius: 10px;
                       padding: 1rem 1.25rem; font-family: "SF Mono", "Monaco", "Cascadia Code", monospace;
@@ -319,28 +331,21 @@ jobs:
                               </div>
                               <div class="chart-description">{chart['description']}</div>
                               <div class="chart-tags">{tags_html}</div>
+                              <div class="artifact-hub-link">
+                                  <a href="https://artifacthub.io/packages/helm/jeanlopezxyz/{chart['name']}" target="_blank">
+                                      <i class="fas fa-external-link-alt"></i> View on Artifact Hub
+                                  </a>
+                              </div>
                               <div class="install-command">helm install {install_name} jeanlopezxyz/{chart['name']}</div>
                           </div>'''
           
           html_content += '''
                       </div>
-                      <div class="instructions">
-                          <h2>Getting Started</h2>
-                          <p>Add this repository to your Helm installation:</p>
-                          <div class="code-block">helm repo add jeanlopezxyz https://jeanlopezxyz.github.io/helm-charts
-          helm repo update
-          helm search repo jeanlopezxyz</div>
-                          <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Install a chart</h3>
-                          <div class="code-block">helm install my-release jeanlopezxyz/CHART-NAME</div>
-                      </div>
                   </div>
               </main>
               <footer>
                   <div class="container">
-                      <p>&copy; 2025 Red Hat. Licensed under MIT License.</p>
-                      <p style="margin-top: 0.5rem;">
-                          <a href="https://artifacthub.io/packages/search?repo=jeanlopezxyz" target="_blank">Also available on Artifact Hub →</a>
-                      </p>
+                      <p>&copy; 2025 jeanlopezxyz. Licensed under Apache License.</p>
                   </div>
               </footer>
               <script>

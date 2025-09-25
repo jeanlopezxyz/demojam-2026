@@ -1,42 +1,36 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: rhdh
+  name: app-openshift-ai-assistant
   namespace: openshift-gitops
   labels:
-    app: rhdh
+    app: ai-assistant
     project: demojam-2026
-    tier: infrastructure
-    component: red-hat-developer-hub
+    tier: application
+    component: ai-service
   annotations:
-    argocd.argoproj.io/sync-wave: "5"
+    argocd.argoproj.io/sync-wave: "10"
 spec:
   project: demojam
   source:
     repoURL: https://github.com/jeanlopezxyz/helm-charts
     targetRevision: HEAD
-    path: charts/setup-rh-developer-hub
+    path: charts/setup-app-openshift-ai-asistant
     helm:
       valueFiles:
       - values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: backstage
+    namespace: demojam-ai-assistant
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
-    - RespectIgnoreDifferences=true
     retry:
       limit: 5
       backoff:
         duration: 5s
         factor: 2
         maxDuration: 3m
-  ignoreDifferences:
-  - group: apps
-    kind: Deployment
-    jsonPointers:
-    - /spec/replicas

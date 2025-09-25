@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: rhbk
+  name: rh-keycloak
   namespace: openshift-gitops
   labels:
     app: rhbk

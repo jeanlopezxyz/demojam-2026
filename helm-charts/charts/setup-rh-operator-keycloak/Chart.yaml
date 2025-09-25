@@ -2,7 +2,7 @@ apiVersion: v2
 name: setup-rh-operator-keycloak
 description: Setup Red Hat Build of Keycloak operator installation
 type: application
-version: 1.0.3
+version: 1.0.4
 appVersion: "23.0.0"
 home: https://access.redhat.com/products/red-hat-build-of-keycloak
 sources:

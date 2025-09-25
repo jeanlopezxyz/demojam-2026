@@ -1,27 +1,27 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: ai-assistant
+  name: platform-bookstack
   namespace: openshift-gitops
   labels:
-    app: ai-assistant
+    app: bookstack
     project: demojam-2026
-    tier: application
-    component: ai-service
+    tier: infrastructure
+    component: documentation
   annotations:
-    argocd.argoproj.io/sync-wave: "10"
+    argocd.argoproj.io/sync-wave: "3"
 spec:
   project: demojam
   source:
     repoURL: https://github.com/jeanlopezxyz/helm-charts
     targetRevision: HEAD
-    path: charts/setup-app-openshift-ai-asistant
+    path: charts/setup-platform-bookstack
     helm:
       valueFiles:
       - values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: demojam-ai-assistant
+    namespace: bookstack-corporate
   syncPolicy:
     automated:
       prune: true
@@ -29,8 +29,8 @@ spec:
     syncOptions:
     - CreateNamespace=true
     retry:
-      limit: 5
+      limit: 3
       backoff:
         duration: 5s
         factor: 2
-        maxDuration: 3m
+        maxDuration: 2m

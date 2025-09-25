@@ -1,36 +1,42 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: bookstack
+  name: rh-developer-hub
   namespace: openshift-gitops
   labels:
-    app: bookstack
+    app: rhdh
     project: demojam-2026
     tier: infrastructure
-    component: documentation
+    component: red-hat-developer-hub
   annotations:
-    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave: "5"
 spec:
   project: demojam
   source:
     repoURL: https://github.com/jeanlopezxyz/helm-charts
     targetRevision: HEAD
-    path: charts/setup-platform-bookstack
+    path: charts/setup-rh-developer-hub
     helm:
       valueFiles:
       - values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: bookstack-corporate
+    namespace: backstage
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
+    - RespectIgnoreDifferences=true
     retry:
-      limit: 3
+      limit: 5
       backoff:
         duration: 5s
         factor: 2
-        maxDuration: 2m
+        maxDuration: 3m
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas
