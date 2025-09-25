@@ -1,0 +1,45 @@
+apiVersion: v2
+name: setup-rh-operator-pipelines
+description: Setup Red Hat Pipelines (Tekton) for CI/CD automation
+type: application
+version: 1.0.7
+appVersion: "1.0.0"
+home: https://tekton.dev/
+sources:
+- https://github.com/jeanlopezxyz/helm-charts
+- https://tekton.dev/
+- https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html/cicd/pipelines
+maintainers:
+- name: Jean Paul Lopez
+  email: jealopez@redhat.com
+
+dependencies:
+# Reutilizar helper-operator para instalar operadores
+- name: helper-operator
+  version: "~1.0.0"
+  repository: "https://jeanlopezxyz.github.io/helm-charts"
+  condition: helpers.operator.enabled
+# Reutilizar helper para status checking
+- name: helper-status-checker
+  version: "~4.0.0"
+  repository: "https://jeanlopezxyz.github.io/helm-charts"
+  condition: helpers.statusChecker.enabled
+
+keywords:
+- setup
+- rh
+- red-hat
+- operator
+- pipelines
+- tekton
+- ci-cd
+- devops
+
+annotations:
+  category: CI/CD & DevOps
+  certified: "true"
+  support: "Red Hat"
+  licenses: Apache-2.0
+  "helm.sh/uses-helpers": "helper-operator,helper-status-checker"
+  "helm.sh/vendor": "red-hat"
+  "helm.sh/integration": "openshift-pipelines"

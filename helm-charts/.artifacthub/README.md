@@ -23,9 +23,9 @@ To register this repository with Artifact Hub:
 helm-charts/
 ├── artifacthub-repo.yml           # Repository metadata
 └── charts/
-    ├── setup-rh-pipelines/
+    ├── setup-rh-operator-pipelines/
     │   └── artifacthub-pkg.yml     # Package metadata
-    ├── setup-rh-console/
+    ├── setup-rh-operator-console/
     │   └── artifacthub-pkg.yml
     └── setup-app-openshift-ai-asistant/
         └── artifacthub-pkg.yml

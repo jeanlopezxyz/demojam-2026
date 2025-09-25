@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rhdh-ai-plugin-config
+  namespace: backstage
+  labels:
+    app: rhdh
+    component: ai-plugin
+data:
+  ai-plugin.yaml: |
+    ai:
+      assistant:
+        enabled: true
+        apiUrl: "https://ai-assistant.apps.cluster-7n8gb.dynamic.redhatworkshops.io"
+        features:
+          repositoryAnalysis: true
+          templateRecommendation: true
+          securityValidation: true
+          mcpIntegration: true
+        agents:
+          repository:
+            endpoint: "/api/agents/repository"
+            timeout: 30000
+          security:
+            endpoint: "/api/agents/security"
+            timeout: 45000
+          template:
+            endpoint: "/api/agents/template"
+            timeout: 20000
+        externalIntegrations:
+          bookstack:
+            url: "https://bookstack.apps.cluster-7n8gb.dynamic.redhatworkshops.io"
+            apiPath: "/api"
+          gitea:
+            url: "https://gitea.apps.cluster-7n8gb.dynamic.redhatworkshops.io"
+            apiPath: "/api/v1"
+          openshift:
+            ai:
+              endpoint: "https://openshift-ai.apps.cluster-7n8gb.dynamic.redhatworkshops.io"
+              models:
+                code: "granite-7b-code"
+                general: "granite-13b-instruct"

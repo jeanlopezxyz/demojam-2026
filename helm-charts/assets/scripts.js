@@ -30,14 +30,14 @@ const chartConfig = {
         tags: ['helper', 'etcd', 'backup'],
         version: '1.0.0'
     },
-    'setup-rh-keycloak': {
+    'setup-rh-operator-keycloak': {
         icon: 'fas fa-key',
         category: 'setup',
         description: 'Red Hat Build of Keycloak operator installation',
         tags: ['setup', 'red-hat', 'keycloak', 'operator'],
         version: '1.0.0'
     },
-    'setup-rh-developer-hub': {
+    'setup-rh-operator-developer-hub': {
         icon: 'fas fa-tools',
         category: 'setup',
         description: 'Red Hat Developer Hub (Backstage) with AI Assistant integration',
@@ -51,14 +51,14 @@ const chartConfig = {
         tags: ['setup', 'openshift', 'ai', 'assistant'],
         version: '2.0.0'
     },
-    'setup-rh-pipelines': {
+    'setup-rh-operator-pipelines': {
         icon: 'fas fa-project-diagram',
         category: 'setup',
         description: 'Red Hat Pipelines (Tekton) for CI/CD automation',
         tags: ['setup', 'red-hat', 'pipelines', 'tekton', 'ci-cd'],
         version: '1.0.0'
     },
-    'setup-rh-console': {
+    'setup-rh-operator-console': {
         icon: 'fas fa-desktop',
         category: 'setup',
         description: 'Enhanced OpenShift Console operator with customizations',
@@ -294,11 +294,11 @@ function renderChartsSimple() {
     const charts = [
         { name: 'helper-operator', version: '1.0.28', description: 'Meta-chart for installing operators', category: 'helper' },
         { name: 'helper-status-checker', version: '4.0.13', description: 'Health validation for deployments', category: 'helper' },
-        { name: 'setup-rh-pipelines', version: '1.0.1', description: 'Red Hat Pipelines (Tekton) for CI/CD', category: 'setup' },
-        { name: 'setup-rh-console', version: '1.0.3', description: 'Enhanced OpenShift Console operator', category: 'setup' },
+        { name: 'setup-rh-operator-pipelines', version: '1.0.1', description: 'Red Hat Pipelines (Tekton) for CI/CD', category: 'setup' },
+        { name: 'setup-rh-operator-console', version: '1.0.3', description: 'Enhanced OpenShift Console operator', category: 'setup' },
         { name: 'setup-app-openshift-ai-asistant', version: '2.0.0', description: 'AI-powered assistant with OpenShift AI', category: 'setup' },
-        { name: 'setup-rh-developer-hub', version: '1.0.0', description: 'Red Hat Developer Hub (Backstage)', category: 'setup' },
-        { name: 'setup-rh-keycloak', version: '1.0.0', description: 'Red Hat Build of Keycloak', category: 'setup' },
+        { name: 'setup-rh-operator-developer-hub', version: '1.0.0', description: 'Red Hat Developer Hub (Backstage)', category: 'setup' },
+        { name: 'setup-rh-operator-keycloak', version: '1.0.0', description: 'Red Hat Build of Keycloak', category: 'setup' },
         { name: 'setup-platform-bookstack', version: '1.0.0', description: 'Bookstack documentation platform', category: 'setup' },
         { name: 'setup-platform-gitea', version: '1.1.0', description: 'Gitea Git server with CI/CD', category: 'setup' }
     ];

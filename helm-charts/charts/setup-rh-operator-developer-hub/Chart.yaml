@@ -1,0 +1,36 @@
+apiVersion: v2
+name: setup-rh-operator-developer-hub
+description: Setup Red Hat Developer Hub operator installation
+type: application
+version: 1.1.1
+appVersion: "1.2.0"
+home: https://developers.redhat.com/products/developer-hub
+sources:
+- https://github.com/jeanlopezxyz/helm-charts
+- https://github.com/redhat-developer/red-hat-developer-hub
+- https://access.redhat.com/documentation/en-us/red_hat_developer_hub
+maintainers:
+- name: Jean Paul Lopez
+  email: jealopez@redhat.com
+
+dependencies:
+# Reutilizar helper-operator para instalar RHDH operator
+- name: helper-operator
+  version: "~1.0.0"
+  repository: "https://jeanlopezxyz.github.io/helm-charts"
+  condition: helpers.operator.enabled
+
+keywords:
+- setup
+- rh
+- rhdh
+- red-hat-developer-hub
+- operator
+- backstage
+
+annotations:
+  category: Developer Tools
+  certified: "true"
+  support: "Red Hat"
+  licenses: Apache-2.0
+  "helm.sh/vendor": "red-hat"

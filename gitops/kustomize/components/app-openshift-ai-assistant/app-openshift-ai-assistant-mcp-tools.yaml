@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ai-assistant-mcp-config
+  namespace: demojam-ai-assistant
+data:
+  tools.json: |
+    {
+      "tools": [
+        {
+          "name": "analyze_repository",
+          "description": "Analyze repository patterns and technologies",
+          "schema": {
+            "type": "object", 
+            "properties": {
+              "repository_url": {"type": "string"},
+              "analysis_type": {"type": "string", "enum": ["basic", "deep"]}
+            }
+          }
+        },
+        {
+          "name": "search_bookstack_guidelines", 
+          "description": "Search corporate guidelines in BookStack",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "query": {"type": "string"},
+              "book_scope": {"type": "string", "enum": ["security", "architecture", "development"]}
+            }
+          }
+        },
+        {
+          "name": "create_backstage_project",
+          "description": "Create project using Backstage templates",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "template_name": {"type": "string"},
+              "parameters": {"type": "object"}
+            }
+          }
+        }
+      ]
+    }

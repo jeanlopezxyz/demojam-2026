@@ -1,0 +1,53 @@
+# Artifact Hub package metadata file
+version: 1.0.0
+name: setup-rh-operator-console
+displayName: Enhanced OpenShift Console
+createdAt: "2025-01-25T10:00:00Z"
+description: |
+  Enhanced OpenShift Console operator with customizations for improved UI capabilities.
+  
+  This chart configures the Console operator with custom links, branding options,
+  and notifications to provide a better user experience in OpenShift clusters.
+
+license: MIT
+homeURL: https://docs.openshift.com/container-platform/latest/web_console/web-console.html
+appVersion: "1.0.0"
+containsSecurityUpdates: false
+operator: false
+deprecated: false
+keywords:
+  - console
+  - ui
+  - web-console
+  - red-hat
+  - openshift
+  - interface
+  - customization
+links:
+  - name: GitHub Repository
+    url: https://github.com/jeanlopezxyz/helm-charts
+  - name: OpenShift Console Documentation
+    url: https://docs.openshift.com/container-platform/latest/web_console/web-console.html
+install: |
+  ## Installation
+  
+  ```bash
+  helm repo add jeanlopezxyz https://jeanlopezxyz.github.io/helm-charts
+  helm install console jeanlopezxyz/setup-rh-operator-console
+  ```
+  
+  ## Features
+  
+  - Custom console links
+  - Banner notifications
+  - Branding customization
+  - Plugin management
+
+maintainers:
+  - name: Jean Paul Lopez
+    email: jealopez@redhat.com
+annotations:
+  artifacthub.io/changes: |
+    - kind: added
+      description: Initial release with console operator customizations
+  artifacthub.io/license: MIT

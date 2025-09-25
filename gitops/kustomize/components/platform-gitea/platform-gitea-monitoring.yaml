@@ -1,0 +1,48 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: gitea-metrics
+  namespace: gitea
+  labels:
+    app: gitea
+    component: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: gitea
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s
+    scrapeTimeout: 10s
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: gitea-alerts
+  namespace: gitea
+  labels:
+    app: gitea
+    component: monitoring
+spec:
+  groups:
+  - name: gitea.rules
+    rules:
+    - alert: GiteaDown
+      expr: up{job="gitea"} == 0
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Gitea is down"
+        description: "Gitea has been down for more than 1 minute"
+        
+    - alert: GiteaHighMemoryUsage
+      expr: container_memory_usage_bytes{pod=~"gitea-.*"} / container_spec_memory_limit_bytes > 0.9
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Gitea high memory usage"
+        description: "Gitea memory usage is above 90%"

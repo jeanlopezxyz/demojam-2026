@@ -1,12 +1,15 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: openshift-pipelines
+  name: rhocp-pipelines
   namespace: openshift-gitops
   labels:
-    app: openshift-pipelines
-    project: demojam
+    app: rhocp-pipelines
+    project: demojam-2026
+    tier: infrastructure
     component: ci-cd
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
 spec:
   project: demojam
   source:
@@ -21,14 +24,7 @@ spec:
     namespace: openshift-pipelines
   syncPolicy:
     automated:
-      prune: false  # No auto-prune para pipelines
-      selfHeal: false
+      prune: true
+      selfHeal: true
     syncOptions:
     - CreateNamespace=true
-    - ApplyOutOfSyncOnly=true
-    retry:
-      limit: 2
-      backoff:
-        duration: 15s
-        factor: 2
-        maxDuration: 5m

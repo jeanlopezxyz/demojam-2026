@@ -1,0 +1,40 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Base: Helm chart de BookStack
+helmCharts:
+- name: setup-platform-bookstack
+  repo: https://github.com/jeanlopezxyz/helm-charts
+  version: "1.0.0"
+  releaseName: bookstack
+  namespace: bookstack-corporate
+
+# Customizaciones específicas para BookStack
+patches:
+- target:
+    kind: Deployment
+    name: bookstack
+  patch: |
+    - op: replace
+      path: /spec/replicas
+      value: 2
+    - op: add
+      path: /spec/template/spec/containers/0/env/-
+      value:
+        name: APP_URL
+        value: "https://bookstack.apps.cluster-7n8gb.dynamic.redhatworkshops.io"
+    - op: add
+      path: /spec/template/spec/containers/0/env/-
+      value:
+        name: API_REQUESTS_PER_MIN
+        value: "500"
+
+# Recursos adicionales específicos de BookStack
+resources:
+- platform-bookstack-content-init.yaml
+- platform-bookstack-backup.yaml
+- platform-bookstack-api-access.yaml
+
+# Labels específicos
+commonLabels:
+  component: platform-bookstack

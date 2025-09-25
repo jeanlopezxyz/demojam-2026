@@ -30,8 +30,8 @@ open https://jeanlopezxyz.github.io/helm-charts
 
 Individual chart packages are available for download:
 
-- **setup-rh-pipelines**: [setup-rh-pipelines-1.0.0.tgz](https://jeanlopezxyz.github.io/helm-charts/setup-rh-pipelines-1.0.0.tgz)
-- **setup-rh-console**: [setup-rh-console-1.0.0.tgz](https://jeanlopezxyz.github.io/helm-charts/setup-rh-console-1.0.0.tgz)
+- **setup-rh-operator-pipelines**: [setup-rh-operator-pipelines-1.0.0.tgz](https://jeanlopezxyz.github.io/helm-charts/setup-rh-operator-pipelines-1.0.0.tgz)
+- **setup-rh-operator-console**: [setup-rh-operator-console-1.0.0.tgz](https://jeanlopezxyz.github.io/helm-charts/setup-rh-operator-console-1.0.0.tgz)
 - **setup-app-openshift-ai-asistant**: [setup-app-openshift-ai-asistant-2.0.0.tgz](https://jeanlopezxyz.github.io/helm-charts/setup-app-openshift-ai-asistant-2.0.0.tgz)
 
 ## Available Charts
@@ -52,12 +52,12 @@ Individual chart packages are available for download:
 | Chart | Version | Description |
 |-------|---------|-------------|
 | [setup-app-openshift-ai-asistant](charts/setup-app-openshift-ai-asistant/) | 2.0.0 | OpenShift AI Assistant with RAG integration |
-| [setup-rh-developer-hub](charts/setup-rh-developer-hub/) | 1.0.0 | Red Hat Developer Hub (Backstage) |
+| [setup-rh-operator-developer-hub](charts/setup-rh-operator-developer-hub/) | 1.0.0 | Red Hat Developer Hub (Backstage) |
 | [setup-platform-bookstack](charts/setup-platform-bookstack/) | 1.0.0 | Bookstack documentation platform |
 | [setup-platform-gitea](charts/setup-platform-gitea/) | 1.1.0 | Gitea Git server with CI/CD |
-| [setup-rh-keycloak](charts/setup-rh-keycloak/) | 1.0.0 | Red Hat Build of Keycloak operator |
-| [setup-rh-pipelines](charts/setup-rh-pipelines/) | 1.0.0 | Red Hat Pipelines (Tekton) for CI/CD |
-| [setup-rh-console](charts/setup-rh-console/) | 1.0.0 | Enhanced OpenShift Console operator |
+| [setup-rh-operator-keycloak](charts/setup-rh-operator-keycloak/) | 1.0.0 | Red Hat Build of Keycloak operator |
+| [setup-rh-operator-pipelines](charts/setup-rh-operator-pipelines/) | 1.0.0 | Red Hat Pipelines (Tekton) for CI/CD |
+| [setup-rh-operator-console](charts/setup-rh-operator-console/) | 1.0.0 | Enhanced OpenShift Console operator |
 
 ## Usage Examples
 
@@ -82,16 +82,16 @@ helm install health-monitor jeanlopezxyz/helper-status-checker \
 helm install ai-assistant jeanlopezxyz/setup-app-openshift-ai-asistant
 
 # Install Red Hat Developer Hub
-helm install developer-hub jeanlopezxyz/setup-rh-developer-hub
+helm install developer-hub jeanlopezxyz/setup-rh-operator-developer-hub
 
 # Install Red Hat Keycloak
-helm install keycloak jeanlopezxyz/setup-rh-keycloak
+helm install keycloak jeanlopezxyz/setup-rh-operator-keycloak
 
 # Install Red Hat Pipelines
-helm install pipelines jeanlopezxyz/setup-rh-pipelines
+helm install pipelines jeanlopezxyz/setup-rh-operator-pipelines
 
 # Install Enhanced Console
-helm install console jeanlopezxyz/setup-rh-console
+helm install console jeanlopezxyz/setup-rh-operator-console
 
 # Install Platform Components
 helm install documentation jeanlopezxyz/setup-platform-bookstack

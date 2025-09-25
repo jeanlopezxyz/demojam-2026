@@ -27,11 +27,12 @@
         }
         
         header {
-            background: rgba(15, 23, 42, 0.95);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 100%);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid #334155;
-            padding: 3rem 0;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 2rem 0;
             position: relative;
+            overflow: hidden;
         }
         
         header::before {
@@ -41,37 +42,75 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="1" fill="rgba(59,130,246,0.1)"/><circle cx="80" cy="20" r="1" fill="rgba(59,130,246,0.1)"/><circle cx="50" cy="80" r="1" fill="rgba(59,130,246,0.1)"/></svg>');
-            opacity: 0.3;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        
+        .header-left {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .header-icons {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .enterprise-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #f8fafc;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            backdrop-filter: blur(10px);
         }
         
         h1 {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: 700;
             color: #f8fafc;
-            margin-bottom: 1rem;
-            position: relative;
-            z-index: 1;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
         
         .subtitle {
             color: #94a3b8;
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            position: relative;
-            z-index: 1;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
         }
         
         .repo-add {
-            background: rgba(30, 41, 59, 0.8);
+            background: rgba(15, 23, 42, 0.9);
             border: 1px solid #475569;
-            border-radius: 12px;
-            padding: 1.5rem;
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
             font-family: "SF Mono", "Monaco", "Cascadia Code", monospace;
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: #10b981;
-            position: relative;
-            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
         }
         
@@ -107,16 +146,16 @@
         
         .charts-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
         }
         
         .chart-card {
             background: rgba(30, 41, 59, 0.9);
             border: 1px solid #475569;
-            border-radius: 16px;
-            padding: 2rem;
+            border-radius: 12px;
+            padding: 1.25rem;
             transition: all 0.3s ease;
             backdrop-filter: blur(20px);
             position: relative;
@@ -141,9 +180,9 @@
         
         .chart-header {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
             position: relative;
         }
         
@@ -155,22 +194,21 @@
         
         .chart-actions-top {
             display: flex;
-            gap: 0.5rem;
-            position: absolute;
-            top: 0;
-            right: 0;
+            gap: 0.4rem;
+            flex-shrink: 0;
         }
         
         .icon-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             text-decoration: none;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             backdrop-filter: blur(10px);
+            font-size: 0.8rem;
         }
         
         .icon-btn-secondary {
@@ -182,7 +220,7 @@
         .icon-btn-secondary:hover {
             background: rgba(71, 85, 105, 0.9);
             border-color: #3b82f6;
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
         
         .icon-btn-success {
@@ -193,41 +231,41 @@
         
         .icon-btn-success:hover {
             background: rgba(5, 150, 105, 0.9);
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
         
         .chart-icon {
-            width: 64px;
-            height: 64px;
-            margin-right: 1.5rem;
-            border-radius: 16px;
+            width: 36px;
+            height: 36px;
+            margin-right: 0.75rem;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
-            color: #f8fafc;
-            position: relative;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            font-size: 1rem;
+            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
         }
         
         .chart-info h3 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
             color: #f8fafc;
         }
         
         .chart-version {
             color: #94a3b8;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: 500;
         }
         
         .chart-description {
             color: #cbd5e1;
-            font-size: 1rem;
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
         }
         
         .chart-tags {
@@ -318,18 +356,34 @@
             color: #60a5fa;
         }
         
-        .helper { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-        .setup { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
-        .platform { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
     </style>
 </head>
 <body>
     <header>
         <div class="container">
-            <h1>Helm Charts Repository</h1>
-            <p class="subtitle">Enterprise Helm charts for Red Hat environments</p>
-            <div class="repo-add">
-                helm repo add jeanlopezxyz https://jeanlopezxyz.github.io/helm-charts
+            <div class="header-content">
+                <div class="header-left">
+                    <h1>
+                        <i class="fas fa-dharmachakra" style="color: #3b82f6;"></i>
+                        Helm Charts Repository
+                    </h1>
+                    <p class="subtitle">Enterprise Helm charts for Red Hat environments</p>
+                    <div class="repo-add">
+                        <i class="fas fa-terminal" style="color: #64748b; margin-right: 0.5rem;"></i>
+                        helm repo add jeanlopezxyz https://jeanlopezxyz.github.io/helm-charts
+                    </div>
+                </div>
+                <div class="header-icons">
+                    <div class="enterprise-icon" title="Kubernetes Native">
+                        <i class="fas fa-dharmachakra"></i>
+                    </div>
+                    <div class="enterprise-icon" title="Red Hat Certified">
+                        <i class="fab fa-redhat"></i>
+                    </div>
+                    <div class="enterprise-icon" title="Enterprise Ready">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -344,8 +398,8 @@
                 <div class="chart-card">
                     <div class="chart-header">
                         <div class="chart-main-info">
-                            <div class="chart-icon helper">
-                                <i class="fas fa-cogs"></i>
+                            <div class="chart-icon">
+                                <i class="fas fa-dharmachakra"></i>
                             </div>
                             <div class="chart-info">
                                 <h3>helper-operator</h3>
@@ -377,8 +431,8 @@
                 <div class="chart-card">
                     <div class="chart-header">
                         <div class="chart-main-info">
-                            <div class="chart-icon helper">
-                                <i class="fas fa-heartbeat"></i>
+                            <div class="chart-icon">
+                                <i class="fas fa-dharmachakra"></i>
                             </div>
                             <div class="chart-info">
                                 <h3>helper-status-checker</h3>
@@ -409,12 +463,22 @@
 
                 <div class="chart-card">
                     <div class="chart-header">
-                        <div class="chart-icon setup">
-                            <i class="fas fa-project-diagram"></i>
+                        <div class="chart-main-info">
+                            <div class="chart-icon">
+                                <i class="fas fa-dharmachakra"></i>
+                            </div>
+                            <div class="chart-info">
+                                <h3>setup-rh-operator-pipelines</h3>
+                                <div class="chart-version">v1.0.5</div>
+                            </div>
                         </div>
-                        <div class="chart-info">
-                            <h3>setup-rh-pipelines</h3>
-                            <div class="chart-version">v1.0.5</div>
+                        <div class="chart-actions-top">
+                            <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/setup-rh-operator-pipelines" target="_blank" class="icon-btn icon-btn-secondary" title="View Source">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="https://jeanlopezxyz.github.io/helm-charts/setup-rh-operator-pipelines-1.0.5.tgz" class="icon-btn icon-btn-success" title="Download Chart">
+                                <i class="fas fa-download"></i>
+                            </a>
                         </div>
                     </div>
                     <div class="chart-description">
@@ -425,27 +489,29 @@
                         <span class="tag">tekton</span>
                         <span class="tag">operator</span>
                     </div>
-                    <div class="chart-actions">
-                        <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/setup-rh-pipelines" target="_blank" class="btn btn-secondary">
-                            <i class="fab fa-github"></i> Source
-                        </a>
-                        <a href="https://jeanlopezxyz.github.io/helm-charts/setup-rh-pipelines-1.0.5.tgz" class="btn btn-success">
-                            <i class="fas fa-download"></i> Download
-                        </a>
-                    </div>
                     <div class="install-command">
-                        helm install pipelines jeanlopezxyz/setup-rh-pipelines
+                        helm install pipelines jeanlopezxyz/setup-rh-operator-pipelines
                     </div>
                 </div>
 
                 <div class="chart-card">
                     <div class="chart-header">
-                        <div class="chart-icon setup">
-                            <i class="fas fa-desktop"></i>
+                        <div class="chart-main-info">
+                            <div class="chart-icon">
+                                <i class="fas fa-dharmachakra"></i>
+                            </div>
+                            <div class="chart-info">
+                                <h3>setup-rh-operator-console</h3>
+                                <div class="chart-version">v1.0.7</div>
+                            </div>
                         </div>
-                        <div class="chart-info">
-                            <h3>setup-rh-console</h3>
-                            <div class="chart-version">v1.0.7</div>
+                        <div class="chart-actions-top">
+                            <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/setup-rh-operator-console" target="_blank" class="icon-btn icon-btn-secondary" title="View Source">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="https://jeanlopezxyz.github.io/helm-charts/setup-rh-operator-console-1.0.7.tgz" class="icon-btn icon-btn-success" title="Download Chart">
+                                <i class="fas fa-download"></i>
+                            </a>
                         </div>
                     </div>
                     <div class="chart-description">
@@ -456,27 +522,29 @@
                         <span class="tag">operator</span>
                         <span class="tag">openshift</span>
                     </div>
-                    <div class="chart-actions">
-                        <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/setup-rh-console" target="_blank" class="btn btn-secondary">
-                            <i class="fab fa-github"></i> Source
-                        </a>
-                        <a href="https://jeanlopezxyz.github.io/helm-charts/setup-rh-console-1.0.7.tgz" class="btn btn-success">
-                            <i class="fas fa-download"></i> Download
-                        </a>
-                    </div>
                     <div class="install-command">
-                        helm install console jeanlopezxyz/setup-rh-console
+                        helm install console jeanlopezxyz/setup-rh-operator-console
                     </div>
                 </div>
 
                 <div class="chart-card">
                     <div class="chart-header">
-                        <div class="chart-icon setup">
-                            <i class="fas fa-shield-alt"></i>
+                        <div class="chart-main-info">
+                            <div class="chart-icon">
+                                <i class="fas fa-dharmachakra"></i>
+                            </div>
+                            <div class="chart-info">
+                                <h3>setup-rh-operator-keycloak</h3>
+                                <div class="chart-version">v1.0.3</div>
+                            </div>
                         </div>
-                        <div class="chart-info">
-                            <h3>setup-rh-keycloak</h3>
-                            <div class="chart-version">v1.0.2</div>
+                        <div class="chart-actions-top">
+                            <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/setup-rh-operator-keycloak" target="_blank" class="icon-btn icon-btn-secondary" title="View Source">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="https://jeanlopezxyz.github.io/helm-charts/setup-rh-operator-keycloak-1.0.3.tgz" class="icon-btn icon-btn-success" title="Download Chart">
+                                <i class="fas fa-download"></i>
+                            </a>
                         </div>
                     </div>
                     <div class="chart-description">
@@ -487,27 +555,29 @@
                         <span class="tag">operator</span>
                         <span class="tag">identity</span>
                     </div>
-                    <div class="chart-actions">
-                        <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/setup-rh-keycloak" target="_blank" class="btn btn-secondary">
-                            <i class="fab fa-github"></i> Source
-                        </a>
-                        <a href="https://jeanlopezxyz.github.io/helm-charts/setup-rh-keycloak-1.0.2.tgz" class="btn btn-success">
-                            <i class="fas fa-download"></i> Download
-                        </a>
-                    </div>
                     <div class="install-command">
-                        helm install keycloak jeanlopezxyz/setup-rh-keycloak
+                        helm install keycloak jeanlopezxyz/setup-rh-operator-keycloak
                     </div>
                 </div>
 
                 <div class="chart-card">
                     <div class="chart-header">
-                        <div class="chart-icon setup">
-                            <i class="fas fa-tools"></i>
+                        <div class="chart-main-info">
+                            <div class="chart-icon">
+                                <i class="fas fa-dharmachakra"></i>
+                            </div>
+                            <div class="chart-info">
+                                <h3>setup-rh-operator-developer-hub</h3>
+                                <div class="chart-version">v1.1.0</div>
+                            </div>
                         </div>
-                        <div class="chart-info">
-                            <h3>setup-rh-developer-hub</h3>
-                            <div class="chart-version">v1.1.0</div>
+                        <div class="chart-actions-top">
+                            <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/setup-rh-operator-developer-hub" target="_blank" class="icon-btn icon-btn-secondary" title="View Source">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="https://jeanlopezxyz.github.io/helm-charts/setup-rh-operator-developer-hub-1.1.0.tgz" class="icon-btn icon-btn-success" title="Download Chart">
+                                <i class="fas fa-download"></i>
+                            </a>
                         </div>
                     </div>
                     <div class="chart-description">
@@ -518,27 +588,29 @@
                         <span class="tag">operator</span>
                         <span class="tag">backstage</span>
                     </div>
-                    <div class="chart-actions">
-                        <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/setup-rh-developer-hub" target="_blank" class="btn btn-secondary">
-                            <i class="fab fa-github"></i> Source
-                        </a>
-                        <a href="https://jeanlopezxyz.github.io/helm-charts/setup-rh-developer-hub-1.1.0.tgz" class="btn btn-success">
-                            <i class="fas fa-download"></i> Download
-                        </a>
-                    </div>
                     <div class="install-command">
-                        helm install developer-hub jeanlopezxyz/setup-rh-developer-hub
+                        helm install developer-hub jeanlopezxyz/setup-rh-operator-developer-hub
                     </div>
                 </div>
 
                 <div class="chart-card">
                     <div class="chart-header">
-                        <div class="chart-icon setup">
-                            <i class="fas fa-brain"></i>
+                        <div class="chart-main-info">
+                            <div class="chart-icon">
+                                <i class="fas fa-dharmachakra"></i>
+                            </div>
+                            <div class="chart-info">
+                                <h3>setup-app-openshift-ai-asistant</h3>
+                                <div class="chart-version">v2.0.0</div>
+                            </div>
                         </div>
-                        <div class="chart-info">
-                            <h3>setup-app-openshift-ai-asistant</h3>
-                            <div class="chart-version">v2.0.0</div>
+                        <div class="chart-actions-top">
+                            <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/setup-app-openshift-ai-asistant" target="_blank" class="icon-btn icon-btn-secondary" title="View Source">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="https://jeanlopezxyz.github.io/helm-charts/setup-app-openshift-ai-asistant-2.0.0.tgz" class="icon-btn icon-btn-success" title="Download Chart">
+                                <i class="fas fa-download"></i>
+                            </a>
                         </div>
                     </div>
                     <div class="chart-description">
@@ -548,14 +620,6 @@
                         <span class="tag">ai</span>
                         <span class="tag">openshift</span>
                         <span class="tag">assistant</span>
-                    </div>
-                    <div class="chart-actions">
-                        <a href="https://github.com/jeanlopezxyz/helm-charts/tree/main/charts/setup-app-openshift-ai-asistant" target="_blank" class="btn btn-secondary">
-                            <i class="fab fa-github"></i> Source
-                        </a>
-                        <a href="https://jeanlopezxyz.github.io/helm-charts/setup-app-openshift-ai-asistant-2.0.0.tgz" class="btn btn-success">
-                            <i class="fas fa-download"></i> Download
-                        </a>
                     </div>
                     <div class="install-command">
                         helm install ai-assistant jeanlopezxyz/setup-app-openshift-ai-asistant

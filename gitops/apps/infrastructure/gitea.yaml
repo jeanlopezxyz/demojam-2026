@@ -12,11 +12,7 @@ spec:
   source:
     repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: HEAD
-    path: gitops/kustomize/overlays/prod
-    kustomize:
-      images:
-      - name: gitea/gitea
-        newTag: "1.21.0"
+    path: gitops/kustomize/components/gitea
   destination:
     server: https://kubernetes.default.svc
     namespace: gitea
