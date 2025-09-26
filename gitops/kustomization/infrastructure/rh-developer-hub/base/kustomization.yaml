@@ -6,7 +6,7 @@ namespace: backstage
 helmCharts:
   - name: setup-rh-operator-developer-hub
     repo: https://jeanlopezxyz.github.io/helm-charts
-    version: "1.0.0"
+    version: "1.1.2"
     releaseName: rh-developer-hub
     namespace: backstage
     includeCRDs: true

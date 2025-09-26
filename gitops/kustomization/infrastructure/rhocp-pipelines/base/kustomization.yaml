@@ -6,7 +6,7 @@ namespace: openshift-pipelines
 helmCharts:
   - name: setup-rh-pipelines
     repo: https://jeanlopezxyz.github.io/helm-charts
-    version: "1.0.0"
+    version: "1.0.6"
     releaseName: rhocp-pipelines
     namespace: openshift-pipelines
     includeCRDs: true

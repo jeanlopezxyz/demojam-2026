@@ -6,7 +6,7 @@ namespace: demojam-ai-assistant
 helmCharts:
   - name: setup-app-openshift-ai-asistant
     repo: https://jeanlopezxyz.github.io/helm-charts
-    version: "1.0.0"
+    version: "2.0.2"
     releaseName: ai-assistant
     namespace: demojam-ai-assistant
     valuesFile: values.yaml
