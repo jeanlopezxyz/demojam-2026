@@ -11,7 +11,7 @@ spec:
   project: demojam
   sources:
   - repoURL: https://jeanlopezxyz.github.io/helm-charts
-    targetRevision: 1.1.0
+    targetRevision: 1.0.0
     chart: setup-platform-gitea
   - repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: main
