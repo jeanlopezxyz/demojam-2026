@@ -1,9 +1,13 @@
 # Valores base para Red Hat Build of Keycloak
+# Operator installed separately via operators-app
+helpers:
+  operator:
+    enabled: false  # Disabled - operator installed separately
+  statusChecker:
+    enabled: false  # Disabled for now
+
 operator:
-  enabled: true
-  subscription:
-    channel: stable
-    installPlanApproval: Automatic
+  defaultNamespace: "rhbk-operator"
 
 keycloak:
   instances: 1
