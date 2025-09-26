@@ -12,9 +12,4 @@ helmCharts:
     includeCRDs: true
     valuesFile: values.yaml
 
-configMapGenerator:
-  - name: keycloak-base-config
-    literals:
-      - KC_DB=postgres
-      - KC_HEALTH_ENABLED=true
-      - KC_METRICS_ENABLED=true
+# ConfigMaps incluidos en values.yaml del Helm chart

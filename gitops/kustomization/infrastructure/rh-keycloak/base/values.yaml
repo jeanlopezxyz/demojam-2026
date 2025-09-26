@@ -8,6 +8,7 @@ operator:
 keycloak:
   instances: 1
   
+  # Configuración de la base de datos
   database:
     vendor: postgres
     host: keycloak-postgresql
@@ -15,14 +16,17 @@ keycloak:
     database: keycloak
     username: keycloak
     
+  # Configuración HTTP/TLS
   http:
     tlsSecret: keycloak-tls
     
+  # Configuración de hostname
   hostname:
     hostname: keycloak.apps.your-cluster.com
     admin: keycloak-admin.apps.your-cluster.com
     strict: false
     
+  # Configuración de recursos
   resources:
     requests:
       memory: 512Mi
@@ -30,6 +34,20 @@ keycloak:
     limits:
       memory: 2Gi
       cpu: 2000m
+
+  # Configuración adicional de Keycloak
+  config:
+    # Configuración de logging
+    KC_LOG_LEVEL: INFO
+    KC_DB: postgres
+    KC_HEALTH_ENABLED: "true"
+    KC_METRICS_ENABLED: "true"
+    # Configuración de proxy para producción
+    KC_PROXY: edge
+    KC_HOSTNAME_STRICT_HTTPS: "true"
+    # Configuración de cache
+    KC_CACHE: ispn
+    KC_CACHE_STACK: kubernetes
 
 postgresql:
   enabled: true

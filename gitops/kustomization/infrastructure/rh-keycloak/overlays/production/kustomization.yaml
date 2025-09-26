@@ -6,14 +6,7 @@ namespace: rhbk-operator
 resources:
   - ../../base
 
-configMapGenerator:
-  - name: keycloak-prod-config
-    literals:
-      - KC_LOG_LEVEL=INFO
-      - KC_PROXY=edge
-      - KC_HOSTNAME_STRICT_HTTPS=true
-      - KC_CACHE=ispn
-      - KC_CACHE_STACK=kubernetes
+# Configuración de producción incluida en base/values.yaml
 
 patches:
   - target:
