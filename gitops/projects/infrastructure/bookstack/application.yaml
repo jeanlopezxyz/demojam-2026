@@ -18,11 +18,11 @@ spec:
     chart: setup-platform-bookstack
   - repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: main
-    path: gitops/projects/infrastructure/bookstack
+    path: gitops/values/infrastructure
     ref: values
   helm:
     valueFiles:
-    - $values/values-production.yaml
+    - $values/bookstack-production.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: bookstack-corporate

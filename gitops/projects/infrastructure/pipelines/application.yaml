@@ -18,11 +18,11 @@ spec:
     chart: setup-rh-pipelines
   - repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: main
-    path: gitops/projects/infrastructure/pipelines
+    path: gitops/values/infrastructure
     ref: values
   helm:
     valueFiles:
-    - $values/values-production.yaml
+    - $values/pipelines-production.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: openshift-pipelines
