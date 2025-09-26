@@ -1,0 +1,50 @@
+# Recrear todas las aplicaciones con la nueva estructura de proyectos
+---
+# Proyecto ArgoCD
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: demojam
+  namespace: openshift-gitops
+spec:
+  description: Red Hat One 2026 DemoJam - AI Assistant Project
+  sourceRepos:
+  - https://github.com/jeanlopezxyz/demojam-2026
+  - https://jeanlopezxyz.github.io/helm-charts
+  destinations:
+  - namespace: '*'
+    server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+  - group: ""
+    kind: Namespace
+  - group: argoproj.io
+    kind: Application
+  namespaceResourceWhitelist:
+  - group: "*"
+    kind: "*"
+---
+# App of Apps principal - apunta a projects/
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: demojam-app-of-apps
+  namespace: openshift-gitops
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: demojam
+  source:
+    repoURL: https://github.com/jeanlopezxyz/demojam-2026
+    targetRevision: main
+    path: gitops/projects
+    directory:
+      include: "*/application.yaml"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: openshift-gitops
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
