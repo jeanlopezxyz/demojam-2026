@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-gitea
+  namespace: openshift-gitops
+  labels:
+    app: gitea
+    project: demojam
+    component: git-repository
+spec:
+  project: demojam
+  sources:
+  - repoURL: https://jeanlopezxyz.github.io/helm-charts
+    targetRevision: 1.1.0
+    chart: setup-platform-gitea
+  - repoURL: https://github.com/jeanlopezxyz/demojam-2026
+    targetRevision: main
+    path: gitops/projects/gitea
+    ref: values
+  helm:
+    valueFiles:
+    - $values/values-production.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: gitea
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - Replace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 5m
+  ignoreDifferences:
+  - group: apps
+    kind: StatefulSet
+    jsonPointers:
+    - /spec/replicas
+  - group: ""
+    kind: Secret
+    jsonPointers:
+    - /data
