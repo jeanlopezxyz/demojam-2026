@@ -20,28 +20,12 @@ spec:
       valueFiles: []
       values: |
         # Valores para Red Hat Build of Keycloak
+        # Operator installed separately via rhbk-operator application
         helpers:
           operator:
-            enabled: true
-            operators:
-              rhbk-operator:
-                enabled: true
-                syncwave: 0
-                namespace:
-                  name: openshift-operators-redhat
-                subscription:
-                  channel: stable
-                  operatorName: rhbk-operator
-                  source: redhat-operators
+            enabled: false  # Disabled - operator installed separately
           statusChecker:
-            enabled: true
-            statusChecks:
-              checks:
-                rhbk-operator:
-                  enabled: true
-                  type: deployment
-                  namespace: openshift-operators-redhat
-                  name: rhbk-operator
+            enabled: false  # Disabled for now
 
         operator:
           defaultNamespace: "rhbk-operator"
@@ -94,7 +78,7 @@ spec:
               size: 10Gi
   destination:
     server: https://kubernetes.default.svc
-    namespace: openshift-operators-redhat
+    namespace: rhbk-operator
   syncPolicy:
     automated:
       prune: true

@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: operators-app
+  namespace: openshift-gitops
+  labels:
+    project: demojam-2026
+    tier: meta-app
+    component: operators
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"  # Install before infrastructure
+spec:
+  project: demojam
+  source:
+    repoURL: https://github.com/jeanlopezxyz/demojam-2026
+    targetRevision: main
+    path: gitops/apps/operators
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: openshift-gitops
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
