@@ -1,4 +1,4 @@
-# Valores base para Red Hat OpenShift Pipelines
+# Valores de producción para Red Hat OpenShift Pipelines
 operator:
   enabled: true
   subscription:
@@ -26,13 +26,13 @@ tekton:
     enabled: true
     
   pipelines:
-    runTimeout: 1h
+    runTimeout: 2h  # Producción - más tiempo
     taskRunTimeout: 1h
     finally:
       timeout: 30m
       
   workspaces:
-    defaultSize: 1Gi
+    defaultSize: 2Gi  # Más espacio en producción
     defaultStorageClass: ""
     
   resources:
@@ -46,8 +46,9 @@ tekton:
 pipelinesAsCode:
   enabled: true
   settings:
-    applicationName: "Pipelines as Code"
+    applicationName: "Pipelines as Code - DemoJam"
     autoConfigureNewGitHubRepo: false
+    secretAutoCreation: true
     
 eventListener:
   resources:
@@ -58,6 +59,16 @@ eventListener:
       memory: 256Mi
       cpu: 200m
 
+# Configuración de features específicas para producción
+features:
+  enableApiFields: stable
+  enableCustomTasks: true
+  enableTektonOciBundles: true
+  sendCloudEventsForRuns: true
+  requireGitSshSecretKnownHosts: false
+  disableAffinityAssistant: false
+  disableCredsInit: false
+
 # Pipeline templates
 templates:
   - name: build-and-deploy
@@ -66,3 +77,9 @@ templates:
     description: "Security scanning pipeline"
   - name: promote-to-prod
     description: "Promotion to production pipeline"
+
+# Configuración de monitoring
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true

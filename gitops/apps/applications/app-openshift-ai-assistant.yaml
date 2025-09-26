@@ -15,8 +15,13 @@ spec:
   source:
     repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: main
-    path: gitops/kustomization/applications/app-openshift-ai-assistant/overlays/production
-    kustomize: {}
+    path: gitops/values/applications
+    helm:
+      valueFiles:
+      - ai-assistant-production.yaml
+      chart: setup-app-openshift-ai-asistant
+      repo: https://jeanlopezxyz.github.io/helm-charts
+      version: 2.0.2
   destination:
     server: https://kubernetes.default.svc
     namespace: demojam-ai-assistant
