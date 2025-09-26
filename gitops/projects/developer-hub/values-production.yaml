@@ -1,0 +1,75 @@
+# Valores de producción para Red Hat Developer Hub
+global:
+  clusterRouterBase: apps.your-cluster.com
+  
+backstage:
+  enabled: true
+  
+  replicas: 2  # Producción
+  
+  image:
+    pullPolicy: IfNotPresent
+  
+  resources:
+    requests:
+      memory: 1Gi
+      cpu: 500m
+    limits:
+      memory: 2Gi
+      cpu: 2000m
+
+  postgresql:
+    enabled: true
+    auth:
+      database: backstage
+      username: backstage
+    primary:
+      persistence:
+        enabled: true
+        size: 8Gi
+
+  plugins:
+    - name: kubernetes
+      enabled: true
+    - name: techdocs
+      enabled: true
+    - name: catalog
+      enabled: true
+    - name: scaffolder
+      enabled: true
+
+  auth:
+    providers:
+      - type: oauth2
+        providerId: keycloak
+        
+  cors:
+    origin: "*"
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+
+  # Configuración específica de producción
+  config:
+    app:
+      title: "Red Hat Developer Hub - DemoJam 2026"
+      baseUrl: https://backstage.apps.your-cluster.com
+    backend:
+      baseUrl: https://backstage.apps.your-cluster.com
+      cors:
+        origin: https://backstage.apps.your-cluster.com
+    techdocs:
+      builder: local
+      generator:
+        runIn: local
+      publisher:
+        type: local
+
+route:
+  enabled: true
+  host: backstage.apps.your-cluster.com
+  tls:
+    enabled: true

@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rh-developer-hub
+  namespace: openshift-gitops
+  labels:
+    app: rhdh
+    project: demojam-2026
+    tier: infrastructure
+    component: red-hat-developer-hub
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  project: demojam
+  sources:
+  - repoURL: https://jeanlopezxyz.github.io/helm-charts
+    targetRevision: 1.1.2
+    chart: setup-rh-operator-developer-hub
+  - repoURL: https://github.com/jeanlopezxyz/demojam-2026
+    targetRevision: main
+    path: gitops/projects/developer-hub
+    ref: values
+  helm:
+    valueFiles:
+    - $values/values-production.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: backstage
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - RespectIgnoreDifferences=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas
