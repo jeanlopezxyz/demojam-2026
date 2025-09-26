@@ -1,4 +1,30 @@
 # Valores de producción para Red Hat Developer Hub
+helpers:
+  operator:
+    enabled: true
+    operators:
+      rhdh-operator:
+        enabled: true
+        syncwave: 0
+        namespace:
+          name: openshift-operators
+        subscription:
+          channel: stable
+          operatorName: rhdh-operator
+          source: redhat-operators
+  statusChecker:
+    enabled: true
+    statusChecks:
+      checks:
+        rhdh-operator:
+          enabled: true
+          type: deployment
+          namespace: openshift-operators
+          name: rhdh-operator
+
+operator:
+  defaultNamespace: "backstage"
+
 global:
   clusterRouterBase: apps.your-cluster.com
   
@@ -27,6 +53,7 @@ backstage:
       persistence:
         enabled: true
         size: 8Gi
+        storageClass: ocs-external-storagecluster-ceph-rbd
 
   plugins:
     - name: kubernetes
