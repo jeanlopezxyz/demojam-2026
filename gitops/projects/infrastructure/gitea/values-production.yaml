@@ -40,12 +40,14 @@ gitea:
 persistence:
   enabled: true
   size: 10Gi
+  storageClass: ocs-external-storagecluster-ceph-rbd
 
 postgresql:
   enabled: true
   persistence:
     enabled: true
     size: 8Gi
+    storageClass: ocs-external-storagecluster-ceph-rbd
   auth:
     database: gitea
     username: gitea
