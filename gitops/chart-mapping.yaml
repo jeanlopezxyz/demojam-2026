@@ -1,0 +1,7 @@
+# Mapeo de proyectos a charts para ApplicationSet
+keycloak: setup-rh-operator-keycloak
+bookstack: setup-platform-bookstack  
+gitea: setup-platform-gitea
+developer-hub: setup-rh-operator-developer-hub
+pipelines: setup-rh-pipelines
+ai-assistant: setup-app-openshift-ai-asistant

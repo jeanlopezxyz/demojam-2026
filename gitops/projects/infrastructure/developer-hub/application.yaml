@@ -4,10 +4,10 @@ metadata:
   name: rh-developer-hub
   namespace: openshift-gitops
   labels:
-    app: rhdh
+    app: developer-hub
     project: demojam-2026
     tier: infrastructure
-    component: red-hat-developer-hub
+    component: backstage
   annotations:
     argocd.argoproj.io/sync-wave: "5"
 spec:
@@ -32,15 +32,3 @@ spec:
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
-    - RespectIgnoreDifferences=true
-    retry:
-      limit: 5
-      backoff:
-        duration: 5s
-        factor: 2
-        maxDuration: 3m
-  ignoreDifferences:
-  - group: apps
-    kind: Deployment
-    jsonPointers:
-    - /spec/replicas

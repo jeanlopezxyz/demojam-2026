@@ -5,8 +5,11 @@ metadata:
   namespace: openshift-gitops
   labels:
     app: gitea
-    project: demojam
+    project: demojam-2026
+    tier: infrastructure
     component: git-repository
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   project: demojam
   sources:
@@ -29,19 +32,3 @@ spec:
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
-    - Replace=true
-    retry:
-      limit: 5
-      backoff:
-        duration: 10s
-        factor: 2
-        maxDuration: 5m
-  ignoreDifferences:
-  - group: apps
-    kind: StatefulSet
-    jsonPointers:
-    - /spec/replicas
-  - group: ""
-    kind: Secret
-    jsonPointers:
-    - /data

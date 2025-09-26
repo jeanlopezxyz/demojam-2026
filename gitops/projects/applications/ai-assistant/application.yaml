@@ -14,7 +14,7 @@ spec:
   project: demojam
   sources:
   - repoURL: https://jeanlopezxyz.github.io/helm-charts
-    targetRevision: 1.0.0
+    targetRevision: 2.0.2  # Versión diferente!
     chart: setup-app-openshift-ai-asistant
   - repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: main
@@ -32,9 +32,3 @@ spec:
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
-    retry:
-      limit: 5
-      backoff:
-        duration: 5s
-        factor: 2
-        maxDuration: 3m

@@ -4,7 +4,7 @@ metadata:
   name: rhocp-pipelines
   namespace: openshift-gitops
   labels:
-    app: rhocp-pipelines
+    app: pipelines
     project: demojam-2026
     tier: infrastructure
     component: ci-cd
