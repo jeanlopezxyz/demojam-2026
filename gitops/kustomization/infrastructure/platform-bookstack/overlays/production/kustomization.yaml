@@ -9,7 +9,6 @@ resources:
 # Valores específicos para producción
 configMapGenerator:
   - name: bookstack-prod-config
-    behavior: merge
     literals:
       - APP_ENV=production
       - APP_DEBUG=false

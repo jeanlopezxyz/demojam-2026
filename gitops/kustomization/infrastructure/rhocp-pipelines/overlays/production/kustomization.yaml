@@ -8,7 +8,6 @@ resources:
 
 configMapGenerator:
   - name: pipelines-prod-config
-    behavior: merge
     literals:
       - ENVIRONMENT=production
       - DEFAULT_TIMEOUT_MINUTES=120

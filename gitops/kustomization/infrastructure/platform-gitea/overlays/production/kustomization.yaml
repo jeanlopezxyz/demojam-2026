@@ -8,7 +8,6 @@ resources:
 
 configMapGenerator:
   - name: gitea-prod-config
-    behavior: merge
     literals:
       - GITEA_RUN_MODE=prod
       - GITEA_LOG_LEVEL=info

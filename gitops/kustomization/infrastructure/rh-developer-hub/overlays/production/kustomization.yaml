@@ -8,7 +8,6 @@ resources:
 
 configMapGenerator:
   - name: rhdh-prod-config
-    behavior: merge
     literals:
       - ENVIRONMENT=production
       - LOG_LEVEL=warn

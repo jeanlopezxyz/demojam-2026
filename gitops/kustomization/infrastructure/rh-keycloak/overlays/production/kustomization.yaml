@@ -8,7 +8,6 @@ resources:
 
 configMapGenerator:
   - name: keycloak-prod-config
-    behavior: merge
     literals:
       - KC_LOG_LEVEL=INFO
       - KC_PROXY=edge
