@@ -13,15 +13,67 @@ metadata:
 spec:
   project: demojam
   source:
-    repoURL: https://github.com/jeanlopezxyz/demojam-2026
-    targetRevision: main
-    path: gitops/values/infrastructure
+    repoURL: https://jeanlopezxyz.github.io/helm-charts
+    targetRevision: 1.0.4
+    chart: setup-rh-operator-keycloak
     helm:
-      valueFiles:
-      - keycloak-production.yaml
-      chart: setup-rh-operator-keycloak
-      repo: https://jeanlopezxyz.github.io/helm-charts
-      version: 1.0.4
+      valueFiles: []
+      values: |
+        helpers:
+          operator:
+            enabled: true
+            operators:
+              rhbk-operator:
+                enabled: true
+                syncwave: 0
+                namespace:
+                  name: openshift-operators-redhat
+                subscription:
+                  channel: stable
+                  operatorName: rhbk-operator
+                  source: redhat-operators
+          statusChecker:
+            enabled: true
+
+        operator:
+          defaultNamespace: "rhbk-operator"
+
+        keycloak:
+          instances: 2
+          database:
+            vendor: postgres
+            host: keycloak-postgresql
+            port: 5432
+            database: keycloak
+            username: keycloak
+          http:
+            tlsSecret: keycloak-tls
+          hostname:
+            hostname: keycloak.apps.your-cluster.com
+            admin: keycloak-admin.apps.your-cluster.com
+            strict: false
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 500m
+            limits:
+              memory: 2Gi
+              cpu: 2000m
+          config:
+            KC_LOG_LEVEL: INFO
+            KC_DB: postgres
+            KC_HEALTH_ENABLED: "true"
+            KC_METRICS_ENABLED: "true"
+
+        postgresql:
+          enabled: true
+          auth:
+            database: keycloak
+            username: keycloak
+          primary:
+            persistence:
+              enabled: true
+              size: 10Gi
   destination:
     server: https://kubernetes.default.svc
     namespace: openshift-operators-redhat

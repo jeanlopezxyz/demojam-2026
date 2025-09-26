@@ -13,15 +13,31 @@ metadata:
 spec:
   project: demojam
   source:
-    repoURL: https://github.com/jeanlopezxyz/demojam-2026
-    targetRevision: main
-    path: gitops/values/infrastructure
+    repoURL: https://jeanlopezxyz.github.io/helm-charts
+    targetRevision: 1.1.2
+    chart: setup-rh-operator-developer-hub
     helm:
-      valueFiles:
-      - developer-hub-production.yaml
-      chart: setup-rh-operator-developer-hub
-      repo: https://jeanlopezxyz.github.io/helm-charts
-      version: 1.1.2
+      valueFiles: []
+      values: |
+        backstage:
+          enabled: true
+          replicas: 2
+          resources:
+            requests:
+              memory: 1Gi
+              cpu: 500m
+            limits:
+              memory: 2Gi
+              cpu: 2000m
+          postgresql:
+            enabled: true
+            auth:
+              database: backstage
+              username: backstage
+            primary:
+              persistence:
+                enabled: true
+                size: 8Gi
   destination:
     server: https://kubernetes.default.svc
     namespace: backstage

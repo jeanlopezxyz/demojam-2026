@@ -10,15 +10,41 @@ metadata:
 spec:
   project: demojam
   source:
-    repoURL: https://github.com/jeanlopezxyz/demojam-2026
-    targetRevision: main
-    path: gitops/values/infrastructure
+    repoURL: https://jeanlopezxyz.github.io/helm-charts
+    targetRevision: 1.1.0
+    chart: setup-platform-gitea
     helm:
-      valueFiles:
-      - gitea-production.yaml
-      chart: setup-platform-gitea
-      repo: https://jeanlopezxyz.github.io/helm-charts
-      version: 1.1.0
+      valueFiles: []
+      values: |
+        replicaCount: 1
+        gitea:
+          config:
+            server:
+              DOMAIN: gitea.apps.your-cluster.com
+              ROOT_URL: https://gitea.apps.your-cluster.com
+            database:
+              DB_TYPE: postgres
+              HOST: gitea-postgresql:5432
+            service:
+              DISABLE_REGISTRATION: true
+        persistence:
+          enabled: true
+          size: 10Gi
+        postgresql:
+          enabled: true
+          persistence:
+            enabled: true
+            size: 8Gi
+          auth:
+            database: gitea
+            username: gitea
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+          requests:
+            cpu: 250m
+            memory: 256Mi
   destination:
     server: https://kubernetes.default.svc
     namespace: gitea

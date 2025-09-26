@@ -13,15 +13,27 @@ metadata:
 spec:
   project: demojam
   source:
-    repoURL: https://github.com/jeanlopezxyz/demojam-2026
-    targetRevision: main
-    path: gitops/values/infrastructure
+    repoURL: https://jeanlopezxyz.github.io/helm-charts
+    targetRevision: 1.0.6
+    chart: setup-rh-pipelines
     helm:
-      valueFiles:
-      - pipelines-production.yaml
-      chart: setup-rh-pipelines
-      repo: https://jeanlopezxyz.github.io/helm-charts
-      version: 1.0.6
+      valueFiles: []
+      values: |
+        operator:
+          enabled: true
+          subscription:
+            channel: latest
+            installPlanApproval: Automatic
+        tekton:
+          config:
+            enableApiFields: stable
+          dashboard:
+            enabled: true
+          triggers:
+            enabled: true
+          pipelines:
+            runTimeout: 2h
+            taskRunTimeout: 1h
   destination:
     server: https://kubernetes.default.svc
     namespace: openshift-pipelines

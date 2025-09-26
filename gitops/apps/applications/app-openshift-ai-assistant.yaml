@@ -13,15 +13,31 @@ metadata:
 spec:
   project: demojam
   source:
-    repoURL: https://github.com/jeanlopezxyz/demojam-2026
-    targetRevision: main
-    path: gitops/values/applications
+    repoURL: https://jeanlopezxyz.github.io/helm-charts
+    targetRevision: 2.0.2
+    chart: setup-app-openshift-ai-asistant
     helm:
-      valueFiles:
-      - ai-assistant-production.yaml
-      chart: setup-app-openshift-ai-asistant
-      repo: https://jeanlopezxyz.github.io/helm-charts
-      version: 2.0.2
+      valueFiles: []
+      values: |
+        replicaCount: 2
+        resources:
+          requests:
+            cpu: 500m
+            memory: 512Mi
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+        autoscaling:
+          enabled: true
+          minReplicas: 2
+          maxReplicas: 5
+        config:
+          environment: production
+          logLevel: info
+          enableMetrics: true
+        persistence:
+          enabled: true
+          size: 5Gi
   destination:
     server: https://kubernetes.default.svc
     namespace: demojam-ai-assistant
