@@ -17,8 +17,7 @@ spec:
     targetRevision: main
     path: gitops/kustomization/infrastructure/platform-bookstack/overlays/production
     # Usa Kustomize con overlay de producción
-    kustomize:
-      version: v5.0.0
+    kustomize: {}
   destination:
     server: https://kubernetes.default.svc
     namespace: bookstack-corporate

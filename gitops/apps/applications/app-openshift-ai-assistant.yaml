@@ -16,8 +16,7 @@ spec:
     repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: main
     path: gitops/kustomization/applications/app-openshift-ai-assistant/overlays/production
-    kustomize:
-      version: v5.0.0
+    kustomize: {}
   destination:
     server: https://kubernetes.default.svc
     namespace: demojam-ai-assistant
