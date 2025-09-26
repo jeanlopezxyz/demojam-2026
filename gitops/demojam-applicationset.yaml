@@ -10,11 +10,12 @@ spec:
   - git:
       repoURL: https://github.com/jeanlopezxyz/demojam-2026
       revision: main
-      files:
-      - path: "gitops/projects/*/*/application.yaml"
+      directories:
+      - path: gitops/projects/infrastructure/*
+      - path: gitops/projects/applications/*
   template:
     metadata:
-      name: '{{path.basenameNormalized}}'
+      name: '{{path.basename}}'
       namespace: openshift-gitops
       labels:
         project: demojam-2026
@@ -25,7 +26,7 @@ spec:
       source:
         repoURL: https://github.com/jeanlopezxyz/demojam-2026
         targetRevision: main
-        path: '{{path.path}}'
+        path: '{{path}}'
       destination:
         server: https://kubernetes.default.svc
         namespace: openshift-gitops
@@ -35,9 +36,3 @@ spec:
           selfHeal: true
         syncOptions:
         - CreateNamespace=true
-        retry:
-          limit: 3
-          backoff:
-            duration: 5s
-            factor: 2
-            maxDuration: 3m
