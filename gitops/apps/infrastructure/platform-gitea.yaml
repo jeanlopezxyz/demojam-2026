@@ -12,8 +12,13 @@ spec:
   source:
     repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: main
-    path: gitops/kustomization/infrastructure/platform-gitea/overlays/production
-    kustomize: {}
+    path: gitops/values/infrastructure
+    helm:
+      valueFiles:
+      - gitea-production.yaml
+      chart: setup-platform-gitea
+      repo: https://jeanlopezxyz.github.io/helm-charts
+      version: 1.1.0
   destination:
     server: https://kubernetes.default.svc
     namespace: gitea

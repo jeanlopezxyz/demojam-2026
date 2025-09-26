@@ -1,0 +1,55 @@
+# Valores de producción para Bookstack
+replicaCount: 2
+
+image:
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+persistence:
+  enabled: true
+  size: 5Gi
+  
+env:
+  - name: APP_URL
+    value: "https://bookstack-corporate.apps.your-cluster.com"
+  - name: APP_DEBUG
+    value: "false"
+  - name: APP_NAME
+    value: "Bookstack Corporate"
+  - name: APP_ENV
+    value: "production"
+  - name: SESSION_SECURE_COOKIE
+    value: "true"
+  - name: BACKUP_ENABLED
+    value: "true"
+  - name: BACKUP_SCHEDULE
+    value: "0 2 * * *"
+  - name: MAX_UPLOAD_SIZE
+    value: "50M"
+
+mariadb:
+  enabled: true
+  auth:
+    database: bookstack
+    username: bookstack
+  primary:
+    persistence:
+      enabled: true
+      size: 8Gi
+
+route:
+  enabled: true
+  host: bookstack-corporate.apps.your-cluster.com
+  tls:
+    enabled: true
