@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: demojam-appset
+  namespace: openshift-gitops
+  labels:
+    project: demojam-2026
+spec:
+  generators:
+  - git:
+      repoURL: https://github.com/jeanlopezxyz/demojam-2026
+      revision: main
+      files:
+      - path: "gitops/projects/*/*/application.yaml"
+  template:
+    metadata:
+      name: '{{path.basenameNormalized}}'
+      namespace: openshift-gitops
+      labels:
+        project: demojam-2026
+        managed-by: applicationset
+        component: '{{path.basename}}'
+    spec:
+      project: demojam
+      source:
+        repoURL: https://github.com/jeanlopezxyz/demojam-2026
+        targetRevision: main
+        path: '{{path.path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: openshift-gitops
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true
+        retry:
+          limit: 3
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m
