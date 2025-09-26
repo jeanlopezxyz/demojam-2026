@@ -12,38 +12,17 @@ metadata:
     argocd.argoproj.io/sync-wave: "3"
 spec:
   project: demojam
-  source:
-    repoURL: https://jeanlopezxyz.github.io/helm-charts
+  sources:
+  - repoURL: https://jeanlopezxyz.github.io/helm-charts
     targetRevision: 1.0.0
     chart: setup-platform-bookstack
-    helm:
-      valueFiles: []
-      values: |
-        replicaCount: 2
-        resources:
-          limits:
-            cpu: 1000m
-            memory: 1Gi
-          requests:
-            cpu: 500m
-            memory: 512Mi
-        persistence:
-          enabled: true
-          size: 5Gi
-        env:
-          - name: APP_URL
-            value: "https://bookstack-corporate.apps.your-cluster.com"
-          - name: APP_ENV
-            value: "production"
-        mariadb:
-          enabled: true
-          auth:
-            database: bookstack
-            username: bookstack
-          primary:
-            persistence:
-              enabled: true
-              size: 8Gi
+  - repoURL: https://github.com/jeanlopezxyz/demojam-2026
+    targetRevision: main
+    path: gitops/values/infrastructure
+    ref: values
+  helm:
+    valueFiles:
+    - $values/bookstack-production.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: bookstack-corporate
