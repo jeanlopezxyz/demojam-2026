@@ -15,7 +15,7 @@ spec:
     chart: setup-platform-gitea
   - repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: main
-    path: gitops/projects/gitea
+    path: gitops/projects/infrastructure/gitea
     ref: values
   helm:
     valueFiles:

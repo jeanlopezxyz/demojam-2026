@@ -18,7 +18,7 @@ spec:
     chart: setup-rh-operator-keycloak
   - repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: main
-    path: gitops/projects/keycloak
+    path: gitops/projects/infrastructure/keycloak
     ref: values
   helm:
     valueFiles:

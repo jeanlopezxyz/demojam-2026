@@ -18,7 +18,7 @@ spec:
     chart: setup-app-openshift-ai-asistant
   - repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: main
-    path: gitops/projects/ai-assistant
+    path: gitops/projects/applications/ai-assistant
     ref: values
   helm:
     valueFiles:
