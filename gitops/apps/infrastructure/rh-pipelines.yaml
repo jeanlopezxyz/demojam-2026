@@ -13,12 +13,11 @@ metadata:
 spec:
   project: demojam
   source:
-    repoURL: https://github.com/jeanlopezxyz/helm-charts
-    targetRevision: HEAD
-    path: charts/setup-rh-pipelines
-    helm:
-      valueFiles:
-      - values.yaml
+    repoURL: https://github.com/jeanlopezxyz/demojam-2026
+    targetRevision: main
+    path: gitops/kustomization/infrastructure/rhocp-pipelines/overlays/production
+    kustomize:
+      version: v5.0.0
   destination:
     server: https://kubernetes.default.svc
     namespace: openshift-pipelines

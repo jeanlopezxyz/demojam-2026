@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: rhbk-operator
+
+helmCharts:
+  - name: setup-rh-operator-keycloak
+    repo: https://jeanlopezxyz.github.io/helm-charts
+    version: "1.0.0"
+    releaseName: rh-keycloak
+    namespace: rhbk-operator
+    includeCRDs: true
+    valuesFile: values.yaml
+
+configMapGenerator:
+  - name: keycloak-base-config
+    literals:
+      - KC_DB=postgres
+      - KC_HEALTH_ENABLED=true
+      - KC_METRICS_ENABLED=true

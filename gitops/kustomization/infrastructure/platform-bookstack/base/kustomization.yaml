@@ -1,0 +1,42 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Namespace donde se desplegará
+namespace: bookstack-corporate
+
+# Generador de Helm Chart
+helmCharts:
+  - name: setup-platform-bookstack
+    repo: https://jeanlopezxyz.github.io/helm-charts
+    version: "1.0.0"
+    releaseName: platform-bookstack
+    namespace: bookstack-corporate
+    valuesFile: values-override.yaml
+
+# Recursos adicionales personalizados
+resources:
+  # Aquí puedes agregar recursos adicionales como ConfigMaps, Secrets, etc.
+  # - configmap.yaml
+  # - secret.yaml
+
+# Patches para personalizar recursos generados por Helm
+patches:
+  # Ejemplo: Agregar labels adicionales
+  - target:
+      kind: Deployment
+      name: platform-bookstack
+    patch: |-
+      - op: add
+        path: /metadata/labels/project
+        value: demojam-2026
+      - op: add
+        path: /metadata/labels/environment
+        value: production
+
+# ConfigMapGenerator para configuración adicional
+configMapGenerator:
+  - name: bookstack-custom-config
+    literals:
+      - BACKUP_ENABLED=true
+      - BACKUP_SCHEDULE="0 2 * * *"
+      - MAX_UPLOAD_SIZE=50M

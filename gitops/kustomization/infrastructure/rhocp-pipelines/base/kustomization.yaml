@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: openshift-pipelines
+
+helmCharts:
+  - name: setup-rh-pipelines
+    repo: https://jeanlopezxyz.github.io/helm-charts
+    version: "1.0.0"
+    releaseName: rhocp-pipelines
+    namespace: openshift-pipelines
+    includeCRDs: true
+    valuesFile: values.yaml
+
+configMapGenerator:
+  - name: pipelines-base-config
+    literals:
+      - ENABLE_TEKTON_DASHBOARD=true
+      - ENABLE_PIPELINES_AS_CODE=true
+      - DEFAULT_TIMEOUT_MINUTES=60

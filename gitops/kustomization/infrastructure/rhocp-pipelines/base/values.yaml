@@ -1,0 +1,68 @@
+# Valores base para Red Hat OpenShift Pipelines
+operator:
+  enabled: true
+  subscription:
+    channel: latest
+    installPlanApproval: Automatic
+
+tekton:
+  config:
+    enableApiFields: stable
+    autoInstallBundles: false
+    
+  dashboard:
+    enabled: true
+    readonly: false
+    
+  triggers:
+    enabled: true
+    
+  chains:
+    enabled: true
+    transparency:
+      enabled: false
+      
+  results:
+    enabled: true
+    
+  pipelines:
+    runTimeout: 1h
+    taskRunTimeout: 1h
+    finally:
+      timeout: 30m
+      
+  workspaces:
+    defaultSize: 1Gi
+    defaultStorageClass: ""
+    
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 100m
+    limits:
+      memory: 512Mi
+      cpu: 500m
+
+pipelinesAsCode:
+  enabled: true
+  settings:
+    applicationName: "Pipelines as Code"
+    autoConfigureNewGitHubRepo: false
+    
+eventListener:
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 50m
+    limits:
+      memory: 256Mi
+      cpu: 200m
+
+# Pipeline templates
+templates:
+  - name: build-and-deploy
+    description: "Standard build and deploy pipeline"
+  - name: security-scan
+    description: "Security scanning pipeline"
+  - name: promote-to-prod
+    description: "Promotion to production pipeline"

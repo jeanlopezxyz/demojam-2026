@@ -13,12 +13,11 @@ metadata:
 spec:
   project: demojam
   source:
-    repoURL: https://github.com/jeanlopezxyz/helm-charts
-    targetRevision: HEAD
-    path: charts/setup-app-openshift-ai-asistant
-    helm:
-      valueFiles:
-      - values.yaml
+    repoURL: https://github.com/jeanlopezxyz/demojam-2026
+    targetRevision: main
+    path: gitops/kustomization/applications/app-openshift-ai-assistant/overlays/production
+    kustomize:
+      version: v5.0.0
   destination:
     server: https://kubernetes.default.svc
     namespace: demojam-ai-assistant

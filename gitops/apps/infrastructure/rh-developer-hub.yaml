@@ -13,12 +13,11 @@ metadata:
 spec:
   project: demojam
   source:
-    repoURL: https://github.com/jeanlopezxyz/helm-charts
-    targetRevision: HEAD
-    path: charts/setup-rh-operator-developer-hub
-    helm:
-      valueFiles:
-      - values.yaml
+    repoURL: https://github.com/jeanlopezxyz/demojam-2026
+    targetRevision: main
+    path: gitops/kustomization/infrastructure/rh-developer-hub/overlays/production
+    kustomize:
+      version: v5.0.0
   destination:
     server: https://kubernetes.default.svc
     namespace: backstage

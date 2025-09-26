@@ -13,12 +13,12 @@ metadata:
 spec:
   project: demojam
   source:
-    repoURL: https://github.com/jeanlopezxyz/helm-charts
-    targetRevision: HEAD
-    path: charts/setup-platform-bookstack
-    helm:
-      valueFiles:
-      - values.yaml
+    repoURL: https://github.com/jeanlopezxyz/demojam-2026
+    targetRevision: main
+    path: gitops/kustomization/infrastructure/platform-bookstack/overlays/production
+    # Usa Kustomize con overlay de producción
+    kustomize:
+      version: v5.0.0
   destination:
     server: https://kubernetes.default.svc
     namespace: bookstack-corporate

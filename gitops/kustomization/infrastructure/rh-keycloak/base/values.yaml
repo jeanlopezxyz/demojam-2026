@@ -1,0 +1,63 @@
+# Valores base para Red Hat Build of Keycloak
+operator:
+  enabled: true
+  subscription:
+    channel: stable
+    installPlanApproval: Automatic
+
+keycloak:
+  instances: 1
+  
+  database:
+    vendor: postgres
+    host: keycloak-postgresql
+    port: 5432
+    database: keycloak
+    username: keycloak
+    
+  http:
+    tlsSecret: keycloak-tls
+    
+  hostname:
+    hostname: keycloak.apps.your-cluster.com
+    admin: keycloak-admin.apps.your-cluster.com
+    strict: false
+    
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 500m
+    limits:
+      memory: 2Gi
+      cpu: 2000m
+
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: postgres
+    database: keycloak
+    username: keycloak
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi
+      
+realms:
+  - name: demojam
+    displayName: "DemoJam 2026"
+    enabled: true
+    loginTheme: keycloak
+    
+clients:
+  - clientId: backstage
+    name: "Backstage"
+    protocol: openid-connect
+    publicClient: false
+    standardFlowEnabled: true
+    directAccessGrantsEnabled: true
+    rootUrl: https://backstage.apps.your-cluster.com
+    baseUrl: /
+    redirectUris:
+      - https://backstage.apps.your-cluster.com/*
+    webOrigins:
+      - https://backstage.apps.your-cluster.com

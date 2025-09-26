@@ -1,0 +1,33 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: openshift-pipelines
+
+resources:
+  - ../../base
+
+configMapGenerator:
+  - name: pipelines-prod-config
+    behavior: merge
+    literals:
+      - ENVIRONMENT=production
+      - DEFAULT_TIMEOUT_MINUTES=120
+      - MAX_PARALLEL_RUNS=5
+      - ENABLE_METRICS=true
+      - LOG_LEVEL=info
+
+patches:
+  - target:
+      kind: ConfigMap
+      name: pipelines-config
+    patch: |-
+      - op: add
+        path: /data/enable-custom-tasks
+        value: "true"
+      - op: add
+        path: /data/require-git-ssh-secret-known-hosts
+        value: "false"
+
+# Recursos adicionales para producción  
+patchesStrategicMerge:
+  - pipeline-resources-patch.yaml
