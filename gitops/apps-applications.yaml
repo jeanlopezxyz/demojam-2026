@@ -14,9 +14,7 @@ spec:
   source:
     repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: main
-    path: gitops/projects/applications
-    directory:
-      include: "*/application.yaml"
+    path: gitops/projects/applications/ai-assistant
   destination:
     server: https://kubernetes.default.svc
     namespace: openshift-gitops

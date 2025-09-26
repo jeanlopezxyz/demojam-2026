@@ -14,9 +14,7 @@ spec:
   source:
     repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: main
-    path: gitops/projects/infrastructure
-    directory:
-      include: "*/application.yaml"
+    path: gitops/projects/infrastructure/keycloak
   destination:
     server: https://kubernetes.default.svc
     namespace: openshift-gitops
