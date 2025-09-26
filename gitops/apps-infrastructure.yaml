@@ -1,23 +1,22 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: demojam-app-of-apps
+  name: demojam-infrastructure
   namespace: openshift-gitops
   labels:
-    app: demojam-root
+    app: infrastructure
     project: demojam-2026
+    tier: infrastructure
   annotations:
-    argocd.argoproj.io/sync-wave: "0"
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   project: demojam
   source:
     repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: main
-    path: gitops
+    path: gitops/projects/infrastructure
     directory:
-      include: "apps-*.yaml"
+      include: "*/application.yaml"
   destination:
     server: https://kubernetes.default.svc
     namespace: openshift-gitops
@@ -27,9 +26,3 @@ spec:
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
-    - ServerSideApply=true
-  ignoreDifferences:
-  - group: argoproj.io
-    kind: Application
-    jsonPointers:
-    - /status
