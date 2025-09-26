@@ -24,7 +24,7 @@ spec:
       version: 1.0.4
   destination:
     server: https://kubernetes.default.svc
-    namespace: rhbk-operator
+    namespace: openshift-operators-redhat
   syncPolicy:
     automated:
       prune: true
