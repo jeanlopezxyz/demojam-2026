@@ -17,7 +17,6 @@ configMapGenerator:
 patches:
   - target:
       kind: Deployment
-      name: rh-developer-hub
     patch: |-
       - op: replace
         path: /spec/replicas
@@ -25,6 +24,15 @@ patches:
       - op: add
         path: /metadata/labels/environment
         value: production
-
-patchesStrategicMerge:
-  - resources-patch.yaml
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 1Gi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: 500m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 2Gi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 2000m

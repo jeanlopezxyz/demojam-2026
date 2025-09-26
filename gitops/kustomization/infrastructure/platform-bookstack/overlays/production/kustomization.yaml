@@ -19,7 +19,6 @@ configMapGenerator:
 patches:
   - target:
       kind: Deployment
-      name: platform-bookstack
     patch: |-
       - op: add
         path: /metadata/labels/environment
@@ -27,7 +26,15 @@ patches:
       - op: replace
         path: /spec/replicas
         value: 2
-
-# Recursos adicionales para producción
-patchesStrategicMerge:
-  - resources-patch.yaml
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 1000m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 1Gi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: 500m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 512Mi

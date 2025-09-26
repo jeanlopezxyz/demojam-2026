@@ -16,7 +16,6 @@ configMapGenerator:
 patches:
   - target:
       kind: StatefulSet
-      name: gitea
     patch: |-
       - op: add
         path: /metadata/labels/environment

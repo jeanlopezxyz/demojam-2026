@@ -27,6 +27,4 @@ patches:
         path: /data/require-git-ssh-secret-known-hosts
         value: "false"
 
-# Recursos adicionales para producción  
-patchesStrategicMerge:
-  - pipeline-resources-patch.yaml
+# Recursos adicionales para producción

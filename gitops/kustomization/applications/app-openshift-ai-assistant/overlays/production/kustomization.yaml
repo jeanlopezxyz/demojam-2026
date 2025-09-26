@@ -16,7 +16,6 @@ configMapGenerator:
 patches:
   - target:
       kind: Deployment
-      name: ai-assistant
     patch: |-
       - op: replace
         path: /spec/replicas

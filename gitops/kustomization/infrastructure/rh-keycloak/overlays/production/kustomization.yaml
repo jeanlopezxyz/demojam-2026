@@ -18,7 +18,6 @@ configMapGenerator:
 patches:
   - target:
       kind: Keycloak
-      name: keycloak
     patch: |-
       - op: replace
         path: /spec/instances
