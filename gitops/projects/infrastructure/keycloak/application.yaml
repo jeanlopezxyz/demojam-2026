@@ -12,16 +12,17 @@ metadata:
     argocd.argoproj.io/sync-wave: "1"
 spec:
   project: demojam
-  source:
-    repoURL: https://github.com/jeanlopezxyz/demojam-2026
+  sources:
+  - repoURL: https://jeanlopezxyz.github.io/helm-charts
+    targetRevision: 1.0.0
+    chart: setup-rh-operator-keycloak
+  - repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: main
     path: gitops/values/infrastructure/keycloak
-    helm:
-      valueFiles:
-      - values-production.yaml
-      chart: setup-rh-operator-keycloak
-      repo: https://jeanlopezxyz.github.io/helm-charts
-      version: 1.0.0
+    ref: values
+  helm:
+    valueFiles:
+    - $values/values-production.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: rhbk-operator
