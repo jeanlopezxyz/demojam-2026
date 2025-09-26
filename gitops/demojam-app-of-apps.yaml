@@ -14,8 +14,10 @@ spec:
   project: demojam
   source:
     repoURL: https://github.com/jeanlopezxyz/demojam-2026
-    targetRevision: HEAD
-    path: gitops/apps
+    targetRevision: main
+    path: gitops/projects
+    directory:
+      include: "*/application.yaml"
   destination:
     server: https://kubernetes.default.svc
     namespace: openshift-gitops
