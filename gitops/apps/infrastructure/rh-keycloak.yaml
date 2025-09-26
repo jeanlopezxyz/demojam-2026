@@ -13,10 +13,65 @@ metadata:
 spec:
   project: demojam
   source:
-    repoURL: https://github.com/jeanlopezxyz/demojam-2026
-    targetRevision: main
-    path: gitops/kustomization/infrastructure/rh-keycloak/overlays/production
-    kustomize: {}
+    repoURL: https://jeanlopezxyz.github.io/helm-charts
+    targetRevision: 1.0.4
+    chart: setup-rh-operator-keycloak
+    helm:
+      valueFiles: []
+      values: |
+        # Valores para Red Hat Build of Keycloak
+        operator:
+          enabled: true
+          subscription:
+            channel: stable
+            installPlanApproval: Automatic
+
+        keycloak:
+          instances: 2  # Producción
+          
+          database:
+            vendor: postgres
+            host: keycloak-postgresql
+            port: 5432
+            database: keycloak
+            username: keycloak
+            
+          http:
+            tlsSecret: keycloak-tls
+            
+          hostname:
+            hostname: keycloak.apps.your-cluster.com
+            admin: keycloak-admin.apps.your-cluster.com
+            strict: false
+            
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 500m
+            limits:
+              memory: 2Gi
+              cpu: 2000m
+
+          config:
+            KC_LOG_LEVEL: INFO
+            KC_DB: postgres
+            KC_HEALTH_ENABLED: "true"
+            KC_METRICS_ENABLED: "true"
+            KC_PROXY: edge
+            KC_HOSTNAME_STRICT_HTTPS: "true"
+            KC_CACHE: ispn
+            KC_CACHE_STACK: kubernetes
+
+        postgresql:
+          enabled: true
+          auth:
+            postgresPassword: postgres
+            database: keycloak
+            username: keycloak
+          primary:
+            persistence:
+              enabled: true
+              size: 10Gi
   destination:
     server: https://kubernetes.default.svc
     namespace: rhbk-operator

@@ -13,11 +13,61 @@ metadata:
 spec:
   project: demojam
   source:
-    repoURL: https://github.com/jeanlopezxyz/demojam-2026
-    targetRevision: main
-    path: gitops/kustomization/infrastructure/platform-bookstack/overlays/production
-    # Usa Kustomize con overlay de producción
-    kustomize: {}
+    repoURL: https://jeanlopezxyz.github.io/helm-charts
+    targetRevision: 1.0.0
+    chart: setup-platform-bookstack
+    helm:
+      valueFiles: []
+      values: |
+        # Valores de producción para Bookstack
+        replicaCount: 2
+
+        image:
+          pullPolicy: IfNotPresent
+
+        service:
+          type: ClusterIP
+          port: 80
+
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+
+        persistence:
+          enabled: true
+          size: 5Gi
+          
+        env:
+          - name: APP_URL
+            value: "https://bookstack-corporate.apps.your-cluster.com"
+          - name: APP_DEBUG
+            value: "false"
+          - name: APP_NAME
+            value: "Bookstack Corporate"
+          - name: APP_ENV
+            value: "production"
+          - name: SESSION_SECURE_COOKIE
+            value: "true"
+
+        mariadb:
+          enabled: true
+          auth:
+            database: bookstack
+            username: bookstack
+          primary:
+            persistence:
+              enabled: true
+              size: 8Gi
+
+        route:
+          enabled: true
+          host: bookstack-corporate.apps.your-cluster.com
+          tls:
+            enabled: true
   destination:
     server: https://kubernetes.default.svc
     namespace: bookstack-corporate
