@@ -18,11 +18,11 @@ spec:
     chart: setup-rh-operator-developer-hub
   - repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: main
-    path: gitops/values/infrastructure
+    path: gitops/values/infrastructure/developer-hub
     ref: values
   helm:
     valueFiles:
-    - $values/developer-hub-production.yaml
+    - $values/values-production.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: backstage

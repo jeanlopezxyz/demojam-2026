@@ -15,11 +15,11 @@ spec:
     chart: setup-platform-gitea
   - repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: main
-    path: gitops/values/infrastructure
+    path: gitops/values/infrastructure/gitea
     ref: values
   helm:
     valueFiles:
-    - $values/gitea-production.yaml
+    - $values/values-production.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: gitea

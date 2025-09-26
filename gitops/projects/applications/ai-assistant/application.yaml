@@ -18,11 +18,11 @@ spec:
     chart: setup-app-openshift-ai-asistant
   - repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: main
-    path: gitops/values/applications
+    path: gitops/values/applications/ai-assistant
     ref: values
   helm:
     valueFiles:
-    - $values/ai-assistant-production.yaml
+    - $values/values-production.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: demojam-ai-assistant

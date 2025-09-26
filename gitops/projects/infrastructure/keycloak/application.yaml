@@ -18,11 +18,11 @@ spec:
     chart: setup-rh-operator-keycloak
   - repoURL: https://github.com/jeanlopezxyz/demojam-2026
     targetRevision: main
-    path: gitops/values/infrastructure
+    path: gitops/values/infrastructure/keycloak
     ref: values
   helm:
     valueFiles:
-    - $values/keycloak-production.yaml
+    - $values/values-production.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: rhbk-operator
