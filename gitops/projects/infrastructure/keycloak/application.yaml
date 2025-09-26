@@ -13,16 +13,16 @@ metadata:
 spec:
   project: demojam
   sources:
-  - repoURL: https://jeanlopezxyz.github.io/helm-charts
-    targetRevision: 1.0.0
-    chart: setup-rh-operator-keycloak
-  - repoURL: https://github.com/jeanlopezxyz/demojam-2026
-    targetRevision: main
-    path: gitops/values/infrastructure/keycloak
-    ref: values
+    - repoURL: https://jeanlopezxyz.github.io/helm-charts
+      targetRevision: 1.0.0
+      chart: setup-rh-operator-keycloak
+    - repoURL: https://github.com/jeanlopezxyz/demojam-2026
+      targetRevision: main
+      path: gitops/values/infrastructure/keycloak
+      ref: values
   helm:
     valueFiles:
-    - $values/values-production.yaml
+      - $values/values-production.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: rhbk-operator
@@ -31,4 +31,4 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-    - CreateNamespace=true
+      - CreateNamespace=true
