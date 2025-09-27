@@ -1,7 +1,7 @@
 # Valores de producción para Red Hat Build of Keycloak
 helpers:
   operator:
-    enabled: false
+    enabled: true
     operators:
       rhbk-operator:
         enabled: true
