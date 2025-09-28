@@ -1,72 +1,25 @@
 # Valores de producción para Gitea
+namespace:
+  create: false  # ArgoCD creates namespace
+
 replicaCount: 1
 
 image:
+  repository: gitea/gitea
+  tag: "1.21.0"
   pullPolicy: IfNotPresent
 
 service:
-  http:
-    type: ClusterIP
-    port: 3000
-  ssh:
-    type: ClusterIP
-    port: 22
+  type: ClusterIP
+  port: 3000
 
-gitea:
-  config:
-    server:
-      DOMAIN: gitea.apps.your-cluster.com
-      ROOT_URL: https://gitea.apps.your-cluster.com
-      SSH_DOMAIN: gitea.apps.your-cluster.com
-    database:
-      DB_TYPE: postgres
-      HOST: gitea-postgresql:5432
-    cache:
-      ENABLED: true
-      ADAPTER: memory
-    webhook:
-      ALLOWED_HOST_LIST: "*"
-    security:
-      DISABLE_GIT_HOOKS: false
-      DISABLE_WEBHOOKS: false
-    repository:
-      DEFAULT_BRANCH: main
-      DISABLE_HTTP_GIT: false
-    service:
-      DISABLE_REGISTRATION: true
-      ENABLE_PUSH_CREATE_USER: false
-      ENABLE_PUSH_CREATE_ORG: false
-
-persistence:
+# OpenShift Route
+route:
   enabled: true
-  size: 10Gi
-  storageClass: ocs-external-storagecluster-ceph-rbd
-
-postgresql:
-  enabled: true
-  persistence:
-    enabled: true
-    size: 8Gi
-    storageClass: ocs-external-storagecluster-ceph-rbd
-  auth:
-    database: gitea
-    username: gitea
-  # Configuración de seguridad para OpenShift
-  primary:
-    podSecurityContext:
-      enabled: true
-      fsGroup: null  # Let OpenShift assign
-      runAsUser: null  # Let OpenShift assign
-    containerSecurityContext:
-      enabled: true
-      runAsUser: "auto"  # Let OpenShift assign
-      runAsNonRoot: true
-      allowPrivilegeEscalation: false
-      readOnlyRootFilesystem: false
-      capabilities:
-        drop: ["ALL"]
-      seccompProfile:
-        type: RuntimeDefault
+  host: gitea.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
 
 resources:
   limits:
@@ -76,15 +29,45 @@ resources:
     cpu: 250m
     memory: 256Mi
 
-# Configuración de seguridad para OpenShift
+# Gitea configuration
+gitea:
+  config:
+    server:
+      DOMAIN: gitea.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com
+      ROOT_URL: https://gitea.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com
+      SSH_DOMAIN: gitea.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com
+    service:
+      DISABLE_REGISTRATION: true
+      ENABLE_PUSH_CREATE_USER: false
+      ENABLE_PUSH_CREATE_ORG: false
+    repository:
+      DEFAULT_BRANCH: main
+      DISABLE_HTTP_GIT: false
+
+persistence:
+  enabled: true
+  size: 10Gi
+  storageClass: gp3-csi
+
+postgresql:
+  enabled: true
+  persistence:
+    enabled: true
+    size: 8Gi
+    storageClass: gp3-csi
+  auth:
+    database: gitea
+    username: gitea
+
+# Security Context for OpenShift
 podSecurityContext:
   enabled: true
-  fsGroup: null  # Let OpenShift assign
-  runAsUser: null  # Let OpenShift assign
+  fsGroup: null
+  runAsUser: null
 
 containerSecurityContext:
   enabled: true
-  runAsUser: "auto"  # Let OpenShift assign
+  runAsUser: "auto"
   runAsNonRoot: true
   allowPrivilegeEscalation: false
   readOnlyRootFilesystem: false
@@ -92,9 +75,3 @@ containerSecurityContext:
     drop: ["ALL"]
   seccompProfile:
     type: RuntimeDefault
-
-route:
-  enabled: true
-  host: gitea.apps.your-cluster.com
-  tls:
-    enabled: true

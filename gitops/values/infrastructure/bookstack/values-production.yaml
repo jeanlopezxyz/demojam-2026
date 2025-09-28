@@ -1,4 +1,7 @@
 # Valores de producción para Bookstack
+namespace:
+  create: false  # Helm creates namespace with --create-namespace
+
 replicaCount: 2
 
 image:
@@ -19,11 +22,11 @@ resources:
 persistence:
   enabled: true
   size: 5Gi
-  storageClass: ocs-external-storagecluster-ceph-rbd
+  storageClass: gp3-csi
   
 env:
   - name: APP_URL
-    value: "https://bookstack-corporate.apps.your-cluster.com"
+    value: "https://bookstack-corporate.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com"
   - name: APP_DEBUG
     value: "false"
   - name: APP_NAME
@@ -32,6 +35,13 @@ env:
     value: "production"
   - name: SESSION_SECURE_COOKIE
     value: "true"
+
+# Route configuration for OpenShift
+route:
+  enabled: true
+  host: bookstack-corporate.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com
+  tls:
+    enabled: true
 
 mariadb:
   enabled: true
@@ -42,10 +52,4 @@ mariadb:
     persistence:
       enabled: true
       size: 8Gi
-      storageClass: ocs-external-storagecluster-ceph-rbd
-
-route:
-  enabled: true
-  host: bookstack-corporate.apps.your-cluster.com
-  tls:
-    enabled: true
+      storageClass: gp3-csi

@@ -7,22 +7,26 @@ helpers:
         enabled: true
         syncwave: 0
         namespace:
-          name: openshift-operators-redhat
+          name: rhbk-operator
         subscription:
-          channel: stable
+          channel: stable-v26.2
           operatorName: rhbk-operator
           source: redhat-operators
   statusChecker:
     enabled: true
-
-operator:
-  defaultNamespace: "rhbk-operator"
+    statusChecks:
+      checks:
+        rhbk-operator:
+          enabled: true
+          type: deployment
+          namespace: rhbk-operator
+          name: rhbk-operator
 
 keycloak:
   # Namespace configuration
   namespace:
     create: true
-    name: keycloak
+    name: rhbk-operator
 
   # Keycloak instance
   instance:
@@ -33,12 +37,12 @@ keycloak:
   # Hostname configuration
   hostname:
     enabled: true
-    value: keycloak.apps.your-cluster.com
+    value: keycloak.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com
     strict: false
 
   # HTTP configuration  
   http:
-    tlsSecret: keycloak-tls
+    httpEnabled: true
 
   # Update strategy
   update:
@@ -50,50 +54,59 @@ keycloak:
 
   # Database configuration
   database:
-    external: true
+    external: false  # Use internal PostgreSQL
     vendor: postgres
-    host: keycloak-postgresql
-    port: 5432
-    name: keycloak
-    credentialsSecret: keycloak-db-secret
 
-  # Resources
+  # Resource configuration
   resources:
     requests:
-      memory: 512Mi
       cpu: 500m
+      memory: 1Gi
     limits:
-      memory: 2Gi
       cpu: 2000m
+      memory: 2Gi
 
-postgresql:
-  enabled: true
-  auth:
-    postgresPassword: postgres
-    database: keycloak
-    username: keycloak
-  primary:
-    persistence:
-      enabled: true
-      size: 10Gi
-      storageClass: ocs-external-storagecluster-ceph-rbd
-      
-realms:
-  - name: demojam
-    displayName: "DemoJam 2026"
+  # Admin credentials
+  admin:
+    password: "admin123"
+
+  # Additional options
+  additionalOptions:
+    - name: log-level
+      value: INFO
+    - name: metrics-enabled
+      value: "true"
+    - name: health-enabled
+      value: "true"
+
+  # Realm configuration
+  realm:
     enabled: true
-    loginTheme: keycloak
-    
-clients:
-  - clientId: backstage
-    name: "Backstage"
-    protocol: openid-connect
-    publicClient: false
-    standardFlowEnabled: true
-    directAccessGrantsEnabled: true
-    rootUrl: https://backstage.apps.your-cluster.com
-    baseUrl: /
-    redirectUris:
-      - https://backstage.apps.your-cluster.com/*
-    webOrigins:
-      - https://backstage.apps.your-cluster.com
+    name: default-realm-import
+    realmName: demojam
+    displayName: "DemoJam 2026"
+
+    users:
+      - username: admin
+        firstName: Admin
+        lastName: User
+        email: admin@demojam.com
+        credentials:
+          - type: password
+            value: admin123
+            temporary: false
+        realmRoles:
+          - admin
+
+    clients:
+      - clientId: backstage
+        name: "Backstage"
+        protocol: openid-connect
+        publicClient: false
+        standardFlowEnabled: true
+        directAccessGrantsEnabled: true
+        rootUrl: https://backstage.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com
+        redirectUris:
+          - "https://backstage.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com/*"
+        webOrigins:
+          - "https://backstage.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com"
