@@ -25,7 +25,7 @@ spec:
       - $values/values-production.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: keycloak
+    namespace: keycloack
   syncPolicy:
     automated:
       prune: true

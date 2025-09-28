@@ -19,23 +19,45 @@ operator:
   defaultNamespace: "rhbk-operator"
 
 keycloak:
-  instances: 2  # Producción
-  
+  # Namespace configuration
+  namespace:
+    create: true
+    name: keycloak
+
+  # Keycloak instance
+  instance:
+    enabled: true
+    name: keycloak
+    replicas: 2  # Producción
+
+  # Hostname configuration
+  hostname:
+    enabled: true
+    value: keycloak.apps.your-cluster.com
+    strict: false
+
+  # HTTP configuration  
+  http:
+    tlsSecret: keycloak-tls
+
+  # Update strategy
+  update:
+    strategy: RecreateOnImageChange
+
+  # Network Policy
+  networkPolicy:
+    enabled: true
+
+  # Database configuration
   database:
+    external: true
     vendor: postgres
     host: keycloak-postgresql
     port: 5432
-    database: keycloak
-    username: keycloak
-    
-  http:
-    tlsSecret: keycloak-tls
-    
-  hostname:
-    hostname: keycloak.apps.your-cluster.com
-    admin: keycloak-admin.apps.your-cluster.com
-    strict: false
-    
+    name: keycloak
+    credentialsSecret: keycloak-db-secret
+
+  # Resources
   resources:
     requests:
       memory: 512Mi
@@ -43,16 +65,6 @@ keycloak:
     limits:
       memory: 2Gi
       cpu: 2000m
-
-  config:
-    KC_LOG_LEVEL: INFO
-    KC_DB: postgres
-    KC_HEALTH_ENABLED: "true"
-    KC_METRICS_ENABLED: "true"
-    KC_PROXY: edge
-    KC_HOSTNAME_STRICT_HTTPS: "true"
-    KC_CACHE: ispn
-    KC_CACHE_STACK: kubernetes
 
 postgresql:
   enabled: true
