@@ -1,0 +1,14 @@
+{
+  "name": "architecture-chatbot",
+  "version": "1.0.0",
+  "main": "./dist/index.esm.js",
+  "backstage": {
+    "role": "frontend-plugin"
+  },
+  "scalprum": {
+    "name": "architecture-chatbot",
+    "exposedModules": {
+      "ArchitectureChatbotPlugin": "./src/index.ts"
+    }
+  }
+}

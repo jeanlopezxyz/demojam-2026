@@ -348,24 +348,66 @@ const Home = () => {
                     p: 3,
                     zIndex: 3
                   }}>
-                    {/* Featured Product */}
+                    {/* Abstract Tech Icon */}
                     <Box sx={{
                       width: 120,
                       height: 120,
                       borderRadius: '16px',
-                      background: `linear-gradient(135deg, ${techSlides[currentSlide].color}20 0%, ${techSlides[currentSlide].color}40 100%)`,
+                      background: `linear-gradient(135deg, ${techSlides[currentSlide].color}15 0%, ${techSlides[currentSlide].color}30 100%)`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       mb: 3,
-                      transition: 'all 0.5s ease'
+                      transition: 'all 0.5s ease',
+                      position: 'relative',
+                      overflow: 'hidden'
                     }}>
-                      <Typography sx={{ 
-                        fontSize: '3rem',
-                        filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
-                      }}>
-                        {techSlides[currentSlide].icon}
-                      </Typography>
+                      {/* Abstract SVG Pattern */}
+                      <svg width="60" height="60" viewBox="0 0 60 60" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }}>
+                        <defs>
+                          <linearGradient id={`grad-${currentSlide}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style={{ stopColor: techSlides[currentSlide].color, stopOpacity: 1 }} />
+                            <stop offset="100%" style={{ stopColor: techSlides[currentSlide].color, stopOpacity: 0.7 }} />
+                          </linearGradient>
+                        </defs>
+                        
+                        {/* Different patterns for each tech */}
+                        {currentSlide === 0 && ( // Java
+                          <g fill={`url(#grad-${currentSlide})`}>
+                            <circle cx="30" cy="20" r="8" />
+                            <rect x="20" y="30" width="20" height="4" rx="2" />
+                            <rect x="15" y="38" width="30" height="4" rx="2" />
+                            <circle cx="45" cy="45" r="4" opacity="0.6" />
+                          </g>
+                        )}
+                        
+                        {currentSlide === 1 && ( // Python
+                          <g fill={`url(#grad-${currentSlide})`}>
+                            <path d="M15 15 Q30 5 45 15 Q30 25 15 15" />
+                            <path d="M15 35 Q30 25 45 35 Q30 45 15 35" />
+                            <circle cx="20" cy="20" r="3" />
+                            <circle cx="40" cy="40" r="3" />
+                          </g>
+                        )}
+                        
+                        {currentSlide === 2 && ( // Docker
+                          <g fill={`url(#grad-${currentSlide})`}>
+                            <rect x="10" y="15" width="40" height="25" rx="4" />
+                            <rect x="15" y="10" width="30" height="4" rx="2" />
+                            <rect x="20" y="5" width="20" height="4" rx="2" />
+                            <circle cx="50" cy="50" r="6" opacity="0.4" />
+                          </g>
+                        )}
+                        
+                        {currentSlide === 3 && ( // AWS
+                          <g fill={`url(#grad-${currentSlide})`}>
+                            <path d="M10 40 Q30 20 50 40 L45 45 Q30 30 15 45 Z" />
+                            <circle cx="30" cy="15" r="8" opacity="0.8" />
+                            <circle cx="15" cy="50" r="4" opacity="0.6" />
+                            <circle cx="45" cy="50" r="4" opacity="0.6" />
+                          </g>
+                        )}
+                      </svg>
                     </Box>
                     
                     <Typography sx={{
@@ -390,7 +432,7 @@ const Home = () => {
                     </Typography>
 
                     <Box sx={{
-                      fontFamily: 'monospace',
+                      fontFamily: '"JetBrains Mono", "Fira Code", monospace',
                       fontSize: '0.8rem',
                       color: techSlides[currentSlide].color,
                       backgroundColor: `${techSlides[currentSlide].color}10`,
@@ -403,7 +445,7 @@ const Home = () => {
                     </Box>
                   </Box>
 
-                  {/* Floating Elements */}
+                  {/* Modern Abstract Floating Elements */}
                   <Box sx={{
                     position: 'absolute',
                     top: 0,
@@ -411,15 +453,19 @@ const Home = () => {
                     width: 60,
                     height: 60,
                     borderRadius: '12px',
-                    background: 'linear-gradient(135deg, #22c55e20 0%, #22c55e40 100%)',
+                    background: 'linear-gradient(135deg, #22c55e15 0%, #22c55e25 100%)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     animation: 'float 3s ease-in-out infinite',
                     animationDelay: '0s',
-                    zIndex: 2
+                    zIndex: 2,
+                    backdropFilter: 'blur(10px)'
                   }}>
-                    <Typography sx={{ fontSize: '1.5rem' }}>🚀</Typography>
+                    <svg width="24" height="24" viewBox="0 0 24 24">
+                      <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z" 
+                            fill="#22c55e" opacity="0.8" />
+                    </svg>
                   </Box>
 
                   <Box sx={{
@@ -429,15 +475,20 @@ const Home = () => {
                     width: 50,
                     height: 50,
                     borderRadius: '10px',
-                    background: 'linear-gradient(135deg, #f59e0b20 0%, #f59e0b40 100%)',
+                    background: 'linear-gradient(135deg, #f59e0b15 0%, #f59e0b25 100%)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     animation: 'float 3s ease-in-out infinite',
                     animationDelay: '1s',
-                    zIndex: 2
+                    zIndex: 2,
+                    backdropFilter: 'blur(10px)'
                   }}>
-                    <Typography sx={{ fontSize: '1.2rem' }}>⚡</Typography>
+                    <svg width="20" height="20" viewBox="0 0 20 20">
+                      <polygon points="10,2 15,8 8,8" fill="#f59e0b" opacity="0.8" />
+                      <polygon points="2,12 8,18 8,12" fill="#f59e0b" opacity="0.6" />
+                      <polygon points="12,12 18,12 15,18" fill="#f59e0b" opacity="0.7" />
+                    </svg>
                   </Box>
 
                   <Box sx={{
@@ -447,15 +498,21 @@ const Home = () => {
                     width: 45,
                     height: 45,
                     borderRadius: '8px',
-                    background: 'linear-gradient(135deg, #6366f120 0%, #6366f140 100%)',
+                    background: 'linear-gradient(135deg, #6366f115 0%, #6366f125 100%)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     animation: 'float 3s ease-in-out infinite',
                     animationDelay: '2s',
-                    zIndex: 2
+                    zIndex: 2,
+                    backdropFilter: 'blur(10px)'
                   }}>
-                    <Typography sx={{ fontSize: '1rem' }}>💻</Typography>
+                    <svg width="18" height="18" viewBox="0 0 18 18">
+                      <circle cx="9" cy="9" r="7" fill="none" stroke="#6366f1" strokeWidth="2" opacity="0.8" />
+                      <circle cx="9" cy="9" r="3" fill="#6366f1" opacity="0.6" />
+                      <circle cx="5" cy="5" r="1.5" fill="#6366f1" opacity="0.7" />
+                      <circle cx="13" cy="5" r="1.5" fill="#6366f1" opacity="0.7" />
+                    </svg>
                   </Box>
 
                   {/* Slide Indicators */}
