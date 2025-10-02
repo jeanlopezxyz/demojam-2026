@@ -1,0 +1,36 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: ecommerce-services
+  title: E-commerce Platform Services
+  description: Discovery location for all e-commerce microservices
+spec:
+  targets:
+    # System and platform overview
+    - ../app-ecommerce/catalog-info.yaml
+    
+    # Individual microservices (Quarkus + Java 25)
+    - ../app-ecommerce/services/user-service/catalog-info.yaml
+    - ../app-ecommerce/services/product-service/catalog-info.yaml
+    - ../app-ecommerce/services/order-service/catalog-info.yaml
+    - ../app-ecommerce/services/payment-service/catalog-info.yaml
+    - ../app-ecommerce/services/inventory-service/catalog-info.yaml
+    - ../app-ecommerce/services/notification-service/catalog-info.yaml
+    - ../app-ecommerce/services/recommendation-service/catalog-info.yaml
+    
+    # API Gateway (Quarkus) and Frontend (React)
+    - ../app-ecommerce/api-gateway/catalog-info.yaml
+    - ../app-ecommerce/frontend/catalog-info.yaml
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: organization-entities
+  title: Organization Entities
+  description: Teams, users, and domains for the organization
+spec:
+  targets:
+    - ./teams.yaml
+    - ./domains.yaml
+    - ./users.yaml

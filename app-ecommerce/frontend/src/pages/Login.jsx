@@ -1,182 +1,319 @@
-import { useState, useEffect } from 'react'
-import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import * as yup from 'yup'
+import { useEffect } from 'react'
+import { useSearchParams, useNavigate, Link as RouterLink } from 'react-router-dom'
 import {
+  Box,
   Container,
   Paper,
-  TextField,
-  Button,
   Typography,
-  Box,
-  Link,
-  Alert,
-  InputAdornment,
-  IconButton,
-  CircularProgress
+  Button,
+  Grid,
+  CircularProgress,
+  Alert
 } from '@mui/material'
-import { Visibility, VisibilityOff, Email, Lock } from '@mui/icons-material'
+import {
+  Google,
+  GitHub,
+  Email,
+  Security,
+  Speed,
+  VerifiedUser
+} from '@mui/icons-material'
 
 import { useAuth } from '../context/AuthContext'
 
-const schema = yup.object().shape({
-  email: yup
-    .string()
-    .email('Please enter a valid email')
-    .required('Email is required'),
-  password: yup
-    .string()
-    .min(6, 'Password must be at least 6 characters')
-    .required('Password is required'),
-})
-
 const Login = () => {
+  const { login, isAuthenticated, isLoading, keycloak } = useAuth()
+  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  const location = useLocation()
-  const { login, isAuthenticated, loading, error, clearError } = useAuth()
-  const [showPassword, setShowPassword] = useState(false)
+  const action = searchParams.get('action')
 
-  const from = location.state?.from?.pathname || '/'
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm({
-    resolver: yupResolver(schema)
-  })
-
-  // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(from, { replace: true })
+      navigate('/')
     }
-  }, [isAuthenticated, navigate, from])
+  }, [isAuthenticated, navigate])
 
-  // Clear errors when component mounts
-  useEffect(() => {
-    clearError()
-  }, [clearError])
-
-  const onSubmit = async (data) => {
-    const result = await login(data.email, data.password)
-    if (result.success) {
-      navigate(from, { replace: true })
+  const handleKeycloakLogin = (provider = null) => {
+    if (keycloak) {
+      const loginOptions = {
+        redirectUri: window.location.origin
+      }
+      
+      if (provider) {
+        loginOptions.idpHint = provider
+      }
+      
+      keycloak.login(loginOptions)
+    } else {
+      login()
     }
   }
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword)
+  const socialProviders = [
+    {
+      name: 'Google',
+      icon: <Google sx={{ fontSize: 24 }} />,
+      color: '#ea4335',
+      provider: 'google',
+      description: 'Continue with your Google account'
+    },
+    {
+      name: 'GitLab',
+      icon: <GitHub sx={{ fontSize: 24 }} />,
+      color: '#fc6d26',
+      provider: 'gitlab',
+      description: 'Continue with your GitLab account'
+    },
+    {
+      name: 'Email',
+      icon: <Email sx={{ fontSize: 24 }} />,
+      color: '#6b7280',
+      provider: null,
+      description: 'Continue with email and password'
+    }
+  ]
+
+  const benefits = [
+    {
+      icon: <Security sx={{ fontSize: 32, color: '#10b981' }} />,
+      title: 'Secure Authentication',
+      description: 'Enterprise-grade security with Keycloak'
+    },
+    {
+      icon: <Speed sx={{ fontSize: 32, color: '#3b82f6' }} />,
+      title: 'Quick Access',
+      description: 'One-click login with your preferred provider'
+    },
+    {
+      icon: <VerifiedUser sx={{ fontSize: 32, color: '#8b5cf6' }} />,
+      title: 'Trusted Platform',
+      description: 'Your data is protected and never shared'
+    }
+  ]
+
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#f8fafc'
+        }}
+      >
+        <CircularProgress size={60} />
+      </Box>
+    )
   }
 
   return (
-    <Container component="main" maxWidth="sm">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Paper
-          elevation={3}
-          sx={{
-            padding: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            width: '100%',
-          }}
-        >
-          <Typography component="h1" variant="h4" sx={{ mb: 3 }}>
-            Sign In
-          </Typography>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        backgroundColor: '#f8fafc',
+        py: 8
+      }}
+    >
+      <Container maxWidth="lg">
+        <Grid container spacing={8} alignItems="center" minHeight="80vh">
+          {/* Left Side - Benefits */}
+          <Grid item xs={12} lg={6}>
+            <Box sx={{ pr: { lg: 4 } }}>
+              <Typography
+                variant="h2"
+                sx={{
+                  fontWeight: 700,
+                  color: '#1f2937',
+                  mb: 3,
+                  fontSize: { xs: '2.5rem', md: '3rem' }
+                }}
+              >
+                Welcome to{' '}
+                <Box component="span" sx={{ color: '#3b82f6' }}>
+                  ShopHub
+                </Box>
+              </Typography>
+              
+              <Typography
+                variant="h6"
+                sx={{
+                  color: '#6b7280',
+                  mb: 6,
+                  lineHeight: 1.6,
+                  fontSize: '1.1rem'
+                }}
+              >
+                {action === 'register' 
+                  ? 'Join thousands of satisfied customers and start your premium shopping experience today.'
+                  : 'Sign in to access your account, track orders, and enjoy personalized recommendations.'
+                }
+              </Typography>
 
-          {error && (
-            <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
-              {error}
-            </Alert>
-          )}
-
-          <Box
-            component="form"
-            onSubmit={handleSubmit(onSubmit)}
-            sx={{ width: '100%' }}
-          >
-            <TextField
-              margin="normal"
-              fullWidth
-              id="email"
-              label="Email Address"
-              autoComplete="email"
-              autoFocus
-              error={!!errors.email}
-              helperText={errors.email?.message}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Email />
-                  </InputAdornment>
-                ),
-              }}
-              {...register('email')}
-            />
-
-            <TextField
-              margin="normal"
-              fullWidth
-              id="password"
-              label="Password"
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="current-password"
-              error={!!errors.password}
-              helperText={errors.password?.message}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Lock />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={togglePasswordVisibility}
-                      edge="end"
+              {/* Benefits */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {benefits.map((benefit, index) => (
+                  <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 3 }}>
+                    <Box
+                      sx={{
+                        width: 60,
+                        height: 60,
+                        borderRadius: '16px',
+                        backgroundColor: `${benefit.icon.props.style.color}15`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                      }}
                     >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              {...register('password')}
-            />
-
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2, py: 1.5 }}
-              disabled={loading}
-            >
-              {loading ? (
-                <CircularProgress size={24} color="inherit" />
-              ) : (
-                'Sign In'
-              )}
-            </Button>
-
-            <Box sx={{ textAlign: 'center' }}>
-              <Link component={RouterLink} to="/register" variant="body2">
-                Don't have an account? Sign Up
-              </Link>
+                      {benefit.icon}
+                    </Box>
+                    <Box>
+                      <Typography variant="h6" sx={{ fontWeight: 600, color: '#1f2937', mb: 1 }}>
+                        {benefit.title}
+                      </Typography>
+                      <Typography variant="body1" color="#6b7280" lineHeight={1.6}>
+                        {benefit.description}
+                      </Typography>
+                    </Box>
+                  </Box>
+                ))}
+              </Box>
             </Box>
-          </Box>
-        </Paper>
-      </Box>
-    </Container>
+          </Grid>
+
+          {/* Right Side - Login Form */}
+          <Grid item xs={12} lg={6}>
+            <Paper
+              sx={{
+                p: 6,
+                borderRadius: '24px',
+                boxShadow: '0 20px 80px rgba(0,0,0,0.1)',
+                border: '1px solid #e5e7eb',
+                backgroundColor: 'white'
+              }}
+            >
+              <Box sx={{ textAlign: 'center', mb: 4 }}>
+                <Typography
+                  variant="h4"
+                  sx={{
+                    fontWeight: 700,
+                    color: '#1f2937',
+                    mb: 2
+                  }}
+                >
+                  {action === 'register' ? 'Create Account' : 'Sign In'}
+                </Typography>
+                <Typography variant="body1" color="#6b7280">
+                  {action === 'register' 
+                    ? 'Choose your preferred method to create your account'
+                    : 'Choose your preferred method to sign in'
+                  }
+                </Typography>
+              </Box>
+
+              {/* Social Login Options */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mb: 4 }}>
+                {socialProviders.map((provider, index) => (
+                  <Button
+                    key={index}
+                    variant="outlined"
+                    size="large"
+                    onClick={() => handleKeycloakLogin(provider.provider)}
+                    startIcon={provider.icon}
+                    sx={{
+                      py: 2,
+                      borderRadius: '12px',
+                      borderColor: '#e5e7eb',
+                      color: '#1f2937',
+                      textTransform: 'none',
+                      fontWeight: 600,
+                      fontSize: '1rem',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      '&:hover': {
+                        borderColor: provider.color,
+                        backgroundColor: `${provider.color}08`,
+                        color: provider.color,
+                        transform: 'translateY(-1px)',
+                        boxShadow: `0 8px 25px ${provider.color}20`
+                      },
+                      '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: 4,
+                        height: '100%',
+                        backgroundColor: provider.color,
+                        transform: 'scaleY(0)',
+                        transformOrigin: 'bottom',
+                        transition: 'transform 0.3s ease'
+                      },
+                      '&:hover::before': {
+                        transform: 'scaleY(1)'
+                      }
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', ml: 2 }}>
+                      <Typography variant="body1" fontWeight="600">
+                        Continue with {provider.name}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {provider.description}
+                      </Typography>
+                    </Box>
+                  </Button>
+                ))}
+              </Box>
+
+              {/* Security Notice */}
+              <Alert
+                severity="info"
+                sx={{
+                  backgroundColor: '#eff6ff',
+                  border: '1px solid #bfdbfe',
+                  borderRadius: '12px',
+                  '& .MuiAlert-icon': {
+                    color: '#3b82f6'
+                  }
+                }}
+              >
+                <Typography variant="body2">
+                  <strong>Secure Login:</strong> All authentication is handled securely through Keycloak. 
+                  Your credentials are never stored on our servers.
+                </Typography>
+              </Alert>
+
+              {/* Alternative Actions */}
+              <Box sx={{ textAlign: 'center', mt: 4 }}>
+                <Typography variant="body2" color="#6b7280">
+                  {action === 'register' ? 'Already have an account?' : "Don't have an account?"}
+                  {' '}
+                  <Button
+                    component={RouterLink}
+                    to={action === 'register' ? '/login' : '/login?action=register'}
+                    sx={{
+                      color: '#3b82f6',
+                      textTransform: 'none',
+                      fontWeight: 600,
+                      p: 0,
+                      minWidth: 'auto',
+                      '&:hover': {
+                        backgroundColor: 'transparent',
+                        textDecoration: 'underline'
+                      }
+                    }}
+                  >
+                    {action === 'register' ? 'Sign in here' : 'Create account'}
+                  </Button>
+                </Typography>
+              </Box>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
   )
 }
 

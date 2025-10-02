@@ -1,0 +1,41 @@
+# Configuration for Architecture Chatbot Plugin in Developer Hub
+app:
+  title: Red Hat Developer Hub - DemoJam 2026
+  baseUrl: https://backstage.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com
+
+backend:
+  baseUrl: https://backstage.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com
+  cors:
+    origin: https://backstage.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com
+
+# Architecture Chatbot Configuration
+architectureChatbot:
+  apiUrl: https://chatbot-api.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com
+  enabled: true
+  features:
+    - apis
+    - microservices
+    - cloud-native
+    - security
+    - devops
+    - data-architecture
+
+# Navigation integration
+navigation:
+  - title: Architecture Assistant
+    icon: smart_toy
+    to: /architecture-chatbot
+
+# Plugin configuration
+dynamicPlugins:
+  frontend:
+    architecture-chatbot:
+      mountPoints:
+        - mountPoint: entity.page.overview/cards
+          importName: ArchitectureChatbotCard
+        - mountPoint: nav.page
+          importName: ArchitectureChatbotPage
+          config:
+            path: /architecture-chatbot
+            title: Architecture Assistant
+            icon: smart_toy

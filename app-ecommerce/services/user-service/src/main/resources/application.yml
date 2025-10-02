@@ -1,0 +1,127 @@
+# User Service Configuration - Development Profile
+quarkus:
+  application:
+    name: user-service
+    version: 1.0.0
+  
+  # HTTP Configuration
+  http:
+    port: ${PORT:8080}
+    host: ${HOST:0.0.0.0}
+    cors:
+      ~: true
+      origins: "${CORS_ORIGINS:http://localhost:3000,http://localhost:8080}"
+      methods: "GET,POST,PUT,DELETE,OPTIONS"
+      headers: "Content-Type,Authorization,X-User-*"
+  
+  # Container Configuration
+  container-image:
+    builder: jib
+    group: quay.io/redhat
+    name: user-service
+    tag: ${IMAGE_TAG:latest}
+    registry: ${CONTAINER_REGISTRY:quay.io}
+    
+  # OpenShift Configuration  
+  openshift:
+    route:
+      expose: true
+    build-strategy: docker
+  
+  # Database Configuration
+  datasource:
+    db-kind: postgresql
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:password}
+    jdbc:
+      url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:user_service_db}
+      max-size: 16
+      min-size: 4
+  
+  hibernate-orm:
+    database:
+      generation: update
+    log:
+      sql: false
+    
+  # OpenAPI Configuration
+  swagger-ui:
+    always-include: true
+    path: /q/swagger-ui
+  smallrye-openapi:
+    info-title: User Service API
+    info-version: 1.0.0
+    info-description: User profile management service
+    
+  # Health Check Configuration
+  smallrye-health:
+    root-path: /q/health
+    
+  # Metrics Configuration
+  micrometer:
+    enabled: true
+    export:
+      prometheus:
+        enabled: true
+        path: /q/metrics
+        
+  # Logging Configuration
+  log:
+    level: INFO
+    category:
+      "com.redhat.ecommerce.user": DEBUG
+    console:
+      format: "%d{HH:mm:ss} %-5p [%c{2.}] (%t) %s%e%n"
+      
+    
+  # Quarkus 3.28.1 - Dev Assistant (new feature)
+  dev-ui:
+    enabled: true
+    cors-origins: "http://localhost:3000"
+    
+  # Quarkus 3.28.1 - Enhanced Dev Services
+  dev-services:
+    enabled: true
+    
+  # Quarkus 3.28.1 - Improved Native compilation
+  native:
+    enabled: false
+    additional-build-args:
+      - "-H:+ReportExceptionStackTraces"
+      - "--initialize-at-build-time=org.slf4j,org.jboss.logging"
+      - "--enable-preview"  # Java 25 preview features
+      
+  # External services configuration
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    security:
+      protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
+    sasl:
+      mechanism: ${KAFKA_SASL_MECHANISM:PLAIN}
+      jaas-config: ${KAFKA_SASL_JAAS_CONFIG:}
+      
+# Reactive Messaging Configuration
+mp:
+  messaging:
+    outgoing:
+      user-events:
+        connector: smallrye-kafka
+        topic: ecommerce.user.events
+        bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+        security-protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
+        value-serializer: io.quarkus.kafka.client.serialization.JsonbSerializer
+    
+# Custom application properties
+user-service:
+  events:
+    enabled: true
+    retry-attempts: 3
+    retry-delay: 1000
+
+# Custom application properties
+user-service:
+  profile:
+    default-preferences:
+      email-notifications: true
+      sms-notifications: false
+      marketing-emails: false

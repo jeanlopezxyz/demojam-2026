@@ -1,0 +1,53 @@
+# Product Service Configuration
+quarkus:
+  application:
+    name: product-service
+    version: 1.0.0
+  
+  # HTTP Configuration
+  http:
+    port: 3002
+    cors:
+      ~: true
+      origins: "http://localhost:3000,http://localhost:8080"
+  
+  # MongoDB Configuration
+  mongodb:
+    connection-string: ${MONGODB_URI:mongodb://product_user:product_password@localhost:27018/product_service_db?authSource=admin}
+    database: product_service_db
+    
+  # OpenAPI Configuration
+  swagger-ui:
+    always-include: true
+    path: /q/swagger-ui
+  smallrye-openapi:
+    info-title: Product Service API
+    info-version: 1.0.0
+    info-description: Product catalog and search service
+    
+  # Health Check Configuration
+  smallrye-health:
+    root-path: /q/health
+    
+  # Metrics Configuration
+  micrometer:
+    enabled: true
+    export:
+      prometheus:
+        enabled: true
+        path: /q/metrics
+        
+  # Logging Configuration
+  log:
+    level: INFO
+    category:
+      "com.redhat.ecommerce.product": DEBUG
+
+# Custom application properties
+product-service:
+  search:
+    max-results: 100
+    fuzzy-search: true
+  pagination:
+    default-page-size: 20
+    max-page-size: 100

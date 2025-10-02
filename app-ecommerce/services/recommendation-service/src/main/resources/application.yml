@@ -1,0 +1,90 @@
+# Quarkus Configuration - Recommendation Service
+quarkus:
+  application:
+    name: recommendation-service
+    version: 1.0.0
+  
+  # HTTP Configuration
+  http:
+    port: 3007
+    cors:
+      ~: true
+      origins: "http://localhost:3000,http://localhost:8080"
+      methods: "GET,POST,PUT,DELETE,OPTIONS"
+      headers: "Content-Type,Authorization,X-User-*"
+  
+  # MongoDB Configuration
+  mongodb:
+    connection-string: ${MONGODB_URI:mongodb://mongo:password@mongodb:27017/recommendation_service_db?authSource=admin}
+    database: recommendation_service_db
+  
+  # Redis Configuration  
+  redis:
+    hosts: redis://${REDIS_HOST:redis}:${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:password}
+    
+  # REST Client Configuration
+  rest-client:
+    product-service:
+      url: ${PRODUCT_SERVICE_URL:http://localhost:3002}
+      scope: jakarta.inject.Singleton
+    
+  # OIDC/Keycloak Configuration
+  oidc:
+    auth-server-url: ${KEYCLOAK_URL:http://keycloak:8080}/realms/${KEYCLOAK_REALM:ecommerce}
+    client-id: ${KEYCLOAK_CLIENT_ID:recommendation-service}
+    credentials:
+      secret: ${KEYCLOAK_CLIENT_SECRET:recommendation-secret}
+    token:
+      verification-strategy: remote
+      
+  # OpenAPI Configuration
+  swagger-ui:
+    always-include: true
+    path: /q/swagger-ui
+  smallrye-openapi:
+    info-title: Recommendation Service API
+    info-version: 1.0.0
+    info-description: AI-powered product recommendation engine
+    
+  # Health Check Configuration
+  smallrye-health:
+    root-path: /q/health
+    
+  # Metrics Configuration  
+  micrometer:
+    enabled: true
+    export:
+      prometheus:
+        enabled: true
+        path: /q/metrics
+        
+  # Logging Configuration
+  log:
+    level: INFO
+    category:
+      "com.redhat.ecommerce.recommendation": DEBUG
+    console:
+      format: "%d{HH:mm:ss} %-5p [%c{2.}] (%t) %s%e%n"
+      
+  # Native compilation optimizations
+  native:
+    additional-build-args: 
+      - "-H:+ReportExceptionStackTraces"
+      - "--initialize-at-build-time=org.apache.commons.logging"
+
+# Custom application properties
+recommendation:
+  cache:
+    ttl: PT30M  # 30 minutes
+    max-size: 1000
+  algorithm:
+    collaborative-filtering:
+      enabled: true
+      min-rating-threshold: 3.0
+    content-based:
+      enabled: true
+      similarity-threshold: 0.7
+  batch:
+    update-frequency: PT1H  # 1 hour
+    popular-products-limit: 50

@@ -1,0 +1,68 @@
+# Backstage Instance Configuration
+# This file contains configuration for the Backstage instance
+# In production, this would be managed via Helm values or ConfigMaps
+
+app:
+  title: Red Hat Demo Jam - Developer Portal
+  baseUrl: http://localhost:3000
+  support:
+    url: https://github.com/redhat/demojam-ecommerce/issues
+    items:
+      - title: Issues
+        icon: github
+        links:
+          - url: https://github.com/redhat/demojam-ecommerce/issues
+            title: GitHub Issues
+
+organization:
+  name: Red Hat Demo Jam
+
+backend:
+  baseUrl: http://localhost:7007
+  listen:
+    port: 7007
+  csp:
+    connect-src: ["'self'", 'http:', 'https:']
+  cors:
+    origin: http://localhost:3000
+    methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
+    credentials: true
+
+integrations:
+  github:
+    - host: github.com
+      token: ${GITHUB_TOKEN}
+
+catalog:
+  import:
+    entityFilename: catalog-info.yaml
+    pullRequestBranchName: backstage-integration
+  rules:
+    - allow: [Component, System, API, Resource, Location, Domain, Group, User]
+  locations:
+    # Organization entities
+    - type: file
+      target: ./catalog/locations.yaml
+
+scaffolder:
+  defaultAuthor:
+    name: Red Hat Demo Jam
+    email: noreply@redhat.com
+  defaultCommitMessage: 'Initial commit from Backstage scaffolder'
+
+techdocs:
+  builder: 'local'
+  generator:
+    runIn: 'local'
+  publisher:
+    type: 'local'
+
+auth:
+  environment: development
+  providers:
+    guest: {}
+    # GitHub OAuth can be configured here
+    # github:
+    #   development:
+    #     clientId: ${GITHUB_CLIENT_ID}
+    #     clientSecret: ${GITHUB_CLIENT_SECRET}

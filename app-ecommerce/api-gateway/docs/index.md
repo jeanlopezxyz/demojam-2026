@@ -1,272 +1,137 @@
 # API Gateway
 
-## Central Request Router & Security Layer
+Quarkus-based central API Gateway for the E-commerce Platform microservices.
 
-The API Gateway serves as the single entry point for all client requests, providing authentication, routing, rate limiting, and monitoring for our microservices architecture.
+## Overview
 
-## Key Responsibilities
+The API Gateway serves as the single entry point for all client requests, providing:
 
-- **Request Routing** - Intelligent routing to appropriate microservices
-- **Authentication & Authorization** - JWT validation and RBAC enforcement
-- **Rate Limiting** - Protection against abuse and DoS attacks
-- **Load Balancing** - Distribution of traffic across service instances
-- **API Versioning** - Support for multiple API versions
-- **Request/Response Transformation** - Data format conversions
-- **Monitoring & Logging** - Centralized observability
+- **Request Routing**: Intelligent routing to backend microservices
+- **Authentication**: Keycloak OIDC integration for secure access
+- **CORS Handling**: Cross-origin resource sharing configuration
+- **Circuit Breaking**: Fault tolerance for unavailable services
+- **Rate Limiting**: Protection against abuse
+- **Service Discovery**: Health checking and routing decisions
+
+## Technology Stack
+
+- **Framework**: Quarkus 3.28.1
+- **Language**: Java 21
+- **Security**: Keycloak OIDC
+- **Fault Tolerance**: SmallRye Fault Tolerance
+- **Observability**: Prometheus metrics, Health checks, OpenAPI
 
 ## Architecture
 
-```mermaid
-graph TD
-    A[Client Apps] --> B[Load Balancer]
-    B --> C[API Gateway Cluster]
-    
-    C --> D[Authentication Middleware]
-    C --> E[Rate Limiting Middleware]
-    C --> F[Routing Middleware]
-    C --> G[Monitoring Middleware]
-    
-    F --> H[User Service]
-    F --> I[Product Service]
-    F --> J[Order Service]
-    F --> K[Payment Service]
-    F --> L[Inventory Service]
-    F --> M[Notification Service]
-    
-    C --> N[Redis Cache]
-    C --> O[Circuit Breaker]
-    C --> P[Request Queue]
+### Security Model
+
+```
+Frontend → API Gateway → Keycloak (JWT validation)
+              ↓
+         [Secure Headers] → Microservices (header trust)
 ```
 
-## Routing Configuration
+**Key Principles:**
+- Only API Gateway communicates with Keycloak
+- Microservices are NOT exposed to internet
+- Internal communication uses trusted headers
+- Network isolation via Docker networks/Kubernetes NetworkPolicies
 
-### **Service Routes**
-```javascript
-// routes/serviceRoutes.js
-const serviceRoutes = {
-  '/api/auth': {
-    target: process.env.USER_SERVICE_URL,
-    pathRewrite: { '^/api/auth': '/auth' },
-    changeOrigin: true,
-    timeout: 5000,
-    retries: 3
-  },
-  
-  '/api/users': {
-    target: process.env.USER_SERVICE_URL,
-    pathRewrite: { '^/api/users': '/users' },
-    auth: 'required',
-    roles: ['user', 'admin']
-  },
-  
-  '/api/products': {
-    target: process.env.PRODUCT_SERVICE_URL,
-    pathRewrite: { '^/api/products': '/products' },
-    cache: {
-      ttl: 300, // 5 minutes
-      keys: ['GET']
-    }
-  },
-  
-  '/api/orders': {
-    target: process.env.ORDER_SERVICE_URL,
-    pathRewrite: { '^/api/orders': '/orders' },
-    auth: 'required',
-    rateLimit: {
-      windowMs: 60000,
-      max: 100
-    }
-  },
-  
-  '/api/payments': {
-    target: process.env.PAYMENT_SERVICE_URL,
-    pathRewrite: { '^/api/payments': '/payments' },
-    auth: 'required',
-    rateLimit: {
-      windowMs: 60000,
-      max: 20
-    },
-    security: 'high'
-  }
-};
+### Service Discovery
+
+The gateway automatically handles service availability:
+
+- **Health Checks**: Monitors backend service health
+- **Circuit Breaker**: Prevents cascade failures
+- **Graceful Degradation**: Returns meaningful errors for unavailable services
+- **Environment-aware URLs**: localhost (dev) vs Kubernetes DNS (prod)
+
+## Network Configuration
+
+### Development (Docker)
+```
+Gateway: http://localhost:8080
+Services: http://service-name:3001-3007
 ```
 
-## Authentication Middleware
-
-### **JWT Validation**
-```javascript
-// middleware/auth.js
-const authMiddleware = async (req, res, next) => {
-  try {
-    const token = extractToken(req);
-    
-    if (!token) {
-      return res.status(401).json({
-        error: {
-          code: 'NO_TOKEN',
-          message: 'Authentication token required'
-        }
-      });
-    }
-    
-    // Verify JWT token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    // Check token blacklist
-    const isBlacklisted = await redis.get(`blacklist:${token}`);
-    if (isBlacklisted) {
-      return res.status(401).json({
-        error: {
-          code: 'TOKEN_BLACKLISTED',
-          message: 'Token has been invalidated'
-        }
-      });
-    }
-    
-    // Fetch user details
-    const user = await userCache.get(decoded.userId);
-    if (!user || !user.isActive) {
-      return res.status(401).json({
-        error: {
-          code: 'USER_INACTIVE',
-          message: 'User account is inactive'
-        }
-      });
-    }
-    
-    // Add user context to request
-    req.user = user;
-    req.auth = {
-      userId: user.id,
-      role: user.role,
-      permissions: user.permissions,
-      tokenId: decoded.jti
-    };
-    
-    next();
-    
-  } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({
-        error: {
-          code: 'TOKEN_EXPIRED',
-          message: 'Authentication token has expired'
-        }
-      });
-    }
-    
-    return res.status(401).json({
-      error: {
-        code: 'INVALID_TOKEN',
-        message: 'Invalid authentication token'
-      }
-    });
-  }
-};
+### Production (OpenShift)
+```
+Gateway: https://api-gateway-route.apps.cluster.com
+Services: http://service-name.namespace.svc.cluster.local:8080
 ```
 
-## Rate Limiting
+## Endpoints
 
-### **Advanced Rate Limiting**
-```javascript
-// middleware/rateLimiting.js
-const RateLimiter = {
-  // Different limits for different endpoint types
-  limits: {
-    auth: { windowMs: 60000, max: 5 },
-    search: { windowMs: 60000, max: 100 },
-    api: { windowMs: 60000, max: 1000 },
-    payments: { windowMs: 60000, max: 10 },
-    uploads: { windowMs: 60000, max: 5 }
-  },
-  
-  async checkLimit(req, limitType = 'api') {
-    const identifier = this.getIdentifier(req);
-    const limit = this.limits[limitType];
-    
-    const key = `rate_limit:${limitType}:${identifier}`;
-    const current = await redis.get(key);
-    
-    if (current && parseInt(current) >= limit.max) {
-      const ttl = await redis.ttl(key);
-      
-      throw new Error('RATE_LIMIT_EXCEEDED', {
-        limit: limit.max,
-        window: limit.windowMs,
-        resetTime: Date.now() + (ttl * 1000)
-      });
-    }
-    
-    // Increment counter
-    const pipeline = redis.pipeline();
-    pipeline.incr(key);
-    pipeline.expire(key, Math.ceil(limit.windowMs / 1000));
-    await pipeline.exec();
-    
-    return {
-      limit: limit.max,
-      remaining: limit.max - (parseInt(current) || 0) - 1,
-      resetTime: Date.now() + limit.windowMs
-    };
-  },
-  
-  getIdentifier(req) {
-    // Use user ID if authenticated, otherwise IP address
-    return req.user?.id || req.ip;
-  }
-};
+### Public Endpoints
+- `GET /api/health` - Gateway health check
+- `GET /api/products` - Product browsing (no auth required)
+- `GET /api/recommendations/popular` - Popular recommendations
+
+### Authenticated Endpoints
+- `GET /api/users/profile` - User profile (requires Keycloak JWT)
+- `POST /api/orders` - Create order (requires authentication)
+- `GET /api/recommendations/user/{id}` - Personal recommendations
+
+### Admin Endpoints
+- `GET /api/inventory` - Inventory management (admin role required)
+
+## Configuration
+
+Environment variables are managed in:
+- `.env.local` - Development configuration
+- `.env.production` - OpenShift configuration
+
+Key variables:
+- `KEYCLOAK_URL` - External Keycloak instance
+- `USER_SERVICE_URL` - Internal user service URL
+- `FRONTEND_URL` - Frontend URL for CORS
+
+## Development
+
+### Local Development
+```bash
+cd api-gateway
+mvn quarkus:dev
 ```
 
-## Circuit Breaker Pattern
+Access:
+- **Service**: http://localhost:8080
+- **Dev UI**: http://localhost:8080/q/dev-ui
+- **Health**: http://localhost:8080/q/health
+- **Metrics**: http://localhost:8080/q/metrics
+- **API Docs**: http://localhost:8080/q/swagger-ui
 
-### **Service Resilience**
-```javascript
-// middleware/circuitBreaker.js
-const CircuitBreaker = require('opossum');
+### Testing
+```bash
+# Health check
+curl http://localhost:8080/api/health
 
-const createCircuitBreaker = (serviceName, serviceCall) => {
-  const options = {
-    timeout: 5000,
-    errorThresholdPercentage: 50,
-    resetTimeout: 30000,
-    rollingCountTimeout: 10000,
-    rollingCountBuckets: 10
-  };
-  
-  const breaker = new CircuitBreaker(serviceCall, options);
-  
-  // Circuit breaker events
-  breaker.on('open', () => {
-    logger.warn(`Circuit breaker opened for ${serviceName}`);
-    metrics.circuitBreakerOpened.inc({ service: serviceName });
-  });
-  
-  breaker.on('halfOpen', () => {
-    logger.info(`Circuit breaker half-open for ${serviceName}`);
-  });
-  
-  breaker.on('close', () => {
-    logger.info(`Circuit breaker closed for ${serviceName}`);
-  });
-  
-  // Fallback function
-  breaker.fallback((error) => {
-    logger.error(`Service ${serviceName} unavailable: ${error.message}`);
-    return {
-      error: 'SERVICE_UNAVAILABLE',
-      message: `${serviceName} is temporarily unavailable`,
-      timestamp: new Date().toISOString()
-    };
-  });
-  
-  return breaker;
-};
+# Service discovery
+curl http://localhost:8080/api/products
 
-// Usage for each service
-const serviceBreakers = {
-  userService: createCircuitBreaker('user-service', callUserService),
-  productService: createCircuitBreaker('product-service', callProductService),
-  orderService: createCircuitBreaker('order-service', callOrderService),
-  paymentService: createCircuitBreaker('payment-service', callPaymentService)
-};
+# Auth flow (requires Keycloak)
+curl -H "Authorization: Bearer <jwt-token>" http://localhost:8080/api/users/profile
 ```
+
+## Service Dependencies
+
+The API Gateway depends on:
+- **External**: Keycloak for authentication
+- **Internal**: All microservices for routing
+
+Services accessed by gateway:
+- user-service (port 3001/8080)
+- product-service (port 3002/8080)  
+- order-service (port 3003/8080)
+- payment-service (port 3004/8080)
+- inventory-service (port 3005/8080)
+- notification-service (port 3006/8080)
+- recommendation-service (port 3007/8080)
+
+## Security Notes
+
+- **No database access**: Gateway is stateless
+- **Header injection**: Adds X-User-* headers for microservices
+- **HMAC signatures**: Prevents header tampering
+- **Network isolation**: Microservices not accessible from internet
+- **Role-based access**: Uses Keycloak roles for authorization

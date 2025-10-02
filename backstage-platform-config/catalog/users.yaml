@@ -1,0 +1,41 @@
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: jean-lopez
+  title: Jean Lopez
+  description: Platform Architect and Lead Developer
+  tags:
+    - architect
+    - developer
+    - lead
+spec:
+  profile:
+    displayName: Jean Lopez
+    email: jean.lopez@redhat.com
+    picture: https://github.com/jean-lopez.png
+  memberOf: 
+    - platform-team
+    - frontend-team
+    - auth-team
+    - catalog-team
+    - orders-team
+    - payments-team
+    - inventory-team
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: system-user
+  title: System User
+  description: Automated system user for CI/CD operations
+  tags:
+    - system
+    - automation
+    - ci-cd
+spec:
+  profile:
+    displayName: System User
+    email: system@redhat.com
+  memberOf:
+    - platform-team

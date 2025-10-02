@@ -1,13 +1,29 @@
 site_name: API Gateway Documentation
-site_description: Request routing, authentication, and load balancing for microservices
+site_description: Quarkus-based API Gateway for E-commerce Platform
 
 nav:
   - Home: index.md
+  - Architecture:
+    - Gateway Design: architecture/gateway-design.md
+    - Security Model: architecture/security.md
+    - Service Discovery: architecture/service-discovery.md
+  - Configuration:
+    - Environment Variables: config/environment.md
+    - Keycloak Integration: config/keycloak.md
+    - CORS Setup: config/cors.md
+  - Development:
+    - Local Setup: dev/local-setup.md
+    - Testing: dev/testing.md
+    - Debugging: dev/debugging.md
 
 theme:
   name: material
   palette:
-    primary: indigo
+    primary: blue
+  features:
+    - navigation.sections
+    - toc.integrate
 
 plugins:
   - techdocs-core
+  - search

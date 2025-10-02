@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: architecture-chatbot-api
+  labels:
+    app: architecture-chatbot-api
+    component: backend
+    tier: application
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: architecture-chatbot-api
+  template:
+    metadata:
+      labels:
+        app: architecture-chatbot-api
+        component: backend
+    spec:
+      containers:
+      - name: api
+        image: architecture-chatbot-api:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+          name: http
+        env:
+        - name: PORT
+          value: "3000"
+        - name: NODE_ENV
+          value: "production"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1001
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: architecture-chatbot-api
+  labels:
+    app: architecture-chatbot-api
+    component: backend
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: architecture-chatbot-api
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: architecture-chatbot-api
+  labels:
+    app: architecture-chatbot-api
+    component: backend
+spec:
+  host: chatbot-api.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com
+  to:
+    kind: Service
+    name: architecture-chatbot-api
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

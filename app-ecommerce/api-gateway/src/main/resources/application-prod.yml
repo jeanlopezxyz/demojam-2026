@@ -1,0 +1,42 @@
+# Production Profile - OpenShift CORS Configuration
+quarkus:
+  http:
+    cors:
+      ~: true
+      origins: 
+        - "https://frontend-ecommerce-demo.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com"
+        - "https://*.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com"  # Wildcard for cluster
+        - "${FRONTEND_URL}"                                              # Dynamic from Helm
+      methods: "GET,POST,PUT,DELETE,OPTIONS,PATCH"
+      headers: 
+        - "Content-Type"
+        - "Authorization"
+        - "X-User-*"
+        - "X-Requested-With"
+        - "Accept"
+        - "Origin"
+        - "X-Forwarded-*"              # OpenShift proxy headers
+      credentials: true
+      max-age: 86400                   # 24 hours for production
+      
+  # Production logging
+  log:
+    level: INFO
+    category:
+      "com.redhat.ecommerce.gateway": INFO
+      
+  # Production OIDC
+  oidc:
+    auth-server-url: ${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}
+    token:
+      verification-strategy: remote   # Verify with Keycloak server
+      
+  # OpenShift Route configuration
+  openshift:
+    route:
+      annotations:
+        # CORS headers at route level
+        haproxy.router.openshift.io/cors-allow-origin: "${FRONTEND_URL}"
+        haproxy.router.openshift.io/cors-allow-methods: "GET,POST,PUT,DELETE,OPTIONS,PATCH"
+        haproxy.router.openshift.io/cors-allow-headers: "Content-Type,Authorization,X-User-*"
+        haproxy.router.openshift.io/cors-allow-credentials: "true"

@@ -1,0 +1,38 @@
+{
+  "name": "ecommerce-platform",
+  "version": "1.0.0",
+  "description": "Modern enterprise e-commerce platform built with microservices architecture",
+  "private": true,
+  "workspaces": [
+    "api-gateway",
+    "frontend"
+  ],
+  "scripts": {
+    "install-all": "npm install",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "dev": "make dev",
+    "clean": "npm run clean --workspaces --if-present && make clean"
+  },
+  "devDependencies": {
+    "lerna": "^7.4.2"
+  },
+  "author": "Red Hat Demo Jam Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/redhat/demojam-ecommerce.git"
+  },
+  "keywords": [
+    "ecommerce",
+    "microservices",
+    "quarkus",
+    "java",
+    "react",
+    "keycloak",
+    "cqrs",
+    "event-driven",
+    "openshift"
+  ]
+}

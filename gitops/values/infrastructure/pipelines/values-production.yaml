@@ -2,32 +2,12 @@
 helpers:
   operator:
     enabled: true
-    operators:
-      openshift-pipelines-operator:
-        enabled: true
-        syncwave: 0
-        namespace:
-          name: openshift-operators
-        subscription:
-          channel: latest
-          operatorName: openshift-pipelines-operator-rh
-          source: redhat-operators
-  statusChecker:
-    enabled: true
-
-operator:
-  enabled: true
-  subscription:
-    channel: latest
-    installPlanApproval: Automatic
 
 tekton:
   config:
     enableApiFields: stable
-    
   dashboard:
     enabled: true
     readonly: false
-    
   triggers:
     enabled: true

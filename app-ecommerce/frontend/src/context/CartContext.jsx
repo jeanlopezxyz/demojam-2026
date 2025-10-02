@@ -68,33 +68,48 @@ export const CartProvider = ({ children }) => {
   // Load cart from localStorage on mount
   useEffect(() => {
     const savedCart = localStorage.getItem('cart')
-    if (savedCart) {
+    console.log('Loading cart from localStorage:', savedCart)
+    if (savedCart && savedCart !== 'undefined') {
       try {
         const parsedCart = JSON.parse(savedCart)
-        dispatch({ type: 'LOAD_CART', payload: parsedCart })
+        console.log('Parsed cart from localStorage:', parsedCart)
+        if (Array.isArray(parsedCart) && parsedCart.length > 0) {
+          dispatch({ type: 'LOAD_CART', payload: parsedCart })
+          console.log('Cart loaded successfully:', parsedCart.length, 'items')
+        }
       } catch (error) {
         console.error('Error loading cart from localStorage:', error)
+        localStorage.removeItem('cart') // Clear corrupted data
       }
     }
   }, [])
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(state.items))
+    try {
+      localStorage.setItem('cart', JSON.stringify(state.items))
+      console.log('Cart saved to localStorage:', state.items.length, 'items')
+    } catch (error) {
+      console.error('Error saving cart to localStorage:', error)
+    }
   }, [state.items])
 
   const addToCart = (product, quantity = 1) => {
+    console.log('Adding to cart:', product);
+    const cartItem = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      images: product.images || [product.image], // Support both formats
+      quantity: quantity
+    };
+    console.log('Cart item payload:', cartItem);
+    
     dispatch({
       type: 'ADD_ITEM',
-      payload: {
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image: product.image,
-        quantity: quantity
-      }
+      payload: cartItem
     })
-    toast.success(`${product.name} added to cart`)
+    toast.success(`${product.name} añadido al carrito`)
   }
 
   const removeFromCart = (productId) => {

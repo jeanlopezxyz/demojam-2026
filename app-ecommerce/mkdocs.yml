@@ -3,36 +3,11 @@ site_description: Comprehensive documentation for the microservices e-commerce p
 
 nav:
   - Home: index.md
-  - Architecture: 
-    - Overview: architecture/overview.md
-    - Microservices: architecture/microservices.md
-    - Data Flow: architecture/data-flow.md
-    - Security: architecture/security.md
-  - Services:
-    - API Gateway: services/api-gateway.md
-    - User Service: services/user-service.md
-    - Product Service: services/product-service.md
-    - Order Service: services/order-service.md
-    - Payment Service: services/payment-service.md
-    - Inventory Service: services/inventory-service.md
-    - Notification Service: services/notification-service.md
-  - Frontend:
-    - Overview: frontend/overview.md
-    - Components: frontend/components.md
-    - State Management: frontend/state-management.md
   - APIs:
     - REST APIs: apis/rest-apis.md
-    - Authentication: apis/authentication.md
-    - Error Handling: apis/error-handling.md
   - Development:
     - Getting Started: development/getting-started.md
-    - Local Development: development/local-setup.md
     - Testing: development/testing.md
-    - Deployment: development/deployment.md
-  - Operations:
-    - Monitoring: operations/monitoring.md
-    - Logging: operations/logging.md
-    - Troubleshooting: operations/troubleshooting.md
 
 theme:
   name: material

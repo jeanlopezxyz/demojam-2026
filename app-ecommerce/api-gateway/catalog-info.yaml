@@ -1,0 +1,128 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: api-gateway
+  title: API Gateway
+  description: Quarkus-based central API gateway for microservices routing, authentication, and load balancing
+  tags:
+    - gateway
+    - quarkus
+    - java
+    - authentication
+    - routing
+    - keycloak
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: redhat/demojam-ecommerce
+    backstage.io/source-location: url:file:///home/jeanlopez/Documents/redhat/demojam/app-ecommerce/api-gateway
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: ecommerce-platform
+  providesApis:
+    - gateway-api
+  dependsOn:
+    - component:user-service
+    - component:product-service
+    - component:order-service
+    - component:payment-service
+    - component:inventory-service
+    - component:notification-service
+    - component:recommendation-service
+    - resource:keycloak-external
+  consumesApis:
+    - user-management-api
+    - product-catalog-api
+    - order-management-api
+    - payment-processing-api
+    - inventory-management-api
+    - notification-api
+    - recommendation-api
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: gateway-api
+  title: E-commerce API Gateway
+  description: Central API gateway providing unified access to all microservices with authentication and routing
+  tags:
+    - rest-api
+    - gateway
+    - authentication
+    - quarkus
+spec:
+  type: openapi
+  lifecycle: production
+  owner: platform-team
+  system: ecommerce-platform
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: E-commerce API Gateway
+      version: 1.0.0
+      description: Central API gateway for microservices routing and authentication
+    servers:
+      - url: http://localhost:8080
+        description: Development server
+      - url: https://api-gateway-ecommerce-demo.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com
+        description: OpenShift production server
+    paths:
+      /api/health:
+        get:
+          summary: Gateway health check
+          responses:
+            '200':
+              description: Gateway is healthy
+      /api/products:
+        get:
+          summary: List products (proxied to product-service)
+          responses:
+            '200':
+              description: Product list
+            '503':
+              description: Product service unavailable
+      /api/users/profile:
+        get:
+          summary: Get user profile (proxied to user-service)
+          security:
+            - keycloakAuth: []
+          responses:
+            '200':
+              description: User profile data
+            '401':
+              description: Unauthorized
+            '503':
+              description: User service unavailable
+      /api/orders:
+        post:
+          summary: Create order (proxied to order-service)
+          security:
+            - keycloakAuth: []
+          responses:
+            '201':
+              description: Order created
+            '401':
+              description: Unauthorized
+            '503':
+              description: Order service unavailable
+      /api/recommendations/popular:
+        get:
+          summary: Get popular recommendations (proxied to recommendation-service)
+          responses:
+            '200':
+              description: Popular recommendations
+            '503':
+              description: Recommendation service unavailable
+    components:
+      securitySchemes:
+        keycloakAuth:
+          type: oauth2
+          flows:
+            authorizationCode:
+              authorizationUrl: https://keycloak-route.apps.cluster.com/realms/ecommerce/protocol/openid-connect/auth
+              tokenUrl: https://keycloak-route.apps.cluster.com/realms/ecommerce/protocol/openid-connect/token
+              scopes:
+                openid: OpenID Connect scope
+                profile: Profile information
+                email: Email address

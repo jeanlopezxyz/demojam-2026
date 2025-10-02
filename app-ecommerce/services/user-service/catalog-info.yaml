@@ -3,17 +3,22 @@ kind: Component
 metadata:
   name: user-service
   title: User Service
-  description: Authentication, authorization, and user management microservice
+  description: User profile management microservice built with Quarkus + Java 25 - handles user data and preferences
   tags:
     - microservice
-    - authentication
-    - nodejs
+    - quarkus
+    - java-25
     - postgresql
-    - jwt
+    - user-management
+    - no-direct-auth  # Auth handled by API Gateway
   annotations:
     backstage.io/techdocs-ref: dir:.
     github.com/project-slug: redhat/demojam-ecommerce
-    backstage.io/source-location: url:file:///home/jeanlopez/Documents/redhat/demojam/ecommerce-platform/services/user-service
+    backstage.io/source-location: url:file:///home/jeanlopez/Documents/redhat/demojam/app-ecommerce/services/user-service
+    quarkus.io/dev-ui: http://localhost:3001/q/dev-ui
+    quarkus.io/health: http://localhost:3001/q/health
+    quarkus.io/metrics: http://localhost:3001/q/metrics
+    quarkus.io/swagger: http://localhost:3001/q/swagger-ui
 spec:
   type: service
   lifecycle: production
@@ -22,18 +27,21 @@ spec:
   providesApis:
     - user-management-api
   dependsOn:
-    - resource:user-database
+    - resource:user-postgres-db
+    - component:api-gateway  # Depends on gateway for authentication
+  consumesApis: []  # No external API calls - receives headers from gateway
 ---
 apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
   name: user-management-api
   title: User Management API
-  description: Complete user authentication and management API
+  description: User profile management API - accessed via API Gateway only
   tags:
     - rest-api
-    - authentication
     - users
+    - quarkus
+    - internal-only  # Not exposed to internet
 spec:
   type: openapi
   lifecycle: production
@@ -44,84 +52,48 @@ spec:
     info:
       title: User Management API
       version: 1.0.0
-      description: Authentication and user management endpoints
+      description: User profile management endpoints (internal access via API Gateway)
     servers:
-      - url: http://localhost:3001
-        description: Development server
+      - url: http://user-service:3001
+        description: Internal service (Docker/Kubernetes DNS)
     paths:
-      /auth/login:
-        post:
-          summary: User authentication
-          description: Authenticate user with email and password
-          requestBody:
-            required: true
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    email:
-                      type: string
-                      format: email
-                    password:
-                      type: string
-                      minLength: 8
-          responses:
-            '200':
-              description: Authentication successful
-              content:
-                application/json:
-                  schema:
-                    type: object
-                    properties:
-                      token:
-                        type: string
-                      user:
-                        type: object
-            '401':
-              description: Authentication failed
-      /auth/register:
-        post:
-          summary: User registration
-          description: Register a new user account
-          requestBody:
-            required: true
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    email:
-                      type: string
-                      format: email
-                    password:
-                      type: string
-                      minLength: 8
-                    firstName:
-                      type: string
-                    lastName:
-                      type: string
-          responses:
-            '201':
-              description: User created successfully
-            '400':
-              description: Invalid input data
-            '409':
-              description: User already exists
       /users/profile:
         get:
           summary: Get user profile
-          description: Retrieve authenticated user's profile
-          security:
-            - bearerAuth: []
+          description: Get current user profile from headers (no authentication needed)
           responses:
             '200':
               description: User profile data
-            '401':
-              description: Unauthorized
-    components:
-      securitySchemes:
-        bearerAuth:
-          type: http
-          scheme: bearer
-          bearerFormat: JWT
+            '403':
+              description: Direct access forbidden - use API Gateway
+        put:
+          summary: Update user profile
+          description: Update current user profile
+          responses:
+            '200':
+              description: Profile updated successfully
+            '403':
+              description: Direct access forbidden - use API Gateway
+      /q/health:
+        get:
+          summary: Service health check
+          responses:
+            '200':
+              description: Service is healthy
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: user-postgres-db
+  title: User Service Database
+  description: Dedicated PostgreSQL database for user service data
+  tags:
+    - database
+    - postgresql
+    - dedicated
+    - containerized
+spec:
+  type: database
+  lifecycle: production
+  owner: platform-team
+  system: ecommerce-platform

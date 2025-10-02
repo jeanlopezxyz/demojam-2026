@@ -2,29 +2,25 @@ import { useState } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 import {
   Card,
-  CardMedia,
   CardContent,
-  CardActions,
+  CardMedia,
   Typography,
   Button,
-  IconButton,
   Box,
+  IconButton,
   Chip,
   Rating
 } from '@mui/material'
 import {
   AddShoppingCart,
-  Favorite,
   FavoriteBorder,
-  Visibility
+  Favorite
 } from '@mui/icons-material'
 
 import { useCart } from '../../context/CartContext'
-import { useAuth } from '../../context/AuthContext'
 
-const ProductCard = ({ product, onQuickView }) => {
-  const { addToCart, isInCart } = useCart()
-  const { isAuthenticated } = useAuth()
+const ProductCard = ({ product, onQuickView, layout = 'grid' }) => {
+  const { addToCart } = useCart()
   const [isFavorite, setIsFavorite] = useState(false)
 
   const handleAddToCart = (e) => {
@@ -36,29 +32,13 @@ const ProductCard = ({ product, onQuickView }) => {
   const handleToggleFavorite = (e) => {
     e.preventDefault()
     e.stopPropagation()
-    if (!isAuthenticated) {
-      // Could redirect to login or show message
-      return
-    }
     setIsFavorite(!isFavorite)
   }
 
-  const handleQuickView = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (onQuickView) {
-      onQuickView(product)
-    }
-  }
+  const discountPercentage = product.salePrice && product.price ? 
+    Math.round(((product.price - product.salePrice) / product.price) * 100) : 0
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(price)
-  }
-
-  const isProductInCart = isInCart(product.id)
+  const isListView = layout === 'list'
 
   return (
     <Card
@@ -67,187 +47,193 @@ const ProductCard = ({ product, onQuickView }) => {
       sx={{
         height: '100%',
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: isListView ? 'row' : 'column',
         textDecoration: 'none',
-        color: 'inherit',
-        position: 'relative',
-        transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+        borderRadius: 2,
+        overflow: 'hidden',
+        cursor: 'pointer',
+        transition: 'all 0.3s ease',
+        border: '1px solid #e2e8f0',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         '&:hover': {
-          transform: 'translateY(-4px)',
-          boxShadow: 4,
-          '& .product-actions': {
-            opacity: 1,
-          }
+          transform: 'translateY(-2px)',
+          boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+          borderColor: '#1976d2'
         }
       }}
     >
-      {/* Product Image */}
-      <Box sx={{ position: 'relative' }}>
+      {/* Image Container */}
+      <Box sx={{ 
+        position: 'relative', 
+        overflow: 'hidden',
+        width: isListView ? 200 : '100%',
+        flexShrink: 0
+      }}>
         <CardMedia
           component="img"
-          height="200"
-          image={product.image || '/placeholder-product.jpg'}
+          height={isListView ? 150 : 280}
+          image={product.images && product.images[0] ? product.images[0] : `https://via.placeholder.com/400x280/6B7280/FFFFFF?text=${encodeURIComponent(product.name || 'Product')}`}
           alt={product.name}
-          sx={{ objectFit: 'cover' }}
+          sx={{
+            objectFit: 'cover'
+          }}
         />
         
-        {/* Sale Badge */}
-        {product.salePrice && (
+        {/* Discount Badge */}
+        {discountPercentage > 0 && (
           <Chip
-            label={`-${Math.round(((product.price - product.salePrice) / product.price) * 100)}%`}
-            color="error"
+            label={`${discountPercentage}% OFF`}
             size="small"
             sx={{
               position: 'absolute',
-              top: 8,
-              left: 8,
-              fontWeight: 'bold'
+              top: 12,
+              left: 12,
+              backgroundColor: '#ef4444',
+              color: 'white',
+              fontWeight: 600,
+              fontSize: '0.75rem'
             }}
           />
         )}
 
-        {/* Stock Status */}
-        {product.stock === 0 && (
-          <Chip
-            label="Out of Stock"
-            color="default"
-            size="small"
-            sx={{
-              position: 'absolute',
-              top: 8,
-              right: 8,
-              backgroundColor: 'rgba(0, 0, 0, 0.7)',
-              color: 'white'
-            }}
-          />
-        )}
-
-        {/* Hover Actions */}
-        <Box
-          className="product-actions"
+        {/* Favorite Button */}
+        <IconButton
+          onClick={handleToggleFavorite}
           sx={{
             position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            opacity: 0,
-            transition: 'opacity 0.2s ease-in-out',
-            display: 'flex',
-            gap: 1
+            top: 12,
+            right: 12,
+            backgroundColor: 'rgba(255,255,255,0.9)',
+            color: isFavorite ? '#ef4444' : '#6b7280',
+            '&:hover': {
+              backgroundColor: 'white',
+              color: isFavorite ? '#dc2626' : '#374151'
+            }
           }}
         >
-          <IconButton
-            onClick={handleQuickView}
-            sx={{
-              backgroundColor: 'rgba(255, 255, 255, 0.9)',
-              '&:hover': { backgroundColor: 'white' }
-            }}
+          {isFavorite ? <Favorite /> : <FavoriteBorder />}
+        </IconButton>
+
+        {/* Stock Status */}
+        {product.stock !== undefined && product.stock <= 5 && product.stock > 0 && (
+          <Chip
+            label={`Only ${product.stock} left`}
             size="small"
-          >
-            <Visibility />
-          </IconButton>
-          
-          <IconButton
-            onClick={handleToggleFavorite}
             sx={{
-              backgroundColor: 'rgba(255, 255, 255, 0.9)',
-              '&:hover': { backgroundColor: 'white' }
+              position: 'absolute',
+              bottom: 12,
+              left: 12,
+              backgroundColor: '#f59e0b',
+              color: 'white',
+              fontWeight: 600,
+              fontSize: '0.75rem'
             }}
-            size="small"
-          >
-            {isFavorite ? <Favorite color="error" /> : <FavoriteBorder />}
-          </IconButton>
-        </Box>
+          />
+        )}
       </Box>
 
-      {/* Product Info */}
-      <CardContent sx={{ flexGrow: 1, pb: 1 }}>
+      {/* Content */}
+      <CardContent sx={{ flexGrow: 1, p: 3 }}>
         <Typography
           variant="h6"
           component="h3"
           sx={{
-            fontSize: '1rem',
-            fontWeight: 'medium',
-            mb: 1,
+            fontWeight: 600,
+            fontSize: '1.1rem',
+            lineHeight: 1.4,
+            mb: 2,
+            color: '#1f2937',
+            height: '2.8rem',
             overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            lineHeight: 1.2
-          }}
-        >
-          {product.name}
-        </Typography>
-
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{
-            mb: 1,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
             display: '-webkit-box',
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical'
           }}
         >
-          {product.description}
+          {product.name}
         </Typography>
 
-        {/* Rating */}
-        {product.rating && (
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <Rating
-              value={product.rating}
-              precision={0.5}
-              size="small"
-              readOnly
-            />
-            <Typography variant="caption" sx={{ ml: 1 }}>
-              ({product.reviewCount || 0})
-            </Typography>
-          </Box>
-        )}
+        {/* Rating and Popularity Score */}
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <Rating
+            value={product.rating || 4.5}
+            precision={0.5}
+            size="small"
+            readOnly
+            sx={{ mr: 1 }}
+          />
+          <Typography variant="body2" color="#6b7280">
+            ({product.reviewCount || 0})
+          </Typography>
+        </Box>
+        
+        {/* Popularity Score hidden - used internally for algorithms */}
 
         {/* Price */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography
-            variant="h6"
-            component="span"
-            color="primary"
-            sx={{ fontWeight: 'bold' }}
-          >
-            {formatPrice(product.salePrice || product.price)}
-          </Typography>
-          {product.salePrice && (
-            <Typography
-              variant="body2"
-              component="span"
-              sx={{
-                textDecoration: 'line-through',
-                color: 'text.secondary'
+        <Box sx={{ mb: 3 }}>
+          {product.salePrice ? (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  color: '#ef4444',
+                  fontWeight: 700,
+                  fontSize: '1.25rem'
+                }}
+              >
+                ${product.salePrice}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  textDecoration: 'line-through',
+                  color: '#9ca3af'
+                }}
+              >
+                ${product.price}
+              </Typography>
+            </Box>
+          ) : (
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                color: '#1f2937', 
+                fontWeight: 700,
+                fontSize: '1.25rem'
               }}
             >
-              {formatPrice(product.price)}
+              ${product.price}
             </Typography>
           )}
         </Box>
-      </CardContent>
 
-      {/* Actions */}
-      <CardActions sx={{ pt: 0 }}>
+        {/* Add to Cart Button */}
         <Button
+          variant="contained"
           fullWidth
-          variant={isProductInCart ? "outlined" : "contained"}
           startIcon={<AddShoppingCart />}
           onClick={handleAddToCart}
           disabled={product.stock === 0}
-          size="small"
+          sx={{
+            borderRadius: '8px',
+            py: 1.5,
+            fontWeight: 600,
+            textTransform: 'none',
+            fontSize: '0.95rem',
+            backgroundColor: product.stock === 0 ? '#9ca3af' : '#1f2937',
+            boxShadow: 'none',
+            '&:hover': {
+              backgroundColor: product.stock === 0 ? '#9ca3af' : '#111827',
+              boxShadow: product.stock === 0 ? 'none' : '0 4px 20px rgba(31, 41, 55, 0.3)'
+            },
+            '&:disabled': {
+              color: 'white'
+            }
+          }}
         >
-          {isProductInCart ? 'In Cart' : 'Add to Cart'}
+          {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
         </Button>
-      </CardActions>
+      </CardContent>
     </Card>
   )
 }

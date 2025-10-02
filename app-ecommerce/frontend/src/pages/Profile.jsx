@@ -28,7 +28,7 @@ import {
 } from '@mui/icons-material'
 
 import { useAuth } from '../context/AuthContext'
-import { authAPI } from '../services/api'
+import { userAPI } from '../services/api'
 
 const profileSchema = yup.object().shape({
   name: yup.string().min(2, 'Name must be at least 2 characters').required('Name is required'),
@@ -104,7 +104,7 @@ const Profile = () => {
     setSuccess('')
 
     try {
-      const response = await authAPI.updateProfile(data)
+      const response = await userAPI.updateProfile(data)
       updateUser(response.data)
       setSuccess('Profile updated successfully!')
       setIsEditing(false)
@@ -121,12 +121,12 @@ const Profile = () => {
     setSuccess('')
 
     try {
-      await authAPI.changePassword({
-        currentPassword: data.currentPassword,
-        newPassword: data.newPassword
-      })
-      setSuccess('Password changed successfully!')
-      passwordForm.reset()
+      // Password changes handled by Keycloak - redirect to account management
+      const keycloakAccountUrl = `${import.meta.env.VITE_KEYCLOAK_URL}/realms/${import.meta.env.VITE_KEYCLOAK_REALM}/account`;
+      window.open(keycloakAccountUrl, '_blank');
+      
+      setSuccess('Redirected to Keycloak account management for password change');
+      passwordForm.reset();
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to change password')
     } finally {

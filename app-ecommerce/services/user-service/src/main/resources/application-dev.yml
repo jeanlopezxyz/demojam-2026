@@ -1,0 +1,36 @@
+# Development Profile - Local testing with external OpenShift services
+quarkus:
+  http:
+    port: 3001
+    
+  # Development-specific features
+  dev-ui:
+    enabled: true
+    
+  dev-services:
+    enabled: false  # Use external databases via docker-compose
+    
+  # External Keycloak (OpenShift)
+  oidc:
+    auth-server-url: ${KEYCLOAK_URL:https://keycloak-route.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com}/realms/${KEYCLOAK_REALM:ecommerce}
+    client-id: ${KEYCLOAK_CLIENT_ID:user-service}
+    
+  # External Kafka (OpenShift AMQ Streams)  
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka-bootstrap.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com:443}
+    security:
+      protocol: ${KAFKA_SECURITY_PROTOCOL:SASL_SSL}
+    sasl:
+      mechanism: ${KAFKA_SASL_MECHANISM:PLAIN}
+      jaas-config: ${KAFKA_SASL_JAAS_CONFIG:}
+
+# Reactive Messaging - External AMQ
+mp:
+  messaging:
+    outgoing:
+      user-events:
+        connector: smallrye-kafka
+        topic: ecommerce.user.events
+        bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka-bootstrap.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com:443}
+        security-protocol: ${KAFKA_SECURITY_PROTOCOL:SASL_SSL}
+        value-serializer: io.quarkus.kafka.client.serialization.JsonbSerializer

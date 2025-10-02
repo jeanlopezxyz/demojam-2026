@@ -1,101 +1,425 @@
 version: '3.8'
 
 services:
-  # Override for development with volume mounts and hot reload
-  user-service:
-    build:
-      context: ./services/user-service
-      dockerfile: Dockerfile
-      target: dev
-    command: npm run dev
-    volumes:
-      - ./services/user-service/src:/app/src
-      - ./services/user-service/package.json:/app/package.json
+  # Separate Database per Service - True Microservices Pattern
+  
+  # User Service Database
+  user-postgres:
+    image: postgres:15-alpine
     environment:
-      NODE_ENV: development
+      POSTGRES_DB: user_service_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - user_postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/docker/init-user-data.sql:/docker-entrypoint-initdb.d/init-data.sql
+    ports:
+      - "5433:5432"  # Different port to avoid conflicts
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Order Service Database  
+  order-postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: order_service_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - order_postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Payment Service Database
+  payment-postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: payment_service_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - payment_postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Inventory Service Database + Redis
+  inventory-postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: inventory_service_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - inventory_postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5436:5432"
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  inventory-redis:
+    image: redis:7-alpine
+    command: redis-server --requirepass inventory_password
+    volumes:
+      - inventory_redis_data:/data
+    ports:
+      - "6380:6379"
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "inventory_password", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Product Service Database
+  product-mongodb:
+    image: mongo:7-jammy
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: product_user
+      MONGO_INITDB_ROOT_PASSWORD: product_password
+      MONGO_INITDB_DATABASE: product_service_db
+    volumes:
+      - product_mongodb_data:/data/db
+      - ./infrastructure/docker/init-product-data.js:/docker-entrypoint-initdb.d/init-data.js
+    ports:
+      - "27018:27017"
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Notification Service Database
+  notification-mongodb:
+    image: mongo:7-jammy
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: notification_user
+      MONGO_INITDB_ROOT_PASSWORD: notification_password
+      MONGO_INITDB_DATABASE: notification_service_db
+    volumes:
+      - notification_mongodb_data:/data/db
+    ports:
+      - "27019:27017"
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Recommendation Service Database + Redis
+  recommendation-mongodb:
+    image: mongo:7-jammy
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: recommendation_user
+      MONGO_INITDB_ROOT_PASSWORD: recommendation_password
+      MONGO_INITDB_DATABASE: recommendation_service_db
+    volumes:
+      - recommendation_mongodb_data:/data/db
+    ports:
+      - "27020:27017"
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  recommendation-redis:
+    image: redis:7-alpine
+    command: redis-server --requirepass recommendation_password
+    volumes:
+      - recommendation_redis_data:/data
+    ports:
+      - "6381:6379"
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "recommendation_password", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Microservices - Each with its own database
+  user-service:
+    image: quay.io/redhat/user-service:latest
+    environment:
+      PORT: 3001
+      HOST: 0.0.0.0
+      QUARKUS_PROFILE: dev
+      DB_HOST: user-postgres
+      DB_PORT: 5432
+      DB_NAME: user_service_db
+      DB_USER: postgres
+      DB_PASSWORD: password
+    ports:
+      - "3001:3001"
+    depends_on:
+      user-postgres:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3001/q/health/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   product-service:
-    build:
-      context: ./services/product-service
-      dockerfile: Dockerfile
-      target: dev
-    command: npm run dev
-    volumes:
-      - ./services/product-service/src:/app/src
-      - ./services/product-service/package.json:/app/package.json
+    image: quay.io/redhat/product-service:latest
     environment:
-      NODE_ENV: development
+      PORT: 3002
+      HOST: 0.0.0.0
+      QUARKUS_PROFILE: dev
+      MONGODB_URI: mongodb://product_user:product_password@product-mongodb:27017/product_service_db?authSource=admin
+    ports:
+      - "3002:3002"
+    depends_on:
+      product-mongodb:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3002/q/health/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   order-service:
-    build:
-      context: ./services/order-service
-      dockerfile: Dockerfile
-      target: dev
-    command: npm run dev
-    volumes:
-      - ./services/order-service/src:/app/src
-      - ./services/order-service/package.json:/app/package.json
+    image: quay.io/redhat/order-service:latest
     environment:
-      NODE_ENV: development
+      PORT: 3003
+      HOST: 0.0.0.0
+      QUARKUS_PROFILE: dev
+      DB_HOST: order-postgres
+      DB_PORT: 5432
+      DB_NAME: order_service_db
+      DB_USER: postgres
+      DB_PASSWORD: password
+      CQRS_ENABLED: true
+    ports:
+      - "3003:3003"
+    depends_on:
+      order-postgres:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3003/q/health/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   payment-service:
-    build:
-      context: ./services/payment-service
-      dockerfile: Dockerfile
-      target: dev
-    command: npm run dev
-    volumes:
-      - ./services/payment-service/src:/app/src
-      - ./services/payment-service/package.json:/app/package.json
+    image: quay.io/redhat/payment-service:latest
     environment:
-      NODE_ENV: development
+      PORT: 3004
+      HOST: 0.0.0.0
+      QUARKUS_PROFILE: dev
+      DB_HOST: payment-postgres
+      DB_PORT: 5432
+      DB_NAME: payment_service_db
+      DB_USER: postgres
+      DB_PASSWORD: password
+    ports:
+      - "3004:3004"
+    depends_on:
+      payment-postgres:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3004/q/health/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   inventory-service:
-    build:
-      context: ./services/inventory-service
-      dockerfile: Dockerfile
-      target: dev
-    command: npm run dev
-    volumes:
-      - ./services/inventory-service/src:/app/src
-      - ./services/inventory-service/package.json:/app/package.json
+    image: quay.io/redhat/inventory-service:latest
     environment:
-      NODE_ENV: development
+      PORT: 3005
+      HOST: 0.0.0.0
+      QUARKUS_PROFILE: dev
+      DB_HOST: inventory-postgres
+      DB_PORT: 5432
+      DB_NAME: inventory_service_db
+      DB_USER: postgres
+      DB_PASSWORD: password
+      REDIS_HOST: inventory-redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: inventory_password
+    ports:
+      - "3005:3005"
+    depends_on:
+      inventory-postgres:
+        condition: service_healthy
+      inventory-redis:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3005/q/health/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   notification-service:
-    build:
-      context: ./services/notification-service
-      dockerfile: Dockerfile
-      target: dev
-    command: npm run dev
-    volumes:
-      - ./services/notification-service/src:/app/src
-      - ./services/notification-service/package.json:/app/package.json
+    image: quay.io/redhat/notification-service:latest
     environment:
-      NODE_ENV: development
+      PORT: 3006
+      HOST: 0.0.0.0
+      QUARKUS_PROFILE: dev
+      MONGODB_URI: mongodb://notification_user:notification_password@notification-mongodb:27017/notification_service_db?authSource=admin
+    ports:
+      - "3006:3006"
+    depends_on:
+      notification-mongodb:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3006/q/health/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
+  recommendation-service:
+    image: quay.io/redhat/recommendation-service:latest
+    environment:
+      PORT: 3007
+      HOST: 0.0.0.0
+      QUARKUS_PROFILE: dev
+      MONGODB_URI: mongodb://recommendation_user:recommendation_password@recommendation-mongodb:27017/recommendation_service_db?authSource=admin
+      REDIS_HOST: recommendation-redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: recommendation_password
+    ports:
+      - "3007:3007"
+    depends_on:
+      recommendation-mongodb:
+        condition: service_healthy
+      recommendation-redis:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3007/q/health/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # API Gateway (Quarkus) - Only connects to services, not databases
   api-gateway:
+    image: quay.io/redhat/api-gateway:latest
     build:
       context: ./api-gateway
       dockerfile: Dockerfile
-      target: dev
-    command: npm run dev
-    volumes:
-      - ./api-gateway/src:/app/src
-      - ./api-gateway/package.json:/app/package.json
     environment:
-      NODE_ENV: development
+      PORT: 8080
+      HOST: 0.0.0.0
+      QUARKUS_PROFILE: dev
+      FRONTEND_URL: http://localhost:3000
+      USER_SERVICE_URL: http://user-service:3001
+      PRODUCT_SERVICE_URL: http://product-service:3002
+      ORDER_SERVICE_URL: http://order-service:3003
+      PAYMENT_SERVICE_URL: http://payment-service:3004
+      INVENTORY_SERVICE_URL: http://inventory-service:3005
+      NOTIFICATION_SERVICE_URL: http://notification-service:3006
+      RECOMMENDATION_SERVICE_URL: http://recommendation-service:3007
+    ports:
+      - "8080:8080"
+    depends_on:
+      user-service:
+        condition: service_started
+      product-service:
+        condition: service_started
+      order-service:
+        condition: service_started
+      payment-service:
+        condition: service_started
+      inventory-service:
+        condition: service_started
+      notification-service:
+        condition: service_started
+      recommendation-service:
+        condition: service_started
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/q/health/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
+  # Frontend (React) - Only connects to API Gateway
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
-    command: npm run dev
+    image: node:18-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
     volumes:
-      - ./frontend/src:/app/src
-      - ./frontend/package.json:/app/package.json
-      - ./frontend/vite.config.js:/app/vite.config.js
+      - ./frontend:/app
     environment:
-      NODE_ENV: development
+      VITE_API_URL: http://localhost:8080
+      VITE_KEYCLOAK_URL: https://keycloak-route.apps.cluster-tzfv6.tzfv6.sandbox1862.opentlc.com
+      VITE_KEYCLOAK_REALM: ecommerce
+      VITE_KEYCLOAK_CLIENT_ID: ecommerce-frontend
     ports:
       - "3000:3000"
+    depends_on:
+      - api-gateway
+    networks:
+      - ecommerce-network
+
+volumes:
+  # Separate volumes per service
+  user_postgres_data:
+  order_postgres_data:
+  payment_postgres_data:
+  inventory_postgres_data:
+  inventory_redis_data:
+  product_mongodb_data:
+  notification_mongodb_data:
+  recommendation_mongodb_data:
+  recommendation_redis_data:
+
+networks:
+  # Kubernetes-like networking - Single network (like cluster network)
+  ecommerce-network:
+    driver: bridge
+    # In Kubernetes: All pods in same namespace network
+    # Isolation achieved via NetworkPolicies, not separate networks

@@ -1,122 +1,158 @@
-import { Box, Typography, Container, Grid, Link, IconButton } from '@mui/material'
-import { Facebook, Twitter, Instagram, LinkedIn } from '@mui/icons-material'
+import { Link as RouterLink } from 'react-router-dom'
+import {
+  Box,
+  Container,
+  Typography,
+  IconButton,
+  Stack,
+  alpha
+} from '@mui/material'
+import {
+  Facebook,
+  Twitter,
+  Instagram,
+  LinkedIn,
+  Store
+} from '@mui/icons-material'
 
 const Footer = () => {
+  const socialLinks = [
+    { icon: <Facebook />, url: 'https://facebook.com', label: 'Facebook' },
+    { icon: <Twitter />, url: 'https://twitter.com', label: 'Twitter' },
+    { icon: <Instagram />, url: 'https://instagram.com', label: 'Instagram' },
+    { icon: <LinkedIn />, url: 'https://linkedin.com', label: 'LinkedIn' }
+  ]
+
+  const footerLinks = [
+    { label: 'Productos', path: '/products' },
+    { label: 'Categorías', path: '/categories' },
+    { label: 'Acerca de', path: '/about' },
+    { label: 'Contacto', path: '/contact' },
+    { label: 'Política de Privacidad', path: '/privacy' },
+    { label: 'Términos de Servicio', path: '/terms' }
+  ]
+
   return (
     <Box
       component="footer"
       sx={{
-        backgroundColor: 'primary.main',
+        backgroundColor: '#1f2937',
         color: 'white',
-        py: 4,
-        mt: 'auto'
+        mt: 'auto',
+        py: 4
       }}
     >
       <Container maxWidth="lg">
-        <Grid container spacing={4}>
-          {/* Company Info */}
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="h6" gutterBottom>
-              E-Shop
+        <Box sx={{ 
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          textAlign: 'center',
+          gap: 3
+        }}>
+          {/* Logo */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Store sx={{ 
+              fontSize: '1.5rem', 
+              color: '#0066cc', 
+              mr: 1
+            }} />
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 900,
+                fontSize: '1.1rem',
+                fontFamily: '"Inter", sans-serif',
+                letterSpacing: '-0.5px'
+              }}
+            >
+              <span style={{ color: '#0066cc' }}>Tech</span>
+              <span style={{ color: '#6366f1' }}>Shop</span>
+              <span style={{ color: '#ffffff', marginLeft: '3px' }}>Hub</span>
             </Typography>
-            <Typography variant="body2" sx={{ mb: 2 }}>
-              Your one-stop destination for quality products at great prices.
-              Fast shipping, easy returns, and excellent customer service.
-            </Typography>
-            <Box>
-              <IconButton color="inherit" size="small">
-                <Facebook />
-              </IconButton>
-              <IconButton color="inherit" size="small">
-                <Twitter />
-              </IconButton>
-              <IconButton color="inherit" size="small">
-                <Instagram />
-              </IconButton>
-              <IconButton color="inherit" size="small">
-                <LinkedIn />
-              </IconButton>
-            </Box>
-          </Grid>
+          </Box>
 
-          {/* Quick Links */}
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="h6" gutterBottom>
-              Quick Links
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Link href="/products" color="inherit" underline="hover">
-                All Products
-              </Link>
-              <Link href="/products?category=electronics" color="inherit" underline="hover">
-                Electronics
-              </Link>
-              <Link href="/products?category=clothing" color="inherit" underline="hover">
-                Clothing
-              </Link>
-              <Link href="/products?category=home" color="inherit" underline="hover">
-                Home & Garden
-              </Link>
-            </Box>
-          </Grid>
+          {/* Description */}
+          <Typography 
+            variant="body2" 
+            sx={{ 
+              color: '#9ca3af',
+              fontSize: '0.85rem',
+              maxWidth: 500,
+              lineHeight: 1.6
+            }}
+          >
+            Camisetas tech premium para desarrolladores, arquitectos, DevOps y profesionales IT.
+            Muestra tu stack con orgullo.
+          </Typography>
 
-          {/* Customer Service */}
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="h6" gutterBottom>
-              Customer Service
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Link href="#" color="inherit" underline="hover">
-                Contact Us
-              </Link>
-              <Link href="#" color="inherit" underline="hover">
-                Shipping Info
-              </Link>
-              <Link href="#" color="inherit" underline="hover">
-                Returns & Exchanges
-              </Link>
-              <Link href="#" color="inherit" underline="hover">
-                Size Guide
-              </Link>
-              <Link href="#" color="inherit" underline="hover">
-                FAQ
-              </Link>
-            </Box>
-          </Grid>
+          {/* Footer Links */}
+          <Stack 
+            direction="row" 
+            spacing={{ xs: 2, md: 4 }}
+            sx={{ 
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              gap: { xs: 1, md: 2 }
+            }}
+          >
+            {footerLinks.map((link, index) => (
+              <Typography
+                key={index}
+                component={RouterLink}
+                to={link.path}
+                sx={{
+                  color: '#9ca3af',
+                  fontSize: '0.8rem',
+                  fontWeight: 400,
+                  textDecoration: 'none',
+                  transition: 'color 0.2s ease',
+                  '&:hover': {
+                    color: '#0066cc'
+                  }
+                }}
+              >
+                {link.label}
+              </Typography>
+            ))}
+          </Stack>
 
-          {/* About */}
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="h6" gutterBottom>
-              About
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Link href="#" color="inherit" underline="hover">
-                Our Story
-              </Link>
-              <Link href="#" color="inherit" underline="hover">
-                Careers
-              </Link>
-              <Link href="#" color="inherit" underline="hover">
-                Privacy Policy
-              </Link>
-              <Link href="#" color="inherit" underline="hover">
-                Terms of Service
-              </Link>
-            </Box>
-          </Grid>
-        </Grid>
+          {/* Social Icons */}
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            {socialLinks.map((social, index) => (
+              <IconButton
+                key={index}
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  color: '#6b7280',
+                  fontSize: '0.9rem',
+                  '&:hover': {
+                    color: '#0066cc',
+                    backgroundColor: alpha('#0066cc', 0.1)
+                  }
+                }}
+              >
+                {social.icon}
+              </IconButton>
+            ))}
+          </Box>
 
-        {/* Copyright */}
-        <Box
-          sx={{
-            borderTop: '1px solid rgba(255, 255, 255, 0.2)',
-            mt: 4,
-            pt: 3,
-            textAlign: 'center'
-          }}
-        >
-          <Typography variant="body2">
-            © {new Date().getFullYear()} E-Shop. All rights reserved.
+          {/* Copyright */}
+          <Typography 
+            variant="caption" 
+            sx={{ 
+              color: '#6b7280',
+              fontSize: '0.75rem',
+              mt: 2,
+              pt: 2,
+              borderTop: '1px solid #374151',
+              width: '100%',
+              textAlign: 'center'
+            }}
+          >
+            © 2024 TechShopHub. Todos los derechos reservados. Hecho con ❤️ para la comunidad tech.
           </Typography>
         </Box>
       </Container>

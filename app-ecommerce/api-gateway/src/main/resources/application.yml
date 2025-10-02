@@ -1,0 +1,118 @@
+# API Gateway Configuration - Quarkus
+quarkus:
+  application:
+    name: api-gateway
+    version: 1.0.0
+  
+  # HTTP Configuration
+  http:
+    port: ${PORT:8080}
+    host: ${HOST:0.0.0.0}
+    cors:
+      ~: true
+      # Multiple origins support for different environments
+      origins: 
+        - "http://localhost:3000"                    # Local frontend
+        - "http://localhost:3001"                    # Local development alt port
+        - "http://10.0.10.3:3000"                   # Real IP frontend access
+        - "${FRONTEND_URL:}"                         # Dynamic frontend URL
+        - "${CORS_ADDITIONAL_ORIGINS:}"              # Additional origins
+      methods: "GET,POST,PUT,DELETE,OPTIONS,PATCH"
+      headers: 
+        - "Content-Type"
+        - "Authorization" 
+        - "X-User-*"
+        - "X-Requested-With"
+        - "Accept"
+        - "Origin"
+      credentials: true
+      max-age: 3600
+  
+  # OIDC/Keycloak Configuration for Gateway
+  oidc:
+    auth-server-url: ${KEYCLOAK_URL:http://localhost:8090}/realms/${KEYCLOAK_REALM:ecommerce}
+    client-id: ${KEYCLOAK_CLIENT_ID:ecommerce-gateway}
+    credentials:
+      secret: ${KEYCLOAK_CLIENT_SECRET:gateway-secret}
+    token:
+      verification-strategy: local
+      header: Authorization
+    tenant-enabled: false
+    
+  # No database needed - stateless gateway
+  datasource:
+    # Explicitly disable datasource
+    jdbc:
+      driver: none
+      
+  # OpenAPI Configuration
+  swagger-ui:
+    always-include: true
+    path: /q/swagger-ui
+  smallrye-openapi:
+    info-title: E-commerce API Gateway
+    info-version: 1.0.0
+    info-description: Central API gateway for microservices routing and authentication
+    
+  # Health Check Configuration
+  smallrye-health:
+    root-path: /q/health
+    
+  # Metrics Configuration
+  micrometer:
+    enabled: true
+    export:
+      prometheus:
+        enabled: true
+        path: /q/metrics
+        
+  # Rate Limiting Configuration
+  rate-limiter:
+    default:
+      permits: 1000
+      period: PT15M  # 15 minutes
+      
+  # Logging Configuration
+  log:
+    level: INFO
+    category:
+      "com.redhat.ecommerce.gateway": DEBUG
+
+# Service URLs for proxying
+services:
+  user-service:
+    url: ${USER_SERVICE_URL:http://localhost:3001}
+    health-path: /q/health
+  product-service:
+    url: ${PRODUCT_SERVICE_URL:http://localhost:3002}
+    health-path: /q/health
+  order-service:
+    url: ${ORDER_SERVICE_URL:http://order-service:3003}
+    health-path: /q/health
+  payment-service:
+    url: ${PAYMENT_SERVICE_URL:http://payment-service:3004}
+    health-path: /q/health
+  inventory-service:
+    url: ${INVENTORY_SERVICE_URL:http://inventory-service:3005}
+    health-path: /q/health
+  notification-service:
+    url: ${NOTIFICATION_SERVICE_URL:http://notification-service:3006}
+    health-path: /q/health
+  recommendation-service:
+    url: ${RECOMMENDATION_SERVICE_URL:http://localhost:3007}
+    health-path: /q/health
+
+# Gateway Configuration
+gateway:
+  security:
+    shared-secret: ${GATEWAY_SHARED_SECRET:super-secret-gateway-key-dev}
+  proxy:
+    timeout: 30s
+    retry-attempts: 3
+  headers:
+    user-id: X-User-ID
+    user-email: X-User-Email
+    user-name: X-User-Name
+    user-roles: X-User-Roles
+    auth-timestamp: X-Auth-Timestamp
+    gateway-signature: X-Gateway-Signature
